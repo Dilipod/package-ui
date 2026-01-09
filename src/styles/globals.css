@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+:root {
+  /* ===========================================
+     DILIPOD COLOR SYSTEM
+     Black + Cyan - Simple & Bold
+     =========================================== */
+  
+  /* TWO CORE BRAND COLORS ONLY */
+  --black: #0A0A0A;           /* Pure black */
+  --cyan: #00B8A9;            /* Darker cyan/teal */
+  
+  /* Derived shades for gradients (between black and cyan) */
+  --cyan-dark: #007A70;       /* Darker cyan for gradients */
+  --cyan-light: #00E5D4;      /* Lighter cyan for highlights */
+  
+  /* Base */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 4%;
+  
+  /* UI Colors */
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 4%;
+  --primary: 174 100% 36%; /* cyan */
+  --primary-foreground: 0 0% 4%;
+  --secondary: 174 30% 95%;
+  --secondary-foreground: 0 0% 4%;
+  --muted: 174 20% 96%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 174 100% 36%;
+  --accent-foreground: 0 0% 4%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 174 100% 36%;
+  --radius: 0.125rem;
+  
+  /* Status Colors - using cyan for success */
+  --status-success: 174 100% 36%; /* cyan */
+  --status-error: 0 72% 51%;      /* red */
+  --status-warning: 38 92% 50%;   /* orange */
+  --status-active: 174 100% 36%;  /* cyan */
+}
+
+/* ===========================================
+   REUSABLE UTILITIES
+   Black + Cyan only
+   =========================================== */
+@layer utilities {
+  
+  /* ===== BACKGROUND GRADIENTS (Black ↔ Cyan) ===== */
+  
+  /* 1. Light hero - white with cyan glow */
+  .bg-gradient-light {
+    background: 
+      radial-gradient(ellipse at bottom right, rgba(0, 184, 169, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at top left, rgba(0, 184, 169, 0.08) 0%, transparent 50%),
+      white;
+  }
+  
+  /* 2. Dark section - dramatic aurora effect */
+  .bg-gradient-dark {
+    background: 
+      radial-gradient(ellipse 120% 60% at 0% 100%, rgba(0, 184, 169, 0.25) 0%, transparent 40%),
+      radial-gradient(ellipse 80% 80% at 100% 0%, rgba(0, 122, 112, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 80%, rgba(0, 184, 169, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 70% 20%, rgba(0, 229, 212, 0.08) 0%, transparent 40%),
+      linear-gradient(160deg, var(--black) 0%, #071515 30%, #0a1f1f 50%, #061212 70%, var(--black) 100%);
+  }
+  
+  /* 3. Full gradient - black through cyan */
+  .bg-gradient-full {
+    background: linear-gradient(
+      180deg,
+      var(--black) 0%,
+      var(--cyan-dark) 50%,
+      var(--cyan) 100%
+    );
+  }
+  
+  /* 4. Accent - solid colors */
+  .bg-cyan { background-color: var(--cyan); }
+  .bg-black { background-color: var(--black); }
+  
+  /* ===== TEXT ===== */
+  
+  .text-gradient {
+    background: linear-gradient(135deg, var(--cyan-dark) 0%, var(--cyan) 50%, var(--cyan-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-black { color: var(--black); }
+  .text-cyan { color: var(--cyan); }
+  .text-cyan-dark { color: var(--cyan-dark); }
+  
+  /* ===== UTILITY CLASSES ===== */
+  
+  .text-balance { text-wrap: balance; }
+  
+  .glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .glass-dark {
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* Status colors */
+  .text-status-success { color: var(--cyan); }
+  .text-status-error { color: hsl(var(--status-error)); }
+  .bg-status-success { background-color: var(--cyan); }
+  .bg-status-error { background-color: hsl(var(--status-error)); }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure interactive elements have pointer cursor */
+a, button, [role="button"], input[type="submit"], input[type="button"], select {
+  cursor: pointer;
+}
+
+a:not([disabled]), button:not([disabled]) {
+  cursor: pointer;
+}
+
+/* Better focus styles */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Container - centered with max-width and padding */
+@layer base {
+  .container {
+    width: 100%;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+  }
+}
