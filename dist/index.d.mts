@@ -25,7 +25,7 @@ declare const sheetVariants: (props?: ({
 } & class_variance_authority_types.ClassProp) | undefined) => string;
 interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>, VariantProps<typeof sheetVariants> {
 }
-declare const SheetContent: React.ForwardRefExoticComponent<SheetContentProps & React.RefAttributes<HTMLDivElement>>;
+declare const SheetContent: React.ForwardRefExoticComponent<Omit<SheetContentProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare const SheetHeader: {
     ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -40,7 +40,7 @@ declare const SheetDescription: React.ForwardRefExoticComponent<Omit<SheetPrimit
 interface LogoProps {
     variant?: 'dark' | 'light';
     size?: 'sm' | 'md' | 'lg';
-    href?: string;
+    href?: string | null;
     className?: string;
 }
 /**
@@ -128,6 +128,74 @@ interface StatProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<t
 }
 declare const Stat: React.ForwardRefExoticComponent<StatProps & React.RefAttributes<HTMLDivElement>>;
 
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+}
+declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
+
+declare const NODES$1: readonly ["a", "button", "div", "form", "h2", "h3", "img", "input", "label", "li", "nav", "ol", "p", "select", "span", "svg", "ul"];
+type Primitives$1 = {
+    [E in (typeof NODES$1)[number]]: PrimitiveForwardRefComponent$1<E>;
+};
+type PrimitivePropsWithRef$1<E extends React.ElementType> = React.ComponentPropsWithRef<E> & {
+    asChild?: boolean;
+};
+interface PrimitiveForwardRefComponent$1<E extends React.ElementType> extends React.ForwardRefExoticComponent<PrimitivePropsWithRef$1<E>> {
+}
+declare const Primitive$1: Primitives$1;
+
+type PrimitiveLabelProps = React.ComponentPropsWithoutRef<typeof Primitive$1.label>;
+interface LabelProps extends PrimitiveLabelProps {
+}
+
+declare const Label: React.ForwardRefExoticComponent<any>;
+
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+}
+declare const Textarea: React.ForwardRefExoticComponent<TextareaProps & React.RefAttributes<HTMLTextAreaElement>>;
+
+declare const Accordion: React.ForwardRefExoticComponent<any>;
+declare const AccordionItem: React.ForwardRefExoticComponent<any>;
+declare const AccordionTrigger: React.ForwardRefExoticComponent<any>;
+declare const AccordionContent: React.ForwardRefExoticComponent<any>;
+
+declare const NODES: readonly ["a", "button", "div", "form", "h2", "h3", "img", "input", "label", "li", "nav", "ol", "p", "select", "span", "svg", "ul"];
+type Primitives = {
+    [E in (typeof NODES)[number]]: PrimitiveForwardRefComponent<E>;
+};
+type PrimitivePropsWithRef<E extends React.ElementType> = React.ComponentPropsWithRef<E> & {
+    asChild?: boolean;
+};
+interface PrimitiveForwardRefComponent<E extends React.ElementType> extends React.ForwardRefExoticComponent<PrimitivePropsWithRef<E>> {
+}
+declare const Primitive: Primitives;
+
+declare const ORIENTATIONS: readonly ["horizontal", "vertical"];
+type Orientation = (typeof ORIENTATIONS)[number];
+type PrimitiveDivProps = React.ComponentPropsWithoutRef<typeof Primitive.div>;
+interface SeparatorProps extends PrimitiveDivProps {
+    /**
+     * Either `vertical` or `horizontal`. Defaults to `horizontal`.
+     */
+    orientation?: Orientation;
+    /**
+     * Whether or not the component is purely decorative. When true, accessibility-related attributes
+     * are updated so that that the rendered element is removed from the accessibility tree.
+     */
+    decorative?: boolean;
+}
+
+declare const Separator: React.ForwardRefExoticComponent<any>;
+
+declare const NavigationMenu: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuList: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuItem: React.ForwardRefExoticComponent<any>;
+declare const navigationMenuTriggerStyle: (props?: class_variance_authority_types.ClassProp | undefined) => string;
+declare const NavigationMenuTrigger: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuContent: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuLink: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuViewport: React.ForwardRefExoticComponent<any>;
+declare const NavigationMenuIndicator: React.ForwardRefExoticComponent<any>;
+
 declare function cn(...inputs: ClassValue[]): string;
 
-export { Badge, type BadgeProps, Button, type ButtonProps, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, IconBox, type IconBoxProps, Logo, type LogoProps, Progress, type ProgressProps, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Stat, type StatProps, Tag, type TagProps, badgeVariants, buttonVariants, cn, iconBoxVariants, progressVariants, statVariants, tagVariants, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, type BadgeProps, Button, type ButtonProps, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, IconBox, type IconBoxProps, Input, type InputProps, Label, type LabelProps, Logo, type LogoProps, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, type ProgressProps, Separator, type SeparatorProps, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Stat, type StatProps, Tag, type TagProps, Textarea, type TextareaProps, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };

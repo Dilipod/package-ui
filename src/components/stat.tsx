@@ -25,8 +25,8 @@ const statVariants = cva('', {
 const valueVariants = cva('font-bold', {
   variants: {
     size: {
-      sm: 'text-xl',
-      default: 'text-3xl md:text-4xl',
+      sm: 'text-lg',
+      default: 'text-2xl',
       lg: 'text-4xl md:text-5xl',
       xl: 'text-5xl md:text-6xl',
     },
@@ -85,13 +85,13 @@ const Stat = React.forwardRef<HTMLDivElement, StatProps>(
         className={cn(statVariants({ variant, align }), className)}
         {...props}
       >
-        <div className={cn('flex items-baseline gap-2', justifyClass)}>
+        <div className={cn('flex flex-wrap lg:flex-nowrap items-baseline gap-x-2', justifyClass)}>
           <span className={cn(valueVariants({ size: valueSize, color: valueColor }))}>
             {value}
           </span>
           {suffix && (
             <span className={cn(
-              "font-medium text-[var(--cyan)]",
+              "font-medium text-[var(--cyan)] shrink-0",
               valueSize === 'lg' || valueSize === 'xl' ? 'text-lg md:text-xl' : 'text-base md:text-lg'
             )}>
               {suffix}

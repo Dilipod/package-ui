@@ -5,7 +5,7 @@ import * as React from 'react'
 interface LogoProps {
   variant?: 'dark' | 'light' // dark = black text, light = white text
   size?: 'sm' | 'md' | 'lg'
-  href?: string
+  href?: string | null // defaults to '/', pass null to disable link
   className?: string
 }
 
@@ -26,7 +26,7 @@ const sizes = {
 export function Logo({
   variant = 'dark',
   size = 'md',
-  href,
+  href = '/',
   className,
 }: LogoProps) {
   const s = sizes[size]
@@ -77,9 +77,9 @@ export function Logo({
     </svg>
   )
 
-  if (href) {
+  if (href !== null) {
     return (
-      <a href={href} className="inline-flex items-center group">
+      <a href={href} aria-label="Go to homepage" className="inline-flex items-center group">
         {svgContent}
       </a>
     )
