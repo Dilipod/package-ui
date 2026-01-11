@@ -3,6 +3,8 @@ import * as React from 'react';
 import { VariantProps } from 'class-variance-authority';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
+export { LabelProps } from '@radix-ui/react-label';
+export { SeparatorProps } from '@radix-ui/react-separator';
 import { ClassValue } from 'clsx';
 export { AddressBook, ArrowLeft, ArrowRight, ArrowSquareOut, ArrowUpRight, Brain, Briefcase, Buildings, Calendar, CaretDown, CaretRight, CaretUp, ChartBar, ChartLineUp, ChatCircle, Check, CheckCircle, CheckSquare, Circle, Clock, Copy, Database, DotsThree, DotsThreeVertical, Download, Envelope, EnvelopeSimple, Eye, EyeSlash, File, FileText, Files, FirstAid, Funnel, Gear, GearSix, Globe, Handshake, House, Icon, IconProps, Info, Link, LinkedinLogo, List, MagnifyingGlass, Minus, Pause, PencilSimple, Phone, Play, Plus, Question, Receipt, Robot, ShoppingCart, SignIn, SignOut, SortAscending, SortDescending, Stop, Trash, Upload, User, UserPlus, Users, UsersThree, VideoCamera, Wallet, Warning, WarningCircle, X, XLogo } from '@phosphor-icons/react';
 
@@ -132,21 +134,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
 
-declare const NODES$1: readonly ["a", "button", "div", "form", "h2", "h3", "img", "input", "label", "li", "nav", "ol", "p", "select", "span", "svg", "ul"];
-type Primitives$1 = {
-    [E in (typeof NODES$1)[number]]: PrimitiveForwardRefComponent$1<E>;
-};
-type PrimitivePropsWithRef$1<E extends React.ElementType> = React.ComponentPropsWithRef<E> & {
-    asChild?: boolean;
-};
-interface PrimitiveForwardRefComponent$1<E extends React.ElementType> extends React.ForwardRefExoticComponent<PrimitivePropsWithRef$1<E>> {
-}
-declare const Primitive$1: Primitives$1;
-
-type PrimitiveLabelProps = React.ComponentPropsWithoutRef<typeof Primitive$1.label>;
-interface LabelProps extends PrimitiveLabelProps {
-}
-
 declare const Label: React.ForwardRefExoticComponent<any>;
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -157,32 +144,6 @@ declare const Accordion: React.ForwardRefExoticComponent<any>;
 declare const AccordionItem: React.ForwardRefExoticComponent<any>;
 declare const AccordionTrigger: React.ForwardRefExoticComponent<any>;
 declare const AccordionContent: React.ForwardRefExoticComponent<any>;
-
-declare const NODES: readonly ["a", "button", "div", "form", "h2", "h3", "img", "input", "label", "li", "nav", "ol", "p", "select", "span", "svg", "ul"];
-type Primitives = {
-    [E in (typeof NODES)[number]]: PrimitiveForwardRefComponent<E>;
-};
-type PrimitivePropsWithRef<E extends React.ElementType> = React.ComponentPropsWithRef<E> & {
-    asChild?: boolean;
-};
-interface PrimitiveForwardRefComponent<E extends React.ElementType> extends React.ForwardRefExoticComponent<PrimitivePropsWithRef<E>> {
-}
-declare const Primitive: Primitives;
-
-declare const ORIENTATIONS: readonly ["horizontal", "vertical"];
-type Orientation = (typeof ORIENTATIONS)[number];
-type PrimitiveDivProps = React.ComponentPropsWithoutRef<typeof Primitive.div>;
-interface SeparatorProps extends PrimitiveDivProps {
-    /**
-     * Either `vertical` or `horizontal`. Defaults to `horizontal`.
-     */
-    orientation?: Orientation;
-    /**
-     * Whether or not the component is purely decorative. When true, accessibility-related attributes
-     * are updated so that that the rendered element is removed from the accessibility tree.
-     */
-    decorative?: boolean;
-}
 
 declare const Separator: React.ForwardRefExoticComponent<any>;
 
@@ -198,4 +159,4 @@ declare const NavigationMenuIndicator: React.ForwardRefExoticComponent<any>;
 
 declare function cn(...inputs: ClassValue[]): string;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, type BadgeProps, Button, type ButtonProps, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, IconBox, type IconBoxProps, Input, type InputProps, Label, type LabelProps, Logo, type LogoProps, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, type ProgressProps, Separator, type SeparatorProps, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Stat, type StatProps, Tag, type TagProps, Textarea, type TextareaProps, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, type BadgeProps, Button, type ButtonProps, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, IconBox, type IconBoxProps, Input, type InputProps, Label, Logo, type LogoProps, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, type ProgressProps, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Stat, type StatProps, Tag, type TagProps, Textarea, type TextareaProps, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };

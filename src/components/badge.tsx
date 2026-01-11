@@ -40,19 +40,21 @@ export interface BadgeProps
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant, size, pulse, pulseColor: pulseColorProp, children, ...props }, ref) => {
-    const pulseColorMap = {
-      default: 'bg-gray-500',
-      primary: 'bg-[var(--cyan)]',
-      success: 'bg-green-500',
-      warning: 'bg-amber-500',
-      error: 'bg-red-500',
-      outline: 'bg-gray-400',
+    // Get pulse color based on variant or explicit pulseColor prop
+    // Using explicit conditionals so Tailwind can detect the classes
+    const getPulseColorClass = () => {
+      const color = pulseColorProp || variant || 'default'
+      switch (color) {
+        case 'success': return 'bg-green-500'
+        case 'warning': return 'bg-amber-500'
+        case 'error': return 'bg-red-500'
+        case 'primary': return 'bg-[var(--cyan)]'
+        case 'outline': return 'bg-gray-400'
+        default: return 'bg-gray-500'
+      }
     }
     
-    // Use custom pulseColor if provided, otherwise derive from variant
-    const pulseColor = pulseColorProp 
-      ? pulseColorMap[pulseColorProp] 
-      : pulseColorMap[variant || 'default']
+    const pulseColorClass = getPulseColorClass()
 
     return (
       <span
@@ -65,13 +67,13 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
             <span
               className={cn(
                 'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75',
-                pulseColor
+                pulseColorClass
               )}
             />
             <span
               className={cn(
                 'relative inline-flex h-1.5 w-1.5 rounded-full',
-                pulseColor
+                pulseColorClass
               )}
             />
           </span>
