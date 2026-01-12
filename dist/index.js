@@ -8,9 +8,8 @@ var tailwindMerge = require('tailwind-merge');
 var jsxRuntime = require('react/jsx-runtime');
 var SheetPrimitive = require('@radix-ui/react-dialog');
 var react = require('@phosphor-icons/react');
-var LabelPrimitive = require('@radix-ui/react-label');
+require('react-dom');
 var AccordionPrimitive = require('@radix-ui/react-accordion');
-var SeparatorPrimitive = require('@radix-ui/react-separator');
 var NavigationMenuPrimitive = require('@radix-ui/react-navigation-menu');
 
 function _interopNamespace(e) {
@@ -33,9 +32,7 @@ function _interopNamespace(e) {
 
 var React4__namespace = /*#__PURE__*/_interopNamespace(React4);
 var SheetPrimitive__namespace = /*#__PURE__*/_interopNamespace(SheetPrimitive);
-var LabelPrimitive__namespace = /*#__PURE__*/_interopNamespace(LabelPrimitive);
 var AccordionPrimitive__namespace = /*#__PURE__*/_interopNamespace(AccordionPrimitive);
-var SeparatorPrimitive__namespace = /*#__PURE__*/_interopNamespace(SeparatorPrimitive);
 var NavigationMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(NavigationMenuPrimitive);
 
 // src/components/button.tsx
@@ -253,7 +250,7 @@ function Logo({
   return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "inline-flex items-center", children: svgContent });
 }
 var badgeVariants = classVarianceAuthority.cva(
-  "inline-flex items-center gap-1.5 rounded-full font-semibold transition-colors",
+  "inline-flex items-center gap-1.5 rounded-md font-semibold transition-colors",
   {
     variants: {
       variant: {
@@ -335,7 +332,7 @@ var Card = React4__namespace.forwardRef(({ className, ...props }, ref) => /* @__
   {
     ref,
     className: cn(
-      "rounded-sm border border-gray-200 bg-white shadow-sm",
+      "rounded-md border border-gray-200 bg-white shadow-sm",
       className
     ),
     ...props
@@ -459,7 +456,7 @@ var iconBoxVariants = classVarianceAuthority.cva(
     defaultVariants: {
       variant: "default",
       size: "default",
-      rounded: "sm"
+      rounded: "default"
     }
   }
 );
@@ -478,7 +475,7 @@ var IconBox = React4__namespace.forwardRef(
 );
 IconBox.displayName = "IconBox";
 var tagVariants = classVarianceAuthority.cva(
-  "inline-flex items-center gap-2 font-medium transition-colors cursor-pointer",
+  "inline-flex items-center gap-2 font-medium transition-colors cursor-pointer rounded-md",
   {
     variants: {
       variant: {
@@ -488,9 +485,9 @@ var tagVariants = classVarianceAuthority.cva(
         dark: "bg-[var(--black)] text-white"
       },
       size: {
-        sm: "px-2 py-1 text-[10px] rounded",
-        default: "px-3 py-1.5 text-xs rounded-full",
-        lg: "px-4 py-2 text-sm rounded-full"
+        sm: "px-2 py-1 text-[10px]",
+        default: "px-3 py-1.5 text-xs",
+        lg: "px-4 py-2 text-sm"
       }
     },
     defaultVariants: {
@@ -611,18 +608,68 @@ var Input = React4__namespace.forwardRef(
   }
 );
 Input.displayName = "Input";
+var NODES = [
+  "a",
+  "button",
+  "div",
+  "form",
+  "h2",
+  "h3",
+  "img",
+  "input",
+  "label",
+  "li",
+  "nav",
+  "ol",
+  "p",
+  "select",
+  "span",
+  "svg",
+  "ul"
+];
+var Primitive = NODES.reduce((primitive, node) => {
+  const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
+  const Node = React4__namespace.forwardRef((props, forwardedRef) => {
+    const { asChild, ...primitiveProps } = props;
+    const Comp = asChild ? Slot2 : node;
+    if (typeof window !== "undefined") {
+      window[/* @__PURE__ */ Symbol.for("radix-ui")] = true;
+    }
+    return /* @__PURE__ */ jsxRuntime.jsx(Comp, { ...primitiveProps, ref: forwardedRef });
+  });
+  Node.displayName = `Primitive.${node}`;
+  return { ...primitive, [node]: Node };
+}, {});
+var NAME = "Label";
+var Label = React4__namespace.forwardRef((props, forwardedRef) => {
+  return /* @__PURE__ */ jsxRuntime.jsx(
+    Primitive.label,
+    {
+      ...props,
+      ref: forwardedRef,
+      onMouseDown: (event) => {
+        const target = event.target;
+        if (target.closest("button, input, select, textarea")) return;
+        props.onMouseDown?.(event);
+        if (!event.defaultPrevented && event.detail > 1) event.preventDefault();
+      }
+    }
+  );
+});
+Label.displayName = NAME;
+var Root2 = Label;
 var labelVariants = classVarianceAuthority.cva(
   "text-sm font-medium leading-none text-[var(--black)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label = React4__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
-  LabelPrimitive__namespace.Root,
+var Label2 = React4__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  Root2,
   {
     ref,
     className: cn(labelVariants(), className),
     ...props
   }
 ));
-Label.displayName = LabelPrimitive__namespace.Root.displayName;
+Label2.displayName = Root2.displayName;
 var Textarea = React4__namespace.forwardRef(
   ({ className, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
@@ -675,9 +722,64 @@ var AccordionContent = React4__namespace.forwardRef(({ className, children, ...p
   }
 ));
 AccordionContent.displayName = AccordionPrimitive__namespace.Content.displayName;
-var Separator = React4__namespace.forwardRef(
+var NODES2 = [
+  "a",
+  "button",
+  "div",
+  "form",
+  "h2",
+  "h3",
+  "img",
+  "input",
+  "label",
+  "li",
+  "nav",
+  "ol",
+  "p",
+  "select",
+  "span",
+  "svg",
+  "ul"
+];
+var Primitive2 = NODES2.reduce((primitive, node) => {
+  const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
+  const Node = React4__namespace.forwardRef((props, forwardedRef) => {
+    const { asChild, ...primitiveProps } = props;
+    const Comp = asChild ? Slot2 : node;
+    if (typeof window !== "undefined") {
+      window[/* @__PURE__ */ Symbol.for("radix-ui")] = true;
+    }
+    return /* @__PURE__ */ jsxRuntime.jsx(Comp, { ...primitiveProps, ref: forwardedRef });
+  });
+  Node.displayName = `Primitive.${node}`;
+  return { ...primitive, [node]: Node };
+}, {});
+var NAME2 = "Separator";
+var DEFAULT_ORIENTATION = "horizontal";
+var ORIENTATIONS = ["horizontal", "vertical"];
+var Separator = React4__namespace.forwardRef((props, forwardedRef) => {
+  const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
+  const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
+  const ariaOrientation = orientation === "vertical" ? orientation : void 0;
+  const semanticProps = decorative ? { role: "none" } : { "aria-orientation": ariaOrientation, role: "separator" };
+  return /* @__PURE__ */ jsxRuntime.jsx(
+    Primitive2.div,
+    {
+      "data-orientation": orientation,
+      ...semanticProps,
+      ...domProps,
+      ref: forwardedRef
+    }
+  );
+});
+Separator.displayName = NAME2;
+function isValidOrientation(orientation) {
+  return ORIENTATIONS.includes(orientation);
+}
+var Root4 = Separator;
+var Separator2 = React4__namespace.forwardRef(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
-    SeparatorPrimitive__namespace.Root,
+    Root4,
     {
       ref,
       decorative,
@@ -691,7 +793,7 @@ var Separator = React4__namespace.forwardRef(
     }
   )
 );
-Separator.displayName = SeparatorPrimitive__namespace.Root.displayName;
+Separator2.displayName = Root4.displayName;
 var NavigationMenu = React4__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   NavigationMenuPrimitive__namespace.Root,
   {
@@ -867,6 +969,10 @@ Object.defineProperty(exports, "Copy", {
   enumerable: true,
   get: function () { return react.Copy; }
 });
+Object.defineProperty(exports, "Crosshair", {
+  enumerable: true,
+  get: function () { return react.Crosshair; }
+});
 Object.defineProperty(exports, "Database", {
   enumerable: true,
   get: function () { return react.Database; }
@@ -987,6 +1093,10 @@ Object.defineProperty(exports, "Question", {
   enumerable: true,
   get: function () { return react.Question; }
 });
+Object.defineProperty(exports, "Quotes", {
+  enumerable: true,
+  get: function () { return react.Quotes; }
+});
 Object.defineProperty(exports, "Receipt", {
   enumerable: true,
   get: function () { return react.Receipt; }
@@ -1018,6 +1128,10 @@ Object.defineProperty(exports, "SortDescending", {
 Object.defineProperty(exports, "Stop", {
   enumerable: true,
   get: function () { return react.Stop; }
+});
+Object.defineProperty(exports, "Target", {
+  enumerable: true,
+  get: function () { return react.Target; }
 });
 Object.defineProperty(exports, "Trash", {
   enumerable: true,
@@ -1081,7 +1195,7 @@ exports.CardHeader = CardHeader;
 exports.CardTitle = CardTitle;
 exports.IconBox = IconBox;
 exports.Input = Input;
-exports.Label = Label;
+exports.Label = Label2;
 exports.Logo = Logo;
 exports.NavigationMenu = NavigationMenu;
 exports.NavigationMenuContent = NavigationMenuContent;
@@ -1092,7 +1206,7 @@ exports.NavigationMenuList = NavigationMenuList;
 exports.NavigationMenuTrigger = NavigationMenuTrigger;
 exports.NavigationMenuViewport = NavigationMenuViewport;
 exports.Progress = Progress;
-exports.Separator = Separator;
+exports.Separator = Separator2;
 exports.Sheet = Sheet;
 exports.SheetClose = SheetClose;
 exports.SheetContent = SheetContent;

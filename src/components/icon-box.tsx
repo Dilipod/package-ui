@@ -30,7 +30,7 @@ const iconBoxVariants = cva(
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      rounded: 'sm',
+      rounded: 'default',
     },
   }
 )

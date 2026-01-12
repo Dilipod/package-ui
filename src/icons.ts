@@ -71,6 +71,8 @@ export {
   Info,
   Question,
   Circle,
+  Target,
+  Crosshair,
 } from '@phosphor-icons/react'
 
 // Social & Communication
@@ -81,6 +83,7 @@ export {
   Envelope,
   Phone,
   Globe,
+  Quotes,
 } from '@phosphor-icons/react'
 
 // UI Elements
