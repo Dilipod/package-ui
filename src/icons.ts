@@ -73,6 +73,11 @@ export {
   Circle,
   Target,
   Crosshair,
+  ShieldCheck,
+  UserCircleCheck,
+  Lightning,
+  TrendUp,
+  Rocket,
 } from '@phosphor-icons/react'
 
 // Social & Communication

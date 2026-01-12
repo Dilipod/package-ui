@@ -1049,6 +1049,10 @@ Object.defineProperty(exports, "Info", {
   enumerable: true,
   get: function () { return react.Info; }
 });
+Object.defineProperty(exports, "Lightning", {
+  enumerable: true,
+  get: function () { return react.Lightning; }
+});
 Object.defineProperty(exports, "Link", {
   enumerable: true,
   get: function () { return react.Link; }
@@ -1105,6 +1109,14 @@ Object.defineProperty(exports, "Robot", {
   enumerable: true,
   get: function () { return react.Robot; }
 });
+Object.defineProperty(exports, "Rocket", {
+  enumerable: true,
+  get: function () { return react.Rocket; }
+});
+Object.defineProperty(exports, "ShieldCheck", {
+  enumerable: true,
+  get: function () { return react.ShieldCheck; }
+});
 Object.defineProperty(exports, "ShoppingCart", {
   enumerable: true,
   get: function () { return react.ShoppingCart; }
@@ -1137,6 +1149,10 @@ Object.defineProperty(exports, "Trash", {
   enumerable: true,
   get: function () { return react.Trash; }
 });
+Object.defineProperty(exports, "TrendUp", {
+  enumerable: true,
+  get: function () { return react.TrendUp; }
+});
 Object.defineProperty(exports, "Upload", {
   enumerable: true,
   get: function () { return react.Upload; }
@@ -1144,6 +1160,10 @@ Object.defineProperty(exports, "Upload", {
 Object.defineProperty(exports, "User", {
   enumerable: true,
   get: function () { return react.User; }
+});
+Object.defineProperty(exports, "UserCircleCheck", {
+  enumerable: true,
+  get: function () { return react.UserCircleCheck; }
 });
 Object.defineProperty(exports, "UserPlus", {
   enumerable: true,
