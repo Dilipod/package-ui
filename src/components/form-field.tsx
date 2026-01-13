@@ -32,12 +32,13 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
     // Clone children to add error state and IDs
     const enhancedChildren = React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
+        const childProps = child.props as { className?: string; [key: string]: any }
         return React.cloneElement(child as React.ReactElement<any>, {
           id: fieldId,
           'aria-invalid': error ? 'true' : undefined,
           'aria-describedby': error ? errorId : helperText ? helperId : undefined,
           className: cn(
-            child.props.className,
+            childProps.className,
             error && 'border-red-500 focus-visible:ring-red-500'
           ),
         })

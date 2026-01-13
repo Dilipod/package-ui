@@ -1309,12 +1309,13 @@ var FormField = React21.forwardRef(
     const helperId = `${fieldId}-helper`;
     const enhancedChildren = React21.Children.map(children, (child) => {
       if (React21.isValidElement(child)) {
+        const childProps = child.props;
         return React21.cloneElement(child, {
           id: fieldId,
           "aria-invalid": error ? "true" : void 0,
           "aria-describedby": error ? errorId : helperText ? helperId : void 0,
           className: cn(
-            child.props.className,
+            childProps.className,
             error && "border-red-500 focus-visible:ring-red-500"
           )
         });
