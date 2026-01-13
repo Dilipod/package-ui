@@ -3,7 +3,7 @@
 import * as React from 'react'
 import * as ToastPrimitives from '@radix-ui/react-toast'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { X, CheckCircle, WarningCircle, Info } from '@phosphor-icons/react'
+import { X, Check, WarningCircle, Info } from '@phosphor-icons/react'
 import { cn } from '../lib/utils'
 
 const ToastProvider = ToastPrimitives.Provider
@@ -120,7 +120,7 @@ type ToastActionElement = React.ReactElement<typeof ToastAction>
 const ToastIcon = ({ variant }: { variant?: 'default' | 'success' | 'error' | 'warning' }) => {
   switch (variant) {
     case 'success':
-      return <CheckCircle size={20} weight="fill" className="text-emerald-600" />
+      return <Check size={20} weight="bold" className="text-emerald-600" />
     case 'error':
       return <WarningCircle size={20} weight="fill" className="text-red-600" />
     case 'warning':
