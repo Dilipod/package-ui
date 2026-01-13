@@ -5,13 +5,14 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { jsxs, jsx } from 'react/jsx-runtime';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
-import { X, Check, CaretDown, CaretRight, Circle } from '@phosphor-icons/react';
+import { X, Check, CaretDown, CaretRight, Circle, Info, WarningCircle, CheckCircle } from '@phosphor-icons/react';
 export { AddressBook, ArrowLeft, ArrowRight, ArrowSquareOut, ArrowUpRight, Brain, Briefcase, Buildings, Calendar, CaretDown, CaretRight, CaretUp, ChartBar, ChartLineUp, ChatCircle, Check, CheckCircle, CheckSquare, Circle, Clock, Copy, Crosshair, Database, DotsThree, DotsThreeVertical, Download, Envelope, EnvelopeSimple, Eye, EyeSlash, File, FileText, Files, FirstAid, Funnel, Gear, GearSix, Globe, Handshake, House, Info, Lightning, Link, LinkedinLogo, List, MagnifyingGlass, Minus, Pause, PencilSimple, Phone, Play, Plus, Question, Quotes, Receipt, Robot, Rocket, ShieldCheck, ShoppingCart, SignIn, SignOut, SortAscending, SortDescending, Stop, Target, Trash, TrendUp, Upload, User, UserCircleCheck, UserPlus, Users, UsersThree, VideoCamera, Wallet, Warning, WarningCircle, X, XLogo } from '@phosphor-icons/react';
 import 'react-dom';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import * as ToastPrimitives from '@radix-ui/react-toast';
 
 // src/components/button.tsx
 function cn(...inputs) {
@@ -1142,6 +1143,7 @@ var Sidebar = React21.forwardRef(
     pathname,
     searchButton,
     helpLink,
+    assistantButton,
     header,
     LinkComponent,
     className,
@@ -1187,7 +1189,7 @@ var Sidebar = React21.forwardRef(
             item.name
           )) }),
           children,
-          (bottomNav.length > 0 || helpLink) && /* @__PURE__ */ jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
+          (bottomNav.length > 0 || helpLink || assistantButton) && /* @__PURE__ */ jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
             bottomNav.map((item) => /* @__PURE__ */ jsx(
               SidebarNavItem,
               {
@@ -1197,6 +1199,17 @@ var Sidebar = React21.forwardRef(
               },
               item.name
             )),
+            assistantButton && /* @__PURE__ */ jsxs(
+              "button",
+              {
+                onClick: assistantButton.onClick,
+                className: "flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm bg-[var(--cyan)]/10 text-[var(--black)] hover:bg-[var(--cyan)]/20 transition-colors font-medium",
+                children: [
+                  assistantButton.icon && /* @__PURE__ */ jsx(assistantButton.icon, { className: "h-4 w-4 text-[var(--cyan)]" }),
+                  assistantButton.label
+                ]
+              }
+            ),
             helpLink && /* @__PURE__ */ jsxs(
               "a",
               {
@@ -1303,7 +1316,7 @@ var CodeBlock = React21.forwardRef(
 );
 CodeBlock.displayName = "CodeBlock";
 var FormField = React21.forwardRef(
-  ({ label, error, helperText, required, id, className, children, ...props }, ref) => {
+  ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
     const fieldId = id || React21.useId();
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
@@ -1323,7 +1336,10 @@ var FormField = React21.forwardRef(
       return child;
     });
     return /* @__PURE__ */ jsxs("div", { ref, className: cn("space-y-2", className), ...props, children: [
-      label && /* @__PURE__ */ jsx(Label2, { htmlFor: fieldId, className: required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : "", children: label }),
+      (label || hint) && /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+        label && /* @__PURE__ */ jsx(Label2, { htmlFor: fieldId, className: required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : "", children: label }),
+        hint && /* @__PURE__ */ jsx("div", { children: hint })
+      ] }),
       enhancedChildren,
       error && /* @__PURE__ */ jsx("p", { id: errorId, className: "text-sm text-red-600", role: "alert", children: error }),
       helperText && !error && /* @__PURE__ */ jsx("p", { id: helperId, className: "text-xs text-muted-foreground", children: helperText })
@@ -1430,7 +1446,239 @@ var Divider = React21.forwardRef(
   }
 );
 Divider.displayName = "Divider";
+var ToastProvider = ToastPrimitives.Provider;
+var ToastViewport = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Viewport,
+  {
+    ref,
+    className: cn(
+      "fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]",
+      className
+    ),
+    ...props
+  }
+));
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
+var toastVariants = cva(
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-sm border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full",
+  {
+    variants: {
+      variant: {
+        default: "border-gray-200 bg-white text-[var(--black)]",
+        success: "border-emerald-200 bg-emerald-50 text-emerald-900",
+        error: "border-red-200 bg-red-50 text-red-900",
+        warning: "border-amber-200 bg-amber-50 text-amber-900"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
+var Toast = React21.forwardRef(({ className, variant, ...props }, ref) => {
+  return /* @__PURE__ */ jsx(
+    ToastPrimitives.Root,
+    {
+      ref,
+      className: cn(toastVariants({ variant }), className),
+      ...props
+    }
+  );
+});
+Toast.displayName = ToastPrimitives.Root.displayName;
+var ToastAction = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Action,
+  {
+    ref,
+    className: cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-sm border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      className
+    ),
+    ...props
+  }
+));
+ToastAction.displayName = ToastPrimitives.Action.displayName;
+var ToastClose = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Close,
+  {
+    ref,
+    className: cn(
+      "absolute right-2 top-2 rounded-sm p-1 text-gray-500 opacity-0 transition-opacity hover:text-gray-900 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
+      className
+    ),
+    "toast-close": "",
+    ...props,
+    children: /* @__PURE__ */ jsx(X, { size: 16 })
+  }
+));
+ToastClose.displayName = ToastPrimitives.Close.displayName;
+var ToastTitle = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Title,
+  {
+    ref,
+    className: cn("text-sm font-semibold", className),
+    ...props
+  }
+));
+ToastTitle.displayName = ToastPrimitives.Title.displayName;
+var ToastDescription = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Description,
+  {
+    ref,
+    className: cn("text-sm opacity-90", className),
+    ...props
+  }
+));
+ToastDescription.displayName = ToastPrimitives.Description.displayName;
+var ToastIcon = ({ variant }) => {
+  switch (variant) {
+    case "success":
+      return /* @__PURE__ */ jsx(CheckCircle, { size: 20, weight: "fill", className: "text-emerald-600" });
+    case "error":
+      return /* @__PURE__ */ jsx(WarningCircle, { size: 20, weight: "fill", className: "text-red-600" });
+    case "warning":
+      return /* @__PURE__ */ jsx(WarningCircle, { size: 20, weight: "fill", className: "text-amber-600" });
+    default:
+      return /* @__PURE__ */ jsx(Info, { size: 20, weight: "fill", className: "text-gray-600" });
+  }
+};
+var TOAST_LIMIT = 5;
+var TOAST_REMOVE_DELAY = 5e3;
+var count = 0;
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER;
+  return count.toString();
+}
+var toastTimeouts = /* @__PURE__ */ new Map();
+var addToRemoveQueue = (toastId) => {
+  if (toastTimeouts.has(toastId)) {
+    return;
+  }
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId);
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId
+    });
+  }, TOAST_REMOVE_DELAY);
+  toastTimeouts.set(toastId, timeout);
+};
+var reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT)
+      };
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === action.toast.id ? { ...t, ...action.toast } : t
+        )
+      };
+    case "DISMISS_TOAST": {
+      const { toastId } = action;
+      if (toastId) {
+        addToRemoveQueue(toastId);
+      } else {
+        state.toasts.forEach((toast2) => {
+          addToRemoveQueue(toast2.id);
+        });
+      }
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === toastId || toastId === void 0 ? {
+            ...t,
+            open: false
+          } : t
+        )
+      };
+    }
+    case "REMOVE_TOAST":
+      if (action.toastId === void 0) {
+        return {
+          ...state,
+          toasts: []
+        };
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId)
+      };
+  }
+};
+var listeners = [];
+var memoryState = { toasts: [] };
+function dispatch(action) {
+  memoryState = reducer(memoryState, action);
+  listeners.forEach((listener) => {
+    listener(memoryState);
+  });
+}
+function toast({ ...props }) {
+  const id = genId();
+  const update = (props2) => dispatch({
+    type: "UPDATE_TOAST",
+    toast: { ...props2, id }
+  });
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      }
+    }
+  });
+  return {
+    id,
+    dismiss,
+    update
+  };
+}
+function useToast() {
+  const [state, setState] = React21.useState(memoryState);
+  React21.useEffect(() => {
+    listeners.push(setState);
+    return () => {
+      const index = listeners.indexOf(setState);
+      if (index > -1) {
+        listeners.splice(index, 1);
+      }
+    };
+  }, [state]);
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId })
+  };
+}
+function Toaster() {
+  const { toasts } = useToast();
+  return /* @__PURE__ */ jsxs(ToastProvider, { children: [
+    toasts.map(function({ id, title, description, action, variant, ...props }) {
+      const safeVariant = variant ?? void 0;
+      return /* @__PURE__ */ jsxs(Toast, { variant: safeVariant, ...props, children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
+          /* @__PURE__ */ jsx(ToastIcon, { variant: safeVariant }),
+          /* @__PURE__ */ jsxs("div", { className: "grid gap-1", children: [
+            title && /* @__PURE__ */ jsx(ToastTitle, { children: title }),
+            description && /* @__PURE__ */ jsx(ToastDescription, { children: description })
+          ] })
+        ] }),
+        action,
+        /* @__PURE__ */ jsx(ToastClose, {})
+      ] }, id);
+    }),
+    /* @__PURE__ */ jsx(ToastViewport, {})
+  ] });
+}
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, FormField, IconBox, Input, Label2 as Label, Logo, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, Separator2 as Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarNavItem, Stat, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tag, Textarea, alertVariants, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, FormField, IconBox, Input, Label2 as Label, Logo, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, Separator2 as Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarNavItem, Stat, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, alertVariants, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

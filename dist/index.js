@@ -13,6 +13,7 @@ var AccordionPrimitive = require('@radix-ui/react-accordion');
 var NavigationMenuPrimitive = require('@radix-ui/react-navigation-menu');
 var AvatarPrimitive = require('@radix-ui/react-avatar');
 var DropdownMenuPrimitive = require('@radix-ui/react-dropdown-menu');
+var ToastPrimitives = require('@radix-ui/react-toast');
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
@@ -38,6 +39,7 @@ var AccordionPrimitive__namespace = /*#__PURE__*/_interopNamespace(AccordionPrim
 var NavigationMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(NavigationMenuPrimitive);
 var AvatarPrimitive__namespace = /*#__PURE__*/_interopNamespace(AvatarPrimitive);
 var DropdownMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(DropdownMenuPrimitive);
+var ToastPrimitives__namespace = /*#__PURE__*/_interopNamespace(ToastPrimitives);
 
 // src/components/button.tsx
 function cn(...inputs) {
@@ -1168,6 +1170,7 @@ var Sidebar = React21__namespace.forwardRef(
     pathname,
     searchButton,
     helpLink,
+    assistantButton,
     header,
     LinkComponent,
     className,
@@ -1213,7 +1216,7 @@ var Sidebar = React21__namespace.forwardRef(
             item.name
           )) }),
           children,
-          (bottomNav.length > 0 || helpLink) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
+          (bottomNav.length > 0 || helpLink || assistantButton) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
             bottomNav.map((item) => /* @__PURE__ */ jsxRuntime.jsx(
               SidebarNavItem,
               {
@@ -1223,6 +1226,17 @@ var Sidebar = React21__namespace.forwardRef(
               },
               item.name
             )),
+            assistantButton && /* @__PURE__ */ jsxRuntime.jsxs(
+              "button",
+              {
+                onClick: assistantButton.onClick,
+                className: "flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm bg-[var(--cyan)]/10 text-[var(--black)] hover:bg-[var(--cyan)]/20 transition-colors font-medium",
+                children: [
+                  assistantButton.icon && /* @__PURE__ */ jsxRuntime.jsx(assistantButton.icon, { className: "h-4 w-4 text-[var(--cyan)]" }),
+                  assistantButton.label
+                ]
+              }
+            ),
             helpLink && /* @__PURE__ */ jsxRuntime.jsxs(
               "a",
               {
@@ -1329,7 +1343,7 @@ var CodeBlock = React21__namespace.forwardRef(
 );
 CodeBlock.displayName = "CodeBlock";
 var FormField = React21__namespace.forwardRef(
-  ({ label, error, helperText, required, id, className, children, ...props }, ref) => {
+  ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
     const fieldId = id || React21__namespace.useId();
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
@@ -1349,7 +1363,10 @@ var FormField = React21__namespace.forwardRef(
       return child;
     });
     return /* @__PURE__ */ jsxRuntime.jsxs("div", { ref, className: cn("space-y-2", className), ...props, children: [
-      label && /* @__PURE__ */ jsxRuntime.jsx(Label2, { htmlFor: fieldId, className: required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : "", children: label }),
+      (label || hint) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between", children: [
+        label && /* @__PURE__ */ jsxRuntime.jsx(Label2, { htmlFor: fieldId, className: required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : "", children: label }),
+        hint && /* @__PURE__ */ jsxRuntime.jsx("div", { children: hint })
+      ] }),
       enhancedChildren,
       error && /* @__PURE__ */ jsxRuntime.jsx("p", { id: errorId, className: "text-sm text-red-600", role: "alert", children: error }),
       helperText && !error && /* @__PURE__ */ jsxRuntime.jsx("p", { id: helperId, className: "text-xs text-muted-foreground", children: helperText })
@@ -1456,6 +1473,238 @@ var Divider = React21__namespace.forwardRef(
   }
 );
 Divider.displayName = "Divider";
+var ToastProvider = ToastPrimitives__namespace.Provider;
+var ToastViewport = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  ToastPrimitives__namespace.Viewport,
+  {
+    ref,
+    className: cn(
+      "fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]",
+      className
+    ),
+    ...props
+  }
+));
+ToastViewport.displayName = ToastPrimitives__namespace.Viewport.displayName;
+var toastVariants = classVarianceAuthority.cva(
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-sm border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full",
+  {
+    variants: {
+      variant: {
+        default: "border-gray-200 bg-white text-[var(--black)]",
+        success: "border-emerald-200 bg-emerald-50 text-emerald-900",
+        error: "border-red-200 bg-red-50 text-red-900",
+        warning: "border-amber-200 bg-amber-50 text-amber-900"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
+var Toast = React21__namespace.forwardRef(({ className, variant, ...props }, ref) => {
+  return /* @__PURE__ */ jsxRuntime.jsx(
+    ToastPrimitives__namespace.Root,
+    {
+      ref,
+      className: cn(toastVariants({ variant }), className),
+      ...props
+    }
+  );
+});
+Toast.displayName = ToastPrimitives__namespace.Root.displayName;
+var ToastAction = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  ToastPrimitives__namespace.Action,
+  {
+    ref,
+    className: cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-sm border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      className
+    ),
+    ...props
+  }
+));
+ToastAction.displayName = ToastPrimitives__namespace.Action.displayName;
+var ToastClose = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  ToastPrimitives__namespace.Close,
+  {
+    ref,
+    className: cn(
+      "absolute right-2 top-2 rounded-sm p-1 text-gray-500 opacity-0 transition-opacity hover:text-gray-900 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
+      className
+    ),
+    "toast-close": "",
+    ...props,
+    children: /* @__PURE__ */ jsxRuntime.jsx(react.X, { size: 16 })
+  }
+));
+ToastClose.displayName = ToastPrimitives__namespace.Close.displayName;
+var ToastTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  ToastPrimitives__namespace.Title,
+  {
+    ref,
+    className: cn("text-sm font-semibold", className),
+    ...props
+  }
+));
+ToastTitle.displayName = ToastPrimitives__namespace.Title.displayName;
+var ToastDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  ToastPrimitives__namespace.Description,
+  {
+    ref,
+    className: cn("text-sm opacity-90", className),
+    ...props
+  }
+));
+ToastDescription.displayName = ToastPrimitives__namespace.Description.displayName;
+var ToastIcon = ({ variant }) => {
+  switch (variant) {
+    case "success":
+      return /* @__PURE__ */ jsxRuntime.jsx(react.CheckCircle, { size: 20, weight: "fill", className: "text-emerald-600" });
+    case "error":
+      return /* @__PURE__ */ jsxRuntime.jsx(react.WarningCircle, { size: 20, weight: "fill", className: "text-red-600" });
+    case "warning":
+      return /* @__PURE__ */ jsxRuntime.jsx(react.WarningCircle, { size: 20, weight: "fill", className: "text-amber-600" });
+    default:
+      return /* @__PURE__ */ jsxRuntime.jsx(react.Info, { size: 20, weight: "fill", className: "text-gray-600" });
+  }
+};
+var TOAST_LIMIT = 5;
+var TOAST_REMOVE_DELAY = 5e3;
+var count = 0;
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER;
+  return count.toString();
+}
+var toastTimeouts = /* @__PURE__ */ new Map();
+var addToRemoveQueue = (toastId) => {
+  if (toastTimeouts.has(toastId)) {
+    return;
+  }
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId);
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId
+    });
+  }, TOAST_REMOVE_DELAY);
+  toastTimeouts.set(toastId, timeout);
+};
+var reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT)
+      };
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === action.toast.id ? { ...t, ...action.toast } : t
+        )
+      };
+    case "DISMISS_TOAST": {
+      const { toastId } = action;
+      if (toastId) {
+        addToRemoveQueue(toastId);
+      } else {
+        state.toasts.forEach((toast2) => {
+          addToRemoveQueue(toast2.id);
+        });
+      }
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === toastId || toastId === void 0 ? {
+            ...t,
+            open: false
+          } : t
+        )
+      };
+    }
+    case "REMOVE_TOAST":
+      if (action.toastId === void 0) {
+        return {
+          ...state,
+          toasts: []
+        };
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId)
+      };
+  }
+};
+var listeners = [];
+var memoryState = { toasts: [] };
+function dispatch(action) {
+  memoryState = reducer(memoryState, action);
+  listeners.forEach((listener) => {
+    listener(memoryState);
+  });
+}
+function toast({ ...props }) {
+  const id = genId();
+  const update = (props2) => dispatch({
+    type: "UPDATE_TOAST",
+    toast: { ...props2, id }
+  });
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      }
+    }
+  });
+  return {
+    id,
+    dismiss,
+    update
+  };
+}
+function useToast() {
+  const [state, setState] = React21__namespace.useState(memoryState);
+  React21__namespace.useEffect(() => {
+    listeners.push(setState);
+    return () => {
+      const index = listeners.indexOf(setState);
+      if (index > -1) {
+        listeners.splice(index, 1);
+      }
+    };
+  }, [state]);
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId })
+  };
+}
+function Toaster() {
+  const { toasts } = useToast();
+  return /* @__PURE__ */ jsxRuntime.jsxs(ToastProvider, { children: [
+    toasts.map(function({ id, title, description, action, variant, ...props }) {
+      const safeVariant = variant ?? void 0;
+      return /* @__PURE__ */ jsxRuntime.jsxs(Toast, { variant: safeVariant, ...props, children: [
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex gap-3", children: [
+          /* @__PURE__ */ jsxRuntime.jsx(ToastIcon, { variant: safeVariant }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "grid gap-1", children: [
+            title && /* @__PURE__ */ jsxRuntime.jsx(ToastTitle, { children: title }),
+            description && /* @__PURE__ */ jsxRuntime.jsx(ToastDescription, { children: description })
+          ] })
+        ] }),
+        action,
+        /* @__PURE__ */ jsxRuntime.jsx(ToastClose, {})
+      ] }, id);
+    }),
+    /* @__PURE__ */ jsxRuntime.jsx(ToastViewport, {})
+  ] });
+}
 
 Object.defineProperty(exports, "AddressBook", {
   enumerable: true,
@@ -1846,6 +2095,15 @@ exports.TableHeader = TableHeader;
 exports.TableRow = TableRow;
 exports.Tag = Tag;
 exports.Textarea = Textarea;
+exports.Toast = Toast;
+exports.ToastAction = ToastAction;
+exports.ToastClose = ToastClose;
+exports.ToastDescription = ToastDescription;
+exports.ToastIcon = ToastIcon;
+exports.ToastProvider = ToastProvider;
+exports.ToastTitle = ToastTitle;
+exports.ToastViewport = ToastViewport;
+exports.Toaster = Toaster;
 exports.alertVariants = alertVariants;
 exports.badgeVariants = badgeVariants;
 exports.buttonVariants = buttonVariants;
@@ -1855,6 +2113,8 @@ exports.navigationMenuTriggerStyle = navigationMenuTriggerStyle;
 exports.progressVariants = progressVariants;
 exports.statVariants = statVariants;
 exports.tagVariants = tagVariants;
+exports.toast = toast;
+exports.useToast = useToast;
 exports.valueVariants = valueVariants;
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map
