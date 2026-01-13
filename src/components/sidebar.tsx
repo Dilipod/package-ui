@@ -7,7 +7,7 @@ import type { Icon } from '../icons'
 export interface SidebarNavItem {
   name: string
   href: string
-  icon: Icon
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement> & { weight?: 'fill' | 'regular' }>
 }
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
@@ -27,7 +27,7 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   helpLink?: {
     href: string
     label?: string
-    icon?: Icon
+    icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { weight?: 'fill' | 'regular' }>
   }
   /** Header content (e.g., Logo) */
   header?: React.ReactNode
@@ -43,9 +43,9 @@ export interface SidebarNavItemProps {
   LinkComponent?: React.ComponentType<{ href: string; className?: string; children?: React.ReactNode } & Record<string, any>>
 }
 
-const SidebarNavItem = React.forwardRef<any, SidebarNavItemProps>(
+const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
   ({ item, isActive, className, LinkComponent, ...props }, ref) => {
-    const Icon = item.icon
+    const Icon = item.icon as React.ComponentType<any>
     const baseClassName = cn(
       'flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors',
       isActive

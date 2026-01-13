@@ -113,6 +113,32 @@ export type {
   SidebarNavItemProps,
 } from './components/sidebar'
 
+export { Alert, alertVariants } from './components/alert'
+export type { AlertProps } from './components/alert'
+
+export { EmptyState } from './components/empty-state'
+export type { EmptyStateProps } from './components/empty-state'
+
+export { CodeBlock } from './components/code-block'
+export type { CodeBlockProps } from './components/code-block'
+
+export { FormField } from './components/form-field'
+export type { FormFieldProps } from './components/form-field'
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './components/table'
+
+export { Divider } from './components/divider'
+export type { DividerProps } from './components/divider'
+
 // Utilities
 export { cn } from './lib/utils'
 

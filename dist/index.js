@@ -70,14 +70,49 @@ var buttonVariants = classVarianceAuthority.cva(
   }
 );
 var Button = React21__namespace.forwardRef(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading, loadingText, children, disabled, ...props }, ref) => {
     const Comp = asChild ? reactSlot.Slot : "button";
-    return /* @__PURE__ */ jsxRuntime.jsx(
+    const isDisabled = disabled || loading;
+    return /* @__PURE__ */ jsxRuntime.jsxs(
       Comp,
       {
         className: cn(buttonVariants({ variant, size, className })),
         ref,
-        ...props
+        disabled: isDisabled,
+        ...props,
+        children: [
+          loading && /* @__PURE__ */ jsxRuntime.jsxs(
+            "svg",
+            {
+              className: "animate-spin h-4 w-4",
+              xmlns: "http://www.w3.org/2000/svg",
+              fill: "none",
+              viewBox: "0 0 24 24",
+              children: [
+                /* @__PURE__ */ jsxRuntime.jsx(
+                  "circle",
+                  {
+                    className: "opacity-25",
+                    cx: "12",
+                    cy: "12",
+                    r: "10",
+                    stroke: "currentColor",
+                    strokeWidth: "4"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntime.jsx(
+                  "path",
+                  {
+                    className: "opacity-75",
+                    fill: "currentColor",
+                    d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  }
+                )
+              ]
+            }
+          ),
+          loading ? loadingText || children : children
+        ]
       }
     );
   }
@@ -597,16 +632,18 @@ var Stat = React21__namespace.forwardRef(
 );
 Stat.displayName = "Stat";
 var Input = React21__namespace.forwardRef(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "input",
       {
         type,
         className: cn(
-          "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--black)] placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
+          "flex h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--black)] placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
+          error ? "border-red-500 focus-visible:ring-red-500" : "border-gray-300 focus-visible:ring-[var(--cyan)]",
           className
         ),
         ref,
+        "aria-invalid": error ? "true" : void 0,
         ...props
       }
     );
@@ -676,15 +713,17 @@ var Label2 = React21__namespace.forwardRef(({ className, ...props }, ref) => /* 
 ));
 Label2.displayName = Root2.displayName;
 var Textarea = React21__namespace.forwardRef(
-  ({ className, ...props }, ref) => {
+  ({ className, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "textarea",
       {
         className: cn(
-          "flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
+          "flex min-h-[80px] w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors resize-none",
+          error ? "border-red-500 focus-visible:ring-red-500" : "border-gray-300 focus-visible:ring-[var(--cyan)]",
           className
         ),
         ref,
+        "aria-invalid": error ? "true" : void 0,
         ...props
       }
     );
@@ -994,7 +1033,7 @@ var DropdownMenuContent = React21__namespace.forwardRef(({ className, sideOffset
     ref,
     sideOffset,
     className: cn(
-      "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-sm border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+      "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-sm border bg-popover p-1.5 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
       className
     ),
     ...props
@@ -1006,7 +1045,7 @@ var DropdownMenuItem = React21__namespace.forwardRef(({ className, inset, ...pro
   {
     ref,
     className: cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none transition-colors focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       inset && "pl-8",
       className
     ),
@@ -1052,7 +1091,7 @@ var DropdownMenuLabel = React21__namespace.forwardRef(({ className, inset, ...pr
   {
     ref,
     className: cn(
-      "px-2 py-1.5 text-sm font-semibold",
+      "px-3 py-2 text-sm font-semibold text-foreground",
       inset && "pl-8",
       className
     ),
@@ -1202,6 +1241,220 @@ var Sidebar = React21__namespace.forwardRef(
   }
 );
 Sidebar.displayName = "Sidebar";
+var alertVariants = classVarianceAuthority.cva(
+  "rounded-sm border p-3 text-sm",
+  {
+    variants: {
+      variant: {
+        default: "bg-background border-border text-foreground",
+        success: "bg-green-50 border-green-200 text-green-900",
+        error: "bg-red-50 border-red-200 text-red-900",
+        warning: "bg-amber-50 border-amber-200 text-amber-900",
+        info: "bg-blue-50 border-blue-200 text-blue-900",
+        primary: "bg-[var(--cyan)]/10 border-[var(--cyan)]/20 text-[var(--cyan)]"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
+var Alert = React21__namespace.forwardRef(
+  ({ className, variant, icon, title, action, children, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsx(
+      "div",
+      {
+        ref,
+        className: cn(alertVariants({ variant }), className),
+        ...props,
+        children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start gap-3 flex-1", children: [
+            icon && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "shrink-0 mt-0.5", children: icon }),
+            /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1 min-w-0", children: [
+              title && /* @__PURE__ */ jsxRuntime.jsx("p", { className: "font-semibold mb-1", children: title }),
+              /* @__PURE__ */ jsxRuntime.jsx("div", { className: title ? "text-sm" : "", children })
+            ] })
+          ] }),
+          action && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "shrink-0", children: action })
+        ] })
+      }
+    );
+  }
+);
+Alert.displayName = "Alert";
+var EmptyState = React21__namespace.forwardRef(
+  ({ className, icon, title, description, action, size = "default", ...props }, ref) => {
+    const paddingClass = {
+      sm: "p-8",
+      default: "p-12",
+      lg: "p-16"
+    }[size];
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      "div",
+      {
+        ref,
+        className: cn(
+          "rounded-sm border border-dashed text-center",
+          paddingClass,
+          className
+        ),
+        ...props,
+        children: [
+          icon && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex justify-center mb-4", children: icon }),
+          title && /* @__PURE__ */ jsxRuntime.jsx("h3", { className: "text-sm font-semibold text-foreground mb-1", children: title }),
+          description && /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm text-muted-foreground mb-4", children: description }),
+          action && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex justify-center", children: action })
+        ]
+      }
+    );
+  }
+);
+EmptyState.displayName = "EmptyState";
+var CodeBlock = React21__namespace.forwardRef(
+  ({ className, children, language, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsx(
+      "pre",
+      {
+        ref,
+        className: cn(
+          "rounded-sm bg-muted p-4 text-sm overflow-auto font-mono",
+          className
+        ),
+        ...language && { "data-language": language },
+        ...props,
+        children: /* @__PURE__ */ jsxRuntime.jsx("code", { children })
+      }
+    );
+  }
+);
+CodeBlock.displayName = "CodeBlock";
+var FormField = React21__namespace.forwardRef(
+  ({ label, error, helperText, required, id, className, children, ...props }, ref) => {
+    const fieldId = id || React21__namespace.useId();
+    const errorId = `${fieldId}-error`;
+    const helperId = `${fieldId}-helper`;
+    const enhancedChildren = React21__namespace.Children.map(children, (child) => {
+      if (React21__namespace.isValidElement(child)) {
+        return React21__namespace.cloneElement(child, {
+          id: fieldId,
+          "aria-invalid": error ? "true" : void 0,
+          "aria-describedby": error ? errorId : helperText ? helperId : void 0,
+          className: cn(
+            child.props.className,
+            error && "border-red-500 focus-visible:ring-red-500"
+          )
+        });
+      }
+      return child;
+    });
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { ref, className: cn("space-y-2", className), ...props, children: [
+      label && /* @__PURE__ */ jsxRuntime.jsx(Label2, { htmlFor: fieldId, className: required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : "", children: label }),
+      enhancedChildren,
+      error && /* @__PURE__ */ jsxRuntime.jsx("p", { id: errorId, className: "text-sm text-red-600", role: "alert", children: error }),
+      helperText && !error && /* @__PURE__ */ jsxRuntime.jsx("p", { id: helperId, className: "text-xs text-muted-foreground", children: helperText })
+    ] });
+  }
+);
+FormField.displayName = "FormField";
+var Table = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsx(
+  "table",
+  {
+    ref,
+    className: cn("w-full border-collapse", className),
+    ...props
+  }
+) }));
+Table.displayName = "Table";
+var TableHeader = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("", className), ...props }));
+TableHeader.displayName = "TableHeader";
+var TableBody = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("tbody", { ref, className: cn("", className), ...props }));
+TableBody.displayName = "TableBody";
+var TableFooter = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "tfoot",
+  {
+    ref,
+    className: cn("border-t bg-muted/50 font-medium", className),
+    ...props
+  }
+));
+TableFooter.displayName = "TableFooter";
+var TableRow = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "tr",
+  {
+    ref,
+    className: cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className),
+    ...props
+  }
+));
+TableRow.displayName = "TableRow";
+var TableHead = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "th",
+  {
+    ref,
+    className: cn(
+      "h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      className
+    ),
+    ...props
+  }
+));
+TableHead.displayName = "TableHead";
+var TableCell = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "td",
+  {
+    ref,
+    className: cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className),
+    ...props
+  }
+));
+TableCell.displayName = "TableCell";
+var TableCaption = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "caption",
+  {
+    ref,
+    className: cn("mt-4 text-sm text-muted-foreground", className),
+    ...props
+  }
+));
+TableCaption.displayName = "TableCaption";
+var Divider = React21__namespace.forwardRef(
+  ({ className, text, orientation = "horizontal", ...props }, ref) => {
+    if (orientation === "vertical") {
+      return /* @__PURE__ */ jsxRuntime.jsx(
+        "div",
+        {
+          ref,
+          className: cn("w-px h-full bg-border", className),
+          ...props
+        }
+      );
+    }
+    if (text) {
+      return /* @__PURE__ */ jsxRuntime.jsxs(
+        "div",
+        {
+          ref,
+          className: cn("relative flex items-center", className),
+          ...props,
+          children: [
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex-1 border-t" }),
+            /* @__PURE__ */ jsxRuntime.jsx("span", { className: "px-2 text-xs uppercase text-muted-foreground bg-background", children: text }),
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex-1 border-t" })
+          ]
+        }
+      );
+    }
+    return /* @__PURE__ */ jsxRuntime.jsx(
+      "div",
+      {
+        ref,
+        className: cn("border-t", className),
+        ...props
+      }
+    );
+  }
+);
+Divider.displayName = "Divider";
 
 Object.defineProperty(exports, "AddressBook", {
   enumerable: true,
@@ -1523,6 +1776,7 @@ exports.Accordion = Accordion;
 exports.AccordionContent = AccordionContent;
 exports.AccordionItem = AccordionItem;
 exports.AccordionTrigger = AccordionTrigger;
+exports.Alert = Alert;
 exports.Avatar = Avatar;
 exports.AvatarFallback = AvatarFallback;
 exports.AvatarImage = AvatarImage;
@@ -1535,6 +1789,8 @@ exports.CardFooter = CardFooter;
 exports.CardHeader = CardHeader;
 exports.CardTitle = CardTitle;
 exports.Checkbox = Checkbox;
+exports.CodeBlock = CodeBlock;
+exports.Divider = Divider;
 exports.DropdownMenu = DropdownMenu;
 exports.DropdownMenuCheckboxItem = DropdownMenuCheckboxItem;
 exports.DropdownMenuContent = DropdownMenuContent;
@@ -1550,6 +1806,8 @@ exports.DropdownMenuSub = DropdownMenuSub;
 exports.DropdownMenuSubContent = DropdownMenuSubContent;
 exports.DropdownMenuSubTrigger = DropdownMenuSubTrigger;
 exports.DropdownMenuTrigger = DropdownMenuTrigger;
+exports.EmptyState = EmptyState;
+exports.FormField = FormField;
 exports.IconBox = IconBox;
 exports.Input = Input;
 exports.Label = Label2;
@@ -1577,8 +1835,17 @@ exports.SheetTrigger = SheetTrigger;
 exports.Sidebar = Sidebar;
 exports.SidebarNavItem = SidebarNavItem;
 exports.Stat = Stat;
+exports.Table = Table;
+exports.TableBody = TableBody;
+exports.TableCaption = TableCaption;
+exports.TableCell = TableCell;
+exports.TableFooter = TableFooter;
+exports.TableHead = TableHead;
+exports.TableHeader = TableHeader;
+exports.TableRow = TableRow;
 exports.Tag = Tag;
 exports.Textarea = Textarea;
+exports.alertVariants = alertVariants;
 exports.badgeVariants = badgeVariants;
 exports.buttonVariants = buttonVariants;
 exports.cn = cn;
