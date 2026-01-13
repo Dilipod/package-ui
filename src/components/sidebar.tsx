@@ -119,7 +119,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
       <aside
         ref={ref}
         className={cn(
-          'flex h-full w-60 flex-col border-r bg-background/50',
+          'relative flex h-full w-60 flex-col border-r bg-background/50',
           className
         )}
         {...props}
@@ -166,7 +166,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         {children}
 
         {/* Bottom Navigation */}
-        {(bottomNav.length > 0 || helpLink || assistantButton) && (
+        {(bottomNav.length > 0 || helpLink) && (
           <div className="px-3 pb-3 space-y-1 border-t pt-3">
             {bottomNav.map((item) => (
               <SidebarNavItem
@@ -176,17 +176,6 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 LinkComponent={LinkComponent}
               />
             ))}
-            {assistantButton && (
-              <button
-                onClick={assistantButton.onClick}
-                className="flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm bg-[var(--cyan)]/10 text-[var(--black)] hover:bg-[var(--cyan)]/20 transition-colors font-medium"
-              >
-                {assistantButton.icon && (
-                  <assistantButton.icon className="h-4 w-4 text-[var(--cyan)]" />
-                )}
-                {assistantButton.label}
-              </button>
-            )}
             {helpLink && (
               <a
                 href={helpLink.href}
@@ -198,6 +187,21 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 {helpLink.label}
               </a>
             )}
+          </div>
+        )}
+
+        {/* Floating Assistant Button */}
+        {assistantButton && (
+          <div className="absolute bottom-4 left-4">
+            <button
+              onClick={assistantButton.onClick}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--cyan)] text-white shadow-lg hover:bg-[var(--cyan)]/90 transition-colors"
+              title={assistantButton.label}
+            >
+              {assistantButton.icon && (
+                <assistantButton.icon className="h-5 w-5" />
+              )}
+            </button>
           </div>
         )}
       </aside>

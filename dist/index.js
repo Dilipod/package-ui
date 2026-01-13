@@ -373,7 +373,7 @@ var Card = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @_
   {
     ref,
     className: cn(
-      "rounded-sm border border-gray-200 bg-white shadow-sm",
+      "rounded-sm border border-gray-200 bg-white",
       className
     ),
     ...props
@@ -750,13 +750,13 @@ var Checkbox = React21__namespace.forwardRef(
         "div",
         {
           className: cn(
-            "w-4 h-4 border-2 border-input rounded-sm flex items-center justify-center transition-colors",
-            "peer-checked:bg-primary peer-checked:border-primary",
-            "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            "w-5 h-5 border border-gray-300 rounded-[2px] flex items-center justify-center transition-colors",
+            "peer-checked:bg-[var(--black)] peer-checked:border-[var(--black)]",
+            "peer-focus-visible:outline-none",
+            "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
             className
           ),
-          children: checked && /* @__PURE__ */ jsxRuntime.jsx(react.Check, { className: "h-3 w-3 text-white", weight: "bold" })
+          children: checked && /* @__PURE__ */ jsxRuntime.jsx(react.Check, { className: "h-3.5 w-3.5 text-white", weight: "bold" })
         }
       )
     ] });
@@ -1189,7 +1189,7 @@ var Sidebar = React21__namespace.forwardRef(
       {
         ref,
         className: cn(
-          "flex h-full w-60 flex-col border-r bg-background/50",
+          "relative flex h-full w-60 flex-col border-r bg-background/50",
           className
         ),
         ...props,
@@ -1216,7 +1216,7 @@ var Sidebar = React21__namespace.forwardRef(
             item.name
           )) }),
           children,
-          (bottomNav.length > 0 || helpLink || assistantButton) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
+          (bottomNav.length > 0 || helpLink) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
             bottomNav.map((item) => /* @__PURE__ */ jsxRuntime.jsx(
               SidebarNavItem,
               {
@@ -1226,17 +1226,6 @@ var Sidebar = React21__namespace.forwardRef(
               },
               item.name
             )),
-            assistantButton && /* @__PURE__ */ jsxRuntime.jsxs(
-              "button",
-              {
-                onClick: assistantButton.onClick,
-                className: "flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm bg-[var(--cyan)]/10 text-[var(--black)] hover:bg-[var(--cyan)]/20 transition-colors font-medium",
-                children: [
-                  assistantButton.icon && /* @__PURE__ */ jsxRuntime.jsx(assistantButton.icon, { className: "h-4 w-4 text-[var(--cyan)]" }),
-                  assistantButton.label
-                ]
-              }
-            ),
             helpLink && /* @__PURE__ */ jsxRuntime.jsxs(
               "a",
               {
@@ -1248,7 +1237,16 @@ var Sidebar = React21__namespace.forwardRef(
                 ]
               }
             )
-          ] })
+          ] }),
+          assistantButton && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "absolute bottom-4 left-4", children: /* @__PURE__ */ jsxRuntime.jsx(
+            "button",
+            {
+              onClick: assistantButton.onClick,
+              className: "flex h-10 w-10 items-center justify-center rounded-full bg-[var(--cyan)] text-white shadow-lg hover:bg-[var(--cyan)]/90 transition-colors",
+              title: assistantButton.label,
+              children: assistantButton.icon && /* @__PURE__ */ jsxRuntime.jsx(assistantButton.icon, { className: "h-5 w-5" })
+            }
+          ) })
         ]
       }
     );
@@ -1473,6 +1471,93 @@ var Divider = React21__namespace.forwardRef(
   }
 );
 Divider.displayName = "Divider";
+var Dialog = SheetPrimitive__namespace.Root;
+var DialogTrigger = SheetPrimitive__namespace.Trigger;
+var DialogPortal = SheetPrimitive__namespace.Portal;
+var DialogClose = SheetPrimitive__namespace.Close;
+var DialogOverlay = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  SheetPrimitive__namespace.Overlay,
+  {
+    ref,
+    className: cn(
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    ),
+    ...props
+  }
+));
+DialogOverlay.displayName = SheetPrimitive__namespace.Overlay.displayName;
+var DialogContent = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(DialogPortal, { children: [
+  /* @__PURE__ */ jsxRuntime.jsx(DialogOverlay, {}),
+  /* @__PURE__ */ jsxRuntime.jsxs(
+    SheetPrimitive__namespace.Content,
+    {
+      ref,
+      className: cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        className
+      ),
+      ...props,
+      children: [
+        children,
+        /* @__PURE__ */ jsxRuntime.jsxs(SheetPrimitive__namespace.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
+          /* @__PURE__ */ jsxRuntime.jsx(react.X, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "sr-only", children: "Close" })
+        ] })
+      ]
+    }
+  )
+] }));
+DialogContent.displayName = SheetPrimitive__namespace.Content.displayName;
+var DialogHeader = ({
+  className,
+  ...props
+}) => /* @__PURE__ */ jsxRuntime.jsx(
+  "div",
+  {
+    className: cn(
+      "flex flex-col space-y-1.5 text-center sm:text-left",
+      className
+    ),
+    ...props
+  }
+);
+DialogHeader.displayName = "DialogHeader";
+var DialogFooter = ({
+  className,
+  ...props
+}) => /* @__PURE__ */ jsxRuntime.jsx(
+  "div",
+  {
+    className: cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    ),
+    ...props
+  }
+);
+DialogFooter.displayName = "DialogFooter";
+var DialogTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  SheetPrimitive__namespace.Title,
+  {
+    ref,
+    className: cn(
+      "text-lg font-semibold leading-none tracking-tight text-[var(--black)]",
+      className
+    ),
+    ...props
+  }
+));
+DialogTitle.displayName = SheetPrimitive__namespace.Title.displayName;
+var DialogDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  SheetPrimitive__namespace.Description,
+  {
+    ref,
+    className: cn("text-sm text-muted-foreground", className),
+    ...props
+  }
+));
+DialogDescription.displayName = SheetPrimitive__namespace.Description.displayName;
 var ToastProvider = ToastPrimitives__namespace.Provider;
 var ToastViewport = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Viewport,
@@ -1560,7 +1645,7 @@ ToastDescription.displayName = ToastPrimitives__namespace.Description.displayNam
 var ToastIcon = ({ variant }) => {
   switch (variant) {
     case "success":
-      return /* @__PURE__ */ jsxRuntime.jsx(react.CheckCircle, { size: 20, weight: "fill", className: "text-emerald-600" });
+      return /* @__PURE__ */ jsxRuntime.jsx(react.Check, { size: 20, weight: "bold", className: "text-emerald-600" });
     case "error":
       return /* @__PURE__ */ jsxRuntime.jsx(react.WarningCircle, { size: 20, weight: "fill", className: "text-red-600" });
     case "warning":
@@ -2040,6 +2125,16 @@ exports.CardHeader = CardHeader;
 exports.CardTitle = CardTitle;
 exports.Checkbox = Checkbox;
 exports.CodeBlock = CodeBlock;
+exports.Dialog = Dialog;
+exports.DialogClose = DialogClose;
+exports.DialogContent = DialogContent;
+exports.DialogDescription = DialogDescription;
+exports.DialogFooter = DialogFooter;
+exports.DialogHeader = DialogHeader;
+exports.DialogOverlay = DialogOverlay;
+exports.DialogPortal = DialogPortal;
+exports.DialogTitle = DialogTitle;
+exports.DialogTrigger = DialogTrigger;
 exports.Divider = Divider;
 exports.DropdownMenu = DropdownMenu;
 exports.DropdownMenuCheckboxItem = DropdownMenuCheckboxItem;

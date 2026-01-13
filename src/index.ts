@@ -139,6 +139,20 @@ export {
 export { Divider } from './components/divider'
 export type { DividerProps } from './components/divider'
 
+// Dialog Components
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './components/dialog'
+
 // Toast Components
 export {
   ToastProvider,
