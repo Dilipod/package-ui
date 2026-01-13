@@ -62,6 +62,9 @@ export type { LabelProps } from '@radix-ui/react-label'
 export { Textarea } from './components/textarea'
 export type { TextareaProps } from './components/textarea'
 
+export { Select } from './components/select'
+export type { SelectProps } from './components/select'
+
 export { Checkbox } from './components/checkbox'
 export type { CheckboxProps } from './components/checkbox'
 
