@@ -1,13 +1,13 @@
 'use strict';
 
-var React21 = require('react');
+var React24 = require('react');
 var reactSlot = require('@radix-ui/react-slot');
 var classVarianceAuthority = require('class-variance-authority');
 var clsx = require('clsx');
 var tailwindMerge = require('tailwind-merge');
 var jsxRuntime = require('react/jsx-runtime');
 var SheetPrimitive = require('@radix-ui/react-dialog');
-var react = require('@phosphor-icons/react');
+var react_star = require('@phosphor-icons/react');
 require('react-dom');
 var AccordionPrimitive = require('@radix-ui/react-accordion');
 var NavigationMenuPrimitive = require('@radix-ui/react-navigation-menu');
@@ -33,15 +33,146 @@ function _interopNamespace(e) {
   return Object.freeze(n);
 }
 
-var React21__namespace = /*#__PURE__*/_interopNamespace(React21);
+var React24__namespace = /*#__PURE__*/_interopNamespace(React24);
 var SheetPrimitive__namespace = /*#__PURE__*/_interopNamespace(SheetPrimitive);
+var react_star__namespace = /*#__PURE__*/_interopNamespace(react_star);
 var AccordionPrimitive__namespace = /*#__PURE__*/_interopNamespace(AccordionPrimitive);
 var NavigationMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(NavigationMenuPrimitive);
 var AvatarPrimitive__namespace = /*#__PURE__*/_interopNamespace(AvatarPrimitive);
 var DropdownMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(DropdownMenuPrimitive);
 var ToastPrimitives__namespace = /*#__PURE__*/_interopNamespace(ToastPrimitives);
 
-// src/components/button.tsx
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget);
+
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
+  Accordion: () => Accordion,
+  AccordionContent: () => AccordionContent,
+  AccordionItem: () => AccordionItem,
+  AccordionTrigger: () => AccordionTrigger,
+  Alert: () => Alert,
+  Avatar: () => Avatar,
+  AvatarFallback: () => AvatarFallback,
+  AvatarImage: () => AvatarImage,
+  Badge: () => Badge,
+  Button: () => Button,
+  Card: () => Card,
+  CardContent: () => CardContent,
+  CardDescription: () => CardDescription,
+  CardFooter: () => CardFooter,
+  CardHeader: () => CardHeader,
+  CardTitle: () => CardTitle,
+  Checkbox: () => Checkbox,
+  CodeBlock: () => CodeBlock,
+  Dialog: () => Dialog,
+  DialogClose: () => DialogClose,
+  DialogContent: () => DialogContent,
+  DialogDescription: () => DialogDescription,
+  DialogFooter: () => DialogFooter,
+  DialogHeader: () => DialogHeader,
+  DialogOverlay: () => DialogOverlay,
+  DialogPortal: () => DialogPortal,
+  DialogTitle: () => DialogTitle,
+  DialogTrigger: () => DialogTrigger,
+  Divider: () => Divider,
+  DropdownMenu: () => DropdownMenu,
+  DropdownMenuCheckboxItem: () => DropdownMenuCheckboxItem,
+  DropdownMenuContent: () => DropdownMenuContent,
+  DropdownMenuGroup: () => DropdownMenuGroup,
+  DropdownMenuItem: () => DropdownMenuItem,
+  DropdownMenuLabel: () => DropdownMenuLabel,
+  DropdownMenuPortal: () => DropdownMenuPortal,
+  DropdownMenuRadioGroup: () => DropdownMenuRadioGroup,
+  DropdownMenuRadioItem: () => DropdownMenuRadioItem,
+  DropdownMenuSeparator: () => DropdownMenuSeparator,
+  DropdownMenuShortcut: () => DropdownMenuShortcut,
+  DropdownMenuSub: () => DropdownMenuSub,
+  DropdownMenuSubContent: () => DropdownMenuSubContent,
+  DropdownMenuSubTrigger: () => DropdownMenuSubTrigger,
+  DropdownMenuTrigger: () => DropdownMenuTrigger,
+  EmptyState: () => EmptyState,
+  FormField: () => FormField,
+  IconBox: () => IconBox,
+  Input: () => Input,
+  Label: () => Label2,
+  Logo: () => Logo,
+  MetricCard: () => MetricCard,
+  NavigationMenu: () => NavigationMenu,
+  NavigationMenuContent: () => NavigationMenuContent,
+  NavigationMenuIndicator: () => NavigationMenuIndicator,
+  NavigationMenuItem: () => NavigationMenuItem,
+  NavigationMenuLink: () => NavigationMenuLink,
+  NavigationMenuList: () => NavigationMenuList,
+  NavigationMenuTrigger: () => NavigationMenuTrigger,
+  NavigationMenuViewport: () => NavigationMenuViewport,
+  Progress: () => Progress,
+  Separator: () => Separator2,
+  Sheet: () => Sheet,
+  SheetClose: () => SheetClose,
+  SheetContent: () => SheetContent,
+  SheetDescription: () => SheetDescription,
+  SheetFooter: () => SheetFooter,
+  SheetHeader: () => SheetHeader,
+  SheetOverlay: () => SheetOverlay,
+  SheetPortal: () => SheetPortal,
+  SheetTitle: () => SheetTitle,
+  SheetTrigger: () => SheetTrigger,
+  Sidebar: () => Sidebar,
+  SidebarNavItem: () => SidebarNavItem,
+  Stat: () => Stat,
+  Table: () => Table,
+  TableBody: () => TableBody,
+  TableCaption: () => TableCaption,
+  TableCell: () => TableCell,
+  TableFooter: () => TableFooter,
+  TableHead: () => TableHead,
+  TableHeader: () => TableHeader,
+  TableRow: () => TableRow,
+  Tag: () => Tag,
+  Textarea: () => Textarea,
+  Toast: () => Toast,
+  ToastAction: () => ToastAction,
+  ToastClose: () => ToastClose,
+  ToastDescription: () => ToastDescription,
+  ToastIcon: () => ToastIcon,
+  ToastProvider: () => ToastProvider,
+  ToastTitle: () => ToastTitle,
+  ToastViewport: () => ToastViewport,
+  Toaster: () => Toaster,
+  UsageBar: () => UsageBar,
+  UsageChart: () => UsageChart,
+  alertVariants: () => alertVariants,
+  badgeVariants: () => badgeVariants,
+  buttonVariants: () => buttonVariants,
+  cn: () => cn,
+  iconBoxVariants: () => iconBoxVariants,
+  metricCardVariants: () => metricCardVariants,
+  navigationMenuTriggerStyle: () => navigationMenuTriggerStyle,
+  progressVariants: () => progressVariants,
+  statVariants: () => statVariants,
+  tagVariants: () => tagVariants,
+  toast: () => toast,
+  usageBarVariants: () => usageBarVariants,
+  useToast: () => useToast,
+  valueVariants: () => valueVariants
+});
 function cn(...inputs) {
   return tailwindMerge.twMerge(clsx.clsx(inputs));
 }
@@ -71,7 +202,7 @@ var buttonVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Button = React21__namespace.forwardRef(
+var Button = React24__namespace.forwardRef(
   ({ className, variant, size, asChild = false, loading, loadingText, children, disabled, ...props }, ref) => {
     const Comp = asChild ? reactSlot.Slot : "button";
     const isDisabled = disabled || loading;
@@ -124,7 +255,7 @@ var Sheet = SheetPrimitive__namespace.Root;
 var SheetTrigger = SheetPrimitive__namespace.Trigger;
 var SheetClose = SheetPrimitive__namespace.Close;
 var SheetPortal = SheetPrimitive__namespace.Portal;
-var SheetOverlay = React21__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetOverlay = React24__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Overlay accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Overlay,
@@ -155,7 +286,7 @@ var sheetVariants = classVarianceAuthority.cva(
     }
   }
 );
-var SheetContent = React21__namespace.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
+var SheetContent = React24__namespace.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(SheetOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsxs(
     SheetPrimitive__namespace.Content,
@@ -166,7 +297,7 @@ var SheetContent = React21__namespace.forwardRef(({ side = "right", className, c
       children: [
         children,
         /* @__PURE__ */ jsxRuntime.jsxs(SheetPrimitive__namespace.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
-          /* @__PURE__ */ jsxRuntime.jsx(react.X, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsxRuntime.jsx(react_star.X, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsxRuntime.jsx("span", { className: "sr-only", children: "Close" })
         ] })
       ]
@@ -202,7 +333,7 @@ var SheetFooter = ({
   }
 );
 SheetFooter.displayName = "SheetFooter";
-var SheetTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetTitle = React24__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Title accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Title,
@@ -214,7 +345,7 @@ var SheetTitle = React21__namespace.forwardRef(({ className, ...props }, ref) =>
   )
 ));
 SheetTitle.displayName = SheetPrimitive__namespace.Title.displayName;
-var SheetDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetDescription = React24__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Description accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Description,
@@ -314,7 +445,7 @@ var badgeVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Badge = React21__namespace.forwardRef(
+var Badge = React24__namespace.forwardRef(
   ({ className, variant, size, pulse, pulseColor: pulseColorProp, children, ...props }, ref) => {
     const getPulseColorClass = () => {
       const color = pulseColorProp || variant || "default";
@@ -368,7 +499,7 @@ var Badge = React21__namespace.forwardRef(
   }
 );
 Badge.displayName = "Badge";
-var Card = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Card = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -380,7 +511,7 @@ var Card = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @_
   }
 ));
 Card.displayName = "Card";
-var CardHeader = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardHeader = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -389,7 +520,7 @@ var CardHeader = React21__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 CardHeader.displayName = "CardHeader";
-var CardTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardTitle = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "h3",
   {
     ref,
@@ -401,7 +532,7 @@ var CardTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 CardTitle.displayName = "CardTitle";
-var CardDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardDescription = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "p",
   {
     ref,
@@ -410,9 +541,9 @@ var CardDescription = React21__namespace.forwardRef(({ className, ...props }, re
   }
 ));
 CardDescription.displayName = "CardDescription";
-var CardContent = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
+var CardContent = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
 CardContent.displayName = "CardContent";
-var CardFooter = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardFooter = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -435,7 +566,7 @@ var progressVariants = classVarianceAuthority.cva("h-full rounded-full transitio
     variant: "default"
   }
 });
-var Progress = React21__namespace.forwardRef(
+var Progress = React24__namespace.forwardRef(
   ({ className, value, variant, showLabel, label = "Progress", size = "default", ...props }, ref) => {
     const clampedValue = Math.min(100, Math.max(0, value));
     const heightClass = {
@@ -502,7 +633,7 @@ var iconBoxVariants = classVarianceAuthority.cva(
     }
   }
 );
-var IconBox = React21__namespace.forwardRef(
+var IconBox = React24__namespace.forwardRef(
   ({ className, variant, size, rounded, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "div",
@@ -538,7 +669,7 @@ var tagVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Tag = React21__namespace.forwardRef(
+var Tag = React24__namespace.forwardRef(
   ({ className, variant, size, icon, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs(
       "span",
@@ -592,7 +723,7 @@ var valueVariants = classVarianceAuthority.cva("font-bold", {
     color: "default"
   }
 });
-var Stat = React21__namespace.forwardRef(
+var Stat = React24__namespace.forwardRef(
   ({
     className,
     variant,
@@ -633,7 +764,318 @@ var Stat = React21__namespace.forwardRef(
   }
 );
 Stat.displayName = "Stat";
-var Input = React21__namespace.forwardRef(
+var metricCardVariants = classVarianceAuthority.cva("p-5", {
+  variants: {
+    variant: {
+      default: "",
+      outlined: "border-l-4"
+    }
+  },
+  defaultVariants: {
+    variant: "default"
+  }
+});
+var iconContainerVariants = classVarianceAuthority.cva("p-2 rounded-lg shrink-0", {
+  variants: {
+    color: {
+      cyan: "bg-[var(--cyan)]/10",
+      purple: "bg-purple-50",
+      green: "bg-green-50",
+      amber: "bg-amber-50",
+      red: "bg-red-50",
+      gray: "bg-gray-100"
+    }
+  },
+  defaultVariants: {
+    color: "cyan"
+  }
+});
+var iconVariants = classVarianceAuthority.cva("h-5 w-5", {
+  variants: {
+    color: {
+      cyan: "text-[var(--cyan)]",
+      purple: "text-purple-500",
+      green: "text-green-500",
+      amber: "text-amber-500",
+      red: "text-red-500",
+      gray: "text-gray-500"
+    }
+  },
+  defaultVariants: {
+    color: "cyan"
+  }
+});
+var MetricCard = React24__namespace.forwardRef(
+  ({
+    className,
+    variant,
+    value,
+    label,
+    icon: Icon,
+    iconColor = "cyan",
+    borderColor,
+    ...props
+  }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsx(
+      Card,
+      {
+        ref,
+        className: cn(
+          metricCardVariants({ variant }),
+          variant === "outlined" && borderColor,
+          className
+        ),
+        ...props,
+        children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-3", children: [
+          Icon && /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn(iconContainerVariants({ color: iconColor })), children: /* @__PURE__ */ jsxRuntime.jsx(Icon, { className: cn(iconVariants({ color: iconColor })) }) }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-2xl font-bold text-[var(--black)] truncate", children: value }),
+            /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm text-gray-500 truncate", children: label })
+          ] })
+        ] })
+      }
+    );
+  }
+);
+MetricCard.displayName = "MetricCard";
+var usageBarVariants = classVarianceAuthority.cva("space-y-3", {
+  variants: {
+    size: {
+      sm: "",
+      default: "",
+      lg: ""
+    }
+  },
+  defaultVariants: {
+    size: "default"
+  }
+});
+var progressColorVariants = classVarianceAuthority.cva("", {
+  variants: {
+    color: {
+      cyan: "[&>div]:bg-[var(--cyan)]",
+      purple: "[&>div]:bg-purple-500",
+      green: "[&>div]:bg-green-500",
+      amber: "[&>div]:bg-amber-500",
+      red: "[&>div]:bg-red-500"
+    }
+  },
+  defaultVariants: {
+    color: "cyan"
+  }
+});
+var UsageBar = React24__namespace.forwardRef(
+  ({
+    className,
+    size,
+    label,
+    used,
+    included,
+    icon: Icon,
+    color = "cyan",
+    showOverLimit = true,
+    ...props
+  }, ref) => {
+    const percentage = included > 0 ? Math.min(used / included * 100, 100) : 0;
+    const isOverLimit = used > included;
+    const progressHeight = {
+      sm: "h-1.5",
+      default: "h-2.5",
+      lg: "h-3"
+    }[size || "default"];
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      "div",
+      {
+        ref,
+        className: cn(usageBarVariants({ size }), className),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
+              Icon && /* @__PURE__ */ jsxRuntime.jsx(Icon, { className: cn(
+                "h-5 w-5",
+                isOverLimit ? "text-red-500" : "text-gray-500"
+              ) }),
+              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "font-medium text-[var(--black)]", children: label })
+            ] }),
+            /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-right", children: [
+              /* @__PURE__ */ jsxRuntime.jsx(
+                "span",
+                {
+                  className: cn(
+                    "text-lg font-semibold",
+                    isOverLimit ? "text-red-500" : "text-[var(--black)]"
+                  ),
+                  children: used.toLocaleString()
+                }
+              ),
+              /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "text-gray-500", children: [
+                " / ",
+                included.toLocaleString()
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntime.jsx(
+            Progress,
+            {
+              value: percentage,
+              className: cn(
+                progressHeight,
+                isOverLimit ? "[&>div]:bg-red-500" : progressColorVariants({ color })
+              )
+            }
+          ),
+          isOverLimit && showOverLimit && /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-sm text-red-500", children: [
+            "Over limit by ",
+            (used - included).toLocaleString(),
+            " actions"
+          ] })
+        ]
+      }
+    );
+  }
+);
+UsageBar.displayName = "UsageBar";
+var UsageChart = React24__namespace.forwardRef(
+  ({
+    className,
+    data,
+    height = 200,
+    primaryColor = "var(--cyan)",
+    secondaryColor = "#a855f7",
+    showTooltip = true,
+    formatValue = (v) => v.toLocaleString(),
+    ...props
+  }, ref) => {
+    const [hoveredIndex, setHoveredIndex] = React24__namespace.useState(null);
+    const maxValue = React24__namespace.useMemo(() => {
+      return Math.max(
+        ...data.map((d) => d.value + (d.secondaryValue || 0)),
+        1
+      );
+    }, [data]);
+    const scaledMax = maxValue * 1.1;
+    const barWidth = 100 / Math.max(data.length, 1);
+    const barGap = barWidth * 0.3;
+    const actualBarWidth = barWidth - barGap;
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { ref, className: cn("w-full", className), ...props, children: [
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "relative", style: { height }, children: [
+        /* @__PURE__ */ jsxRuntime.jsx("div", { className: "absolute inset-0 flex flex-col justify-between pointer-events-none", children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center w-full", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-full border-t border-gray-100" }) }, i)) }),
+        /* @__PURE__ */ jsxRuntime.jsx(
+          "svg",
+          {
+            className: "absolute inset-0 w-full h-full",
+            preserveAspectRatio: "none",
+            children: data.map((point, index) => {
+              const primaryHeight = point.value / scaledMax * 100;
+              const secondaryHeight = point.secondaryValue ? point.secondaryValue / scaledMax * 100 : 0;
+              const totalHeight = primaryHeight + secondaryHeight;
+              const x = index * barWidth + barGap / 2;
+              const isHovered = hoveredIndex === index;
+              return /* @__PURE__ */ jsxRuntime.jsxs(
+                "g",
+                {
+                  onMouseEnter: () => setHoveredIndex(index),
+                  onMouseLeave: () => setHoveredIndex(null),
+                  className: "cursor-pointer",
+                  children: [
+                    /* @__PURE__ */ jsxRuntime.jsx(
+                      "rect",
+                      {
+                        x: `${x}%`,
+                        y: "0",
+                        width: `${actualBarWidth}%`,
+                        height: "100%",
+                        fill: isHovered ? "rgba(0,0,0,0.02)" : "transparent",
+                        rx: "4"
+                      }
+                    ),
+                    point.secondaryValue !== void 0 && point.secondaryValue > 0 && /* @__PURE__ */ jsxRuntime.jsx(
+                      "rect",
+                      {
+                        x: `${x}%`,
+                        y: `${100 - totalHeight}%`,
+                        width: `${actualBarWidth}%`,
+                        height: `${secondaryHeight}%`,
+                        fill: secondaryColor,
+                        rx: "4",
+                        className: "transition-all duration-200",
+                        style: {
+                          opacity: isHovered ? 1 : 0.85
+                        }
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntime.jsx(
+                      "rect",
+                      {
+                        x: `${x}%`,
+                        y: `${100 - primaryHeight - (point.secondaryValue ? 0 : 0)}%`,
+                        width: `${actualBarWidth}%`,
+                        height: `${primaryHeight}%`,
+                        fill: primaryColor,
+                        rx: point.secondaryValue ? "0" : "4",
+                        style: {
+                          borderTopLeftRadius: point.secondaryValue ? 0 : 4,
+                          borderTopRightRadius: point.secondaryValue ? 0 : 4
+                        },
+                        className: "transition-all duration-200"
+                      }
+                    )
+                  ]
+                },
+                index
+              );
+            })
+          }
+        ),
+        showTooltip && hoveredIndex !== null && data[hoveredIndex] && /* @__PURE__ */ jsxRuntime.jsxs(
+          "div",
+          {
+            className: "absolute z-10 px-3 py-2 text-sm bg-[var(--black)] text-white rounded-lg shadow-lg pointer-events-none transform -translate-x-1/2",
+            style: {
+              left: `${(hoveredIndex + 0.5) * barWidth}%`,
+              top: -8
+            },
+            children: [
+              /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-medium", children: data[hoveredIndex].label }),
+              /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2 mt-1", children: [
+                /* @__PURE__ */ jsxRuntime.jsx(
+                  "span",
+                  {
+                    className: "w-2 h-2 rounded-full",
+                    style: { backgroundColor: primaryColor }
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntime.jsx("span", { children: formatValue(data[hoveredIndex].value) })
+              ] }),
+              data[hoveredIndex].secondaryValue !== void 0 && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntime.jsx(
+                  "span",
+                  {
+                    className: "w-2 h-2 rounded-full",
+                    style: { backgroundColor: secondaryColor }
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntime.jsx("span", { children: formatValue(data[hoveredIndex].secondaryValue) })
+              ] })
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex mt-3", children: data.map((point, index) => /* @__PURE__ */ jsxRuntime.jsx(
+        "div",
+        {
+          className: "text-center text-xs text-gray-500 truncate",
+          style: { width: `${barWidth}%` },
+          children: point.label
+        },
+        index
+      )) })
+    ] });
+  }
+);
+UsageChart.displayName = "UsageChart";
+var Input = React24__namespace.forwardRef(
   ({ className, type, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "input",
@@ -673,7 +1115,7 @@ var NODES = [
 ];
 var Primitive = NODES.reduce((primitive, node) => {
   const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
-  const Node = React21__namespace.forwardRef((props, forwardedRef) => {
+  const Node = React24__namespace.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -685,7 +1127,7 @@ var Primitive = NODES.reduce((primitive, node) => {
   return { ...primitive, [node]: Node };
 }, {});
 var NAME = "Label";
-var Label = React21__namespace.forwardRef((props, forwardedRef) => {
+var Label = React24__namespace.forwardRef((props, forwardedRef) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     Primitive.label,
     {
@@ -705,7 +1147,7 @@ var Root2 = Label;
 var labelVariants = classVarianceAuthority.cva(
   "text-sm font-medium leading-none text-[var(--black)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label2 = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Label2 = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   Root2,
   {
     ref,
@@ -714,7 +1156,7 @@ var Label2 = React21__namespace.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 Label2.displayName = Root2.displayName;
-var Textarea = React21__namespace.forwardRef(
+var Textarea = React24__namespace.forwardRef(
   ({ className, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "textarea",
@@ -732,7 +1174,11 @@ var Textarea = React21__namespace.forwardRef(
   }
 );
 Textarea.displayName = "Textarea";
-var Checkbox = React21__namespace.forwardRef(
+
+// src/icons.ts
+var icons_exports = {};
+__reExport(icons_exports, react_star__namespace);
+var Checkbox = React24__namespace.forwardRef(
   ({ className, checked, onCheckedChange, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs("label", { className: "relative inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsxRuntime.jsx(
@@ -756,7 +1202,7 @@ var Checkbox = React21__namespace.forwardRef(
             "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
             className
           ),
-          children: checked && /* @__PURE__ */ jsxRuntime.jsx(react.Check, { className: "h-3.5 w-3.5 text-white", weight: "bold" })
+          children: checked && /* @__PURE__ */ jsxRuntime.jsx(icons_exports.Check, { className: "h-3.5 w-3.5 text-white", weight: "bold" })
         }
       )
     ] });
@@ -764,7 +1210,7 @@ var Checkbox = React21__namespace.forwardRef(
 );
 Checkbox.displayName = "Checkbox";
 var Accordion = AccordionPrimitive__namespace.Root;
-var AccordionItem = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AccordionItem = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AccordionPrimitive__namespace.Item,
   {
     ref,
@@ -773,7 +1219,7 @@ var AccordionItem = React21__namespace.forwardRef(({ className, ...props }, ref)
   }
 ));
 AccordionItem.displayName = "AccordionItem";
-var AccordionTrigger = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(AccordionPrimitive__namespace.Header, { className: "flex", children: /* @__PURE__ */ jsxRuntime.jsxs(
+var AccordionTrigger = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(AccordionPrimitive__namespace.Header, { className: "flex", children: /* @__PURE__ */ jsxRuntime.jsxs(
   AccordionPrimitive__namespace.Trigger,
   {
     ref,
@@ -784,12 +1230,12 @@ var AccordionTrigger = React21__namespace.forwardRef(({ className, children, ...
     ...props,
     children: [
       children,
-      /* @__PURE__ */ jsxRuntime.jsx(react.CaretDown, { className: "h-4 w-4 shrink-0 text-gray-500 transition-transform duration-200" })
+      /* @__PURE__ */ jsxRuntime.jsx(icons_exports.CaretDown, { className: "h-4 w-4 shrink-0 text-gray-500 transition-transform duration-200" })
     ]
   }
 ) }));
 AccordionTrigger.displayName = AccordionPrimitive__namespace.Trigger.displayName;
-var AccordionContent = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AccordionContent = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AccordionPrimitive__namespace.Content,
   {
     ref,
@@ -820,7 +1266,7 @@ var NODES2 = [
 ];
 var Primitive2 = NODES2.reduce((primitive, node) => {
   const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
-  const Node = React21__namespace.forwardRef((props, forwardedRef) => {
+  const Node = React24__namespace.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -834,7 +1280,7 @@ var Primitive2 = NODES2.reduce((primitive, node) => {
 var NAME2 = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];
-var Separator = React21__namespace.forwardRef((props, forwardedRef) => {
+var Separator = React24__namespace.forwardRef((props, forwardedRef) => {
   const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
   const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
   const ariaOrientation = orientation === "vertical" ? orientation : void 0;
@@ -854,7 +1300,7 @@ function isValidOrientation(orientation) {
   return ORIENTATIONS.includes(orientation);
 }
 var Root4 = Separator;
-var Separator2 = React21__namespace.forwardRef(
+var Separator2 = React24__namespace.forwardRef(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
     Root4,
     {
@@ -871,7 +1317,7 @@ var Separator2 = React21__namespace.forwardRef(
   )
 );
 Separator2.displayName = Root4.displayName;
-var NavigationMenu = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var NavigationMenu = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   NavigationMenuPrimitive__namespace.Root,
   {
     ref,
@@ -887,7 +1333,7 @@ var NavigationMenu = React21__namespace.forwardRef(({ className, children, ...pr
   }
 ));
 NavigationMenu.displayName = NavigationMenuPrimitive__namespace.Root.displayName;
-var NavigationMenuList = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuList = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.List,
   {
     ref,
@@ -903,7 +1349,7 @@ var NavigationMenuItem = NavigationMenuPrimitive__namespace.Item;
 var navigationMenuTriggerStyle = classVarianceAuthority.cva(
   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[var(--black)] transition-colors hover:bg-gray-100 hover:text-[var(--black)] focus:bg-gray-100 focus:text-[var(--black)] focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-[var(--black)] data-[state=open]:bg-gray-100/50 data-[state=open]:hover:bg-gray-100 data-[state=open]:focus:bg-gray-100"
 );
-var NavigationMenuTrigger = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var NavigationMenuTrigger = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   NavigationMenuPrimitive__namespace.Trigger,
   {
     ref,
@@ -913,7 +1359,7 @@ var NavigationMenuTrigger = React21__namespace.forwardRef(({ className, children
       children,
       " ",
       /* @__PURE__ */ jsxRuntime.jsx(
-        react.CaretDown,
+        icons_exports.CaretDown,
         {
           className: "relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180",
           "aria-hidden": "true"
@@ -923,7 +1369,7 @@ var NavigationMenuTrigger = React21__namespace.forwardRef(({ className, children
   }
 ));
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive__namespace.Trigger.displayName;
-var NavigationMenuContent = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuContent = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Content,
   {
     ref,
@@ -936,7 +1382,7 @@ var NavigationMenuContent = React21__namespace.forwardRef(({ className, ...props
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive__namespace.Content.displayName;
 var NavigationMenuLink = NavigationMenuPrimitive__namespace.Link;
-var NavigationMenuViewport = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuViewport = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Viewport,
   {
     className: cn(
@@ -948,7 +1394,7 @@ var NavigationMenuViewport = React21__namespace.forwardRef(({ className, ...prop
   }
 ) }));
 NavigationMenuViewport.displayName = NavigationMenuPrimitive__namespace.Viewport.displayName;
-var NavigationMenuIndicator = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuIndicator = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Indicator,
   {
     ref,
@@ -961,7 +1407,7 @@ var NavigationMenuIndicator = React21__namespace.forwardRef(({ className, ...pro
   }
 ));
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive__namespace.Indicator.displayName;
-var Avatar = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Avatar = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Root,
   {
     ref,
@@ -973,7 +1419,7 @@ var Avatar = React21__namespace.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 Avatar.displayName = AvatarPrimitive__namespace.Root.displayName;
-var AvatarImage = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AvatarImage = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Image,
   {
     ref,
@@ -982,7 +1428,7 @@ var AvatarImage = React21__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 AvatarImage.displayName = AvatarPrimitive__namespace.Image.displayName;
-var AvatarFallback = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AvatarFallback = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Fallback,
   {
     ref,
@@ -1000,7 +1446,7 @@ var DropdownMenuGroup = DropdownMenuPrimitive__namespace.Group;
 var DropdownMenuPortal = DropdownMenuPrimitive__namespace.Portal;
 var DropdownMenuSub = DropdownMenuPrimitive__namespace.Sub;
 var DropdownMenuRadioGroup = DropdownMenuPrimitive__namespace.RadioGroup;
-var DropdownMenuSubTrigger = React21__namespace.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuSubTrigger = React24__namespace.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.SubTrigger,
   {
     ref,
@@ -1012,12 +1458,12 @@ var DropdownMenuSubTrigger = React21__namespace.forwardRef(({ className, inset, 
     ...props,
     children: [
       children,
-      /* @__PURE__ */ jsxRuntime.jsx(react.CaretRight, { className: "ml-auto" })
+      /* @__PURE__ */ jsxRuntime.jsx(icons_exports.CaretRight, { className: "ml-auto" })
     ]
   }
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive__namespace.SubTrigger.displayName;
-var DropdownMenuSubContent = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuSubContent = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.SubContent,
   {
     ref,
@@ -1029,7 +1475,7 @@ var DropdownMenuSubContent = React21__namespace.forwardRef(({ className, ...prop
   }
 ));
 DropdownMenuSubContent.displayName = DropdownMenuPrimitive__namespace.SubContent.displayName;
-var DropdownMenuContent = React21__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuContent = React24__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Content,
   {
     ref,
@@ -1042,7 +1488,7 @@ var DropdownMenuContent = React21__namespace.forwardRef(({ className, sideOffset
   }
 ) }));
 DropdownMenuContent.displayName = DropdownMenuPrimitive__namespace.Content.displayName;
-var DropdownMenuItem = React21__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuItem = React24__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Item,
   {
     ref,
@@ -1055,7 +1501,7 @@ var DropdownMenuItem = React21__namespace.forwardRef(({ className, inset, ...pro
   }
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive__namespace.Item.displayName;
-var DropdownMenuCheckboxItem = React21__namespace.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuCheckboxItem = React24__namespace.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.CheckboxItem,
   {
     ref,
@@ -1066,13 +1512,13 @@ var DropdownMenuCheckboxItem = React21__namespace.forwardRef(({ className, child
     checked,
     ...props,
     children: [
-      /* @__PURE__ */ jsxRuntime.jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.ItemIndicator, { children: /* @__PURE__ */ jsxRuntime.jsx(react.Check, { className: "h-4 w-4" }) }) }),
+      /* @__PURE__ */ jsxRuntime.jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.ItemIndicator, { children: /* @__PURE__ */ jsxRuntime.jsx(icons_exports.Check, { className: "h-4 w-4" }) }) }),
       children
     ]
   }
 ));
 DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive__namespace.CheckboxItem.displayName;
-var DropdownMenuRadioItem = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuRadioItem = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.RadioItem,
   {
     ref,
@@ -1082,13 +1528,13 @@ var DropdownMenuRadioItem = React21__namespace.forwardRef(({ className, children
     ),
     ...props,
     children: [
-      /* @__PURE__ */ jsxRuntime.jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.ItemIndicator, { children: /* @__PURE__ */ jsxRuntime.jsx(react.Circle, { className: "h-2 w-2 fill-current" }) }) }),
+      /* @__PURE__ */ jsxRuntime.jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.ItemIndicator, { children: /* @__PURE__ */ jsxRuntime.jsx(icons_exports.Circle, { className: "h-2 w-2 fill-current" }) }) }),
       children
     ]
   }
 ));
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive__namespace.RadioItem.displayName;
-var DropdownMenuLabel = React21__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuLabel = React24__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Label,
   {
     ref,
@@ -1101,7 +1547,7 @@ var DropdownMenuLabel = React21__namespace.forwardRef(({ className, inset, ...pr
   }
 ));
 DropdownMenuLabel.displayName = DropdownMenuPrimitive__namespace.Label.displayName;
-var DropdownMenuSeparator = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuSeparator = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Separator,
   {
     ref,
@@ -1123,7 +1569,7 @@ var DropdownMenuShortcut = ({
   );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
-var SidebarNavItem = React21__namespace.forwardRef(
+var SidebarNavItem = React24__namespace.forwardRef(
   ({ item, isActive, className, LinkComponent, ...props }, ref) => {
     const Icon = item.icon;
     const baseClassName = cn(
@@ -1163,7 +1609,7 @@ var SidebarNavItem = React21__namespace.forwardRef(
   }
 );
 SidebarNavItem.displayName = "SidebarNavItem";
-var Sidebar = React21__namespace.forwardRef(
+var Sidebar = React24__namespace.forwardRef(
   ({
     mainNav = [],
     bottomNav = [],
@@ -1216,16 +1662,27 @@ var Sidebar = React21__namespace.forwardRef(
             item.name
           )) }),
           children,
-          (bottomNav.length > 0 || helpLink) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
-            bottomNav.map((item) => /* @__PURE__ */ jsxRuntime.jsx(
-              SidebarNavItem,
+          bottomNav.length > 0 && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: bottomNav.map((item) => /* @__PURE__ */ jsxRuntime.jsx(
+            SidebarNavItem,
+            {
+              item,
+              isActive: isActive(item.href),
+              LinkComponent
+            },
+            item.name
+          )) }),
+          (helpLink || assistantButton) && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "px-3 pb-4 pt-3 border-t", children: [
+            assistantButton && /* @__PURE__ */ jsxRuntime.jsxs(
+              "button",
               {
-                item,
-                isActive: isActive(item.href),
-                LinkComponent
-              },
-              item.name
-            )),
+                onClick: assistantButton.onClick,
+                className: "flex w-full items-center gap-3 rounded-lg bg-[var(--cyan)]/10 px-3 py-2.5 text-sm font-medium text-[var(--cyan)] hover:bg-[var(--cyan)]/20 transition-colors mb-2",
+                children: [
+                  assistantButton.icon && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex h-7 w-7 items-center justify-center rounded-full bg-[var(--cyan)] text-white", children: /* @__PURE__ */ jsxRuntime.jsx(assistantButton.icon, { className: "h-4 w-4" }) }),
+                  /* @__PURE__ */ jsxRuntime.jsx("span", { children: assistantButton.label || "Ask Assistant" })
+                ]
+              }
+            ),
             helpLink && /* @__PURE__ */ jsxRuntime.jsxs(
               "a",
               {
@@ -1237,16 +1694,7 @@ var Sidebar = React21__namespace.forwardRef(
                 ]
               }
             )
-          ] }),
-          assistantButton && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "absolute bottom-4 left-4", children: /* @__PURE__ */ jsxRuntime.jsx(
-            "button",
-            {
-              onClick: assistantButton.onClick,
-              className: "flex h-10 w-10 items-center justify-center rounded-full bg-[var(--cyan)] text-white shadow-lg hover:bg-[var(--cyan)]/90 transition-colors",
-              title: assistantButton.label,
-              children: assistantButton.icon && /* @__PURE__ */ jsxRuntime.jsx(assistantButton.icon, { className: "h-5 w-5" })
-            }
-          ) })
+          ] })
         ]
       }
     );
@@ -1271,7 +1719,7 @@ var alertVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Alert = React21__namespace.forwardRef(
+var Alert = React24__namespace.forwardRef(
   ({ className, variant, icon, title, action, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "div",
@@ -1294,7 +1742,7 @@ var Alert = React21__namespace.forwardRef(
   }
 );
 Alert.displayName = "Alert";
-var EmptyState = React21__namespace.forwardRef(
+var EmptyState = React24__namespace.forwardRef(
   ({ className, icon, title, description, action, size = "default", ...props }, ref) => {
     const paddingClass = {
       sm: "p-8",
@@ -1322,7 +1770,7 @@ var EmptyState = React21__namespace.forwardRef(
   }
 );
 EmptyState.displayName = "EmptyState";
-var CodeBlock = React21__namespace.forwardRef(
+var CodeBlock = React24__namespace.forwardRef(
   ({ className, children, language, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "pre",
@@ -1340,15 +1788,15 @@ var CodeBlock = React21__namespace.forwardRef(
   }
 );
 CodeBlock.displayName = "CodeBlock";
-var FormField = React21__namespace.forwardRef(
+var FormField = React24__namespace.forwardRef(
   ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
-    const fieldId = id || React21__namespace.useId();
+    const fieldId = id || React24__namespace.useId();
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
-    const enhancedChildren = React21__namespace.Children.map(children, (child) => {
-      if (React21__namespace.isValidElement(child)) {
+    const enhancedChildren = React24__namespace.Children.map(children, (child) => {
+      if (React24__namespace.isValidElement(child)) {
         const childProps = child.props;
-        return React21__namespace.cloneElement(child, {
+        return React24__namespace.cloneElement(child, {
           id: fieldId,
           "aria-invalid": error ? "true" : void 0,
           "aria-describedby": error ? errorId : helperText ? helperId : void 0,
@@ -1372,7 +1820,7 @@ var FormField = React21__namespace.forwardRef(
   }
 );
 FormField.displayName = "FormField";
-var Table = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsx(
+var Table = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsx(
   "table",
   {
     ref,
@@ -1381,11 +1829,11 @@ var Table = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @
   }
 ) }));
 Table.displayName = "Table";
-var TableHeader = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("", className), ...props }));
+var TableHeader = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("", className), ...props }));
 TableHeader.displayName = "TableHeader";
-var TableBody = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("tbody", { ref, className: cn("", className), ...props }));
+var TableBody = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("tbody", { ref, className: cn("", className), ...props }));
 TableBody.displayName = "TableBody";
-var TableFooter = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableFooter = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "tfoot",
   {
     ref,
@@ -1394,7 +1842,7 @@ var TableFooter = React21__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 TableFooter.displayName = "TableFooter";
-var TableRow = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableRow = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "tr",
   {
     ref,
@@ -1403,7 +1851,7 @@ var TableRow = React21__namespace.forwardRef(({ className, ...props }, ref) => /
   }
 ));
 TableRow.displayName = "TableRow";
-var TableHead = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableHead = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "th",
   {
     ref,
@@ -1415,7 +1863,7 @@ var TableHead = React21__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 TableHead.displayName = "TableHead";
-var TableCell = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableCell = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "td",
   {
     ref,
@@ -1424,7 +1872,7 @@ var TableCell = React21__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 TableCell.displayName = "TableCell";
-var TableCaption = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableCaption = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "caption",
   {
     ref,
@@ -1433,7 +1881,7 @@ var TableCaption = React21__namespace.forwardRef(({ className, ...props }, ref) 
   }
 ));
 TableCaption.displayName = "TableCaption";
-var Divider = React21__namespace.forwardRef(
+var Divider = React24__namespace.forwardRef(
   ({ className, text, orientation = "horizontal", ...props }, ref) => {
     if (orientation === "vertical") {
       return /* @__PURE__ */ jsxRuntime.jsx(
@@ -1475,33 +1923,33 @@ var Dialog = SheetPrimitive__namespace.Root;
 var DialogTrigger = SheetPrimitive__namespace.Trigger;
 var DialogPortal = SheetPrimitive__namespace.Portal;
 var DialogClose = SheetPrimitive__namespace.Close;
-var DialogOverlay = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogOverlay = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Overlay,
   {
     ref,
     className: cn(
-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-150",
       className
     ),
     ...props
   }
 ));
 DialogOverlay.displayName = SheetPrimitive__namespace.Overlay.displayName;
-var DialogContent = React21__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(DialogPortal, { children: [
+var DialogContent = React24__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(DialogPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(DialogOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsxs(
     SheetPrimitive__namespace.Content,
     {
       ref,
       className: cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-white p-6 shadow-lg duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-[0.97] data-[state=open]:zoom-in-[0.97] sm:rounded-lg",
         className
       ),
       ...props,
       children: [
         children,
         /* @__PURE__ */ jsxRuntime.jsxs(SheetPrimitive__namespace.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
-          /* @__PURE__ */ jsxRuntime.jsx(react.X, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsxRuntime.jsx(react_star.X, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsxRuntime.jsx("span", { className: "sr-only", children: "Close" })
         ] })
       ]
@@ -1537,7 +1985,7 @@ var DialogFooter = ({
   }
 );
 DialogFooter.displayName = "DialogFooter";
-var DialogTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogTitle = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Title,
   {
     ref,
@@ -1549,7 +1997,7 @@ var DialogTitle = React21__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 DialogTitle.displayName = SheetPrimitive__namespace.Title.displayName;
-var DialogDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogDescription = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Description,
   {
     ref,
@@ -1559,7 +2007,7 @@ var DialogDescription = React21__namespace.forwardRef(({ className, ...props }, 
 ));
 DialogDescription.displayName = SheetPrimitive__namespace.Description.displayName;
 var ToastProvider = ToastPrimitives__namespace.Provider;
-var ToastViewport = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastViewport = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Viewport,
   {
     ref,
@@ -1572,14 +2020,14 @@ var ToastViewport = React21__namespace.forwardRef(({ className, ...props }, ref)
 ));
 ToastViewport.displayName = ToastPrimitives__namespace.Viewport.displayName;
 var toastVariants = classVarianceAuthority.cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-sm border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-sm border-none p-4 transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
-        default: "border-gray-200 bg-white text-[var(--black)]",
-        success: "border-emerald-200 bg-emerald-50 text-emerald-900",
-        error: "border-red-200 bg-red-50 text-red-900",
-        warning: "border-amber-200 bg-amber-50 text-amber-900"
+        default: "bg-[var(--black)] text-white",
+        success: "bg-[var(--black)] text-white",
+        error: "bg-[var(--black)] text-white",
+        warning: "bg-[var(--black)] text-white"
       }
     },
     defaultVariants: {
@@ -1587,7 +2035,7 @@ var toastVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Toast = React21__namespace.forwardRef(({ className, variant, ...props }, ref) => {
+var Toast = React24__namespace.forwardRef(({ className, variant, ...props }, ref) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     ToastPrimitives__namespace.Root,
     {
@@ -1598,7 +2046,7 @@ var Toast = React21__namespace.forwardRef(({ className, variant, ...props }, ref
   );
 });
 Toast.displayName = ToastPrimitives__namespace.Root.displayName;
-var ToastAction = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastAction = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Action,
   {
     ref,
@@ -1610,21 +2058,21 @@ var ToastAction = React21__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 ToastAction.displayName = ToastPrimitives__namespace.Action.displayName;
-var ToastClose = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastClose = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Close,
   {
     ref,
     className: cn(
-      "absolute right-2 top-2 rounded-sm p-1 text-gray-500 opacity-0 transition-opacity hover:text-gray-900 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
+      "absolute right-3 top-3 rounded-sm p-1 text-white/60 transition-colors hover:text-white focus:outline-none",
       className
     ),
     "toast-close": "",
     ...props,
-    children: /* @__PURE__ */ jsxRuntime.jsx(react.X, { size: 16 })
+    children: /* @__PURE__ */ jsxRuntime.jsx(react_star.X, { size: 16 })
   }
 ));
 ToastClose.displayName = ToastPrimitives__namespace.Close.displayName;
-var ToastTitle = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastTitle = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Title,
   {
     ref,
@@ -1633,11 +2081,11 @@ var ToastTitle = React21__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 ToastTitle.displayName = ToastPrimitives__namespace.Title.displayName;
-var ToastDescription = React21__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastDescription = React24__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Description,
   {
     ref,
-    className: cn("text-sm opacity-90", className),
+    className: cn("text-sm text-white/70", className),
     ...props
   }
 ));
@@ -1645,13 +2093,13 @@ ToastDescription.displayName = ToastPrimitives__namespace.Description.displayNam
 var ToastIcon = ({ variant }) => {
   switch (variant) {
     case "success":
-      return /* @__PURE__ */ jsxRuntime.jsx(react.Check, { size: 20, weight: "bold", className: "text-emerald-600" });
+      return /* @__PURE__ */ jsxRuntime.jsx(react_star.Check, { size: 18, weight: "bold", className: "text-[var(--cyan)]" });
     case "error":
-      return /* @__PURE__ */ jsxRuntime.jsx(react.WarningCircle, { size: 20, weight: "fill", className: "text-red-600" });
+      return /* @__PURE__ */ jsxRuntime.jsx(react_star.WarningCircle, { size: 18, weight: "fill", className: "text-red-400" });
     case "warning":
-      return /* @__PURE__ */ jsxRuntime.jsx(react.WarningCircle, { size: 20, weight: "fill", className: "text-amber-600" });
+      return /* @__PURE__ */ jsxRuntime.jsx(react_star.WarningCircle, { size: 18, weight: "fill", className: "text-amber-400" });
     default:
-      return /* @__PURE__ */ jsxRuntime.jsx(react.Info, { size: 20, weight: "fill", className: "text-gray-600" });
+      return /* @__PURE__ */ jsxRuntime.jsx(react_star.Info, { size: 18, weight: "fill", className: "text-white/70" });
   }
 };
 var TOAST_LIMIT = 5;
@@ -1754,8 +2202,8 @@ function toast({ ...props }) {
   };
 }
 function useToast() {
-  const [state, setState] = React21__namespace.useState(memoryState);
-  React21__namespace.useEffect(() => {
+  const [state, setState] = React24__namespace.useState(memoryState);
+  React24__namespace.useEffect(() => {
     listeners.push(setState);
     return () => {
       const index = listeners.indexOf(setState);
@@ -1791,322 +2239,9 @@ function Toaster() {
   ] });
 }
 
-Object.defineProperty(exports, "AddressBook", {
-  enumerable: true,
-  get: function () { return react.AddressBook; }
-});
-Object.defineProperty(exports, "ArrowLeft", {
-  enumerable: true,
-  get: function () { return react.ArrowLeft; }
-});
-Object.defineProperty(exports, "ArrowRight", {
-  enumerable: true,
-  get: function () { return react.ArrowRight; }
-});
-Object.defineProperty(exports, "ArrowSquareOut", {
-  enumerable: true,
-  get: function () { return react.ArrowSquareOut; }
-});
-Object.defineProperty(exports, "ArrowUpRight", {
-  enumerable: true,
-  get: function () { return react.ArrowUpRight; }
-});
-Object.defineProperty(exports, "Brain", {
-  enumerable: true,
-  get: function () { return react.Brain; }
-});
-Object.defineProperty(exports, "Briefcase", {
-  enumerable: true,
-  get: function () { return react.Briefcase; }
-});
-Object.defineProperty(exports, "Buildings", {
-  enumerable: true,
-  get: function () { return react.Buildings; }
-});
-Object.defineProperty(exports, "Calendar", {
-  enumerable: true,
-  get: function () { return react.Calendar; }
-});
-Object.defineProperty(exports, "CaretDown", {
-  enumerable: true,
-  get: function () { return react.CaretDown; }
-});
-Object.defineProperty(exports, "CaretRight", {
-  enumerable: true,
-  get: function () { return react.CaretRight; }
-});
-Object.defineProperty(exports, "CaretUp", {
-  enumerable: true,
-  get: function () { return react.CaretUp; }
-});
-Object.defineProperty(exports, "ChartBar", {
-  enumerable: true,
-  get: function () { return react.ChartBar; }
-});
-Object.defineProperty(exports, "ChartLineUp", {
-  enumerable: true,
-  get: function () { return react.ChartLineUp; }
-});
-Object.defineProperty(exports, "ChatCircle", {
-  enumerable: true,
-  get: function () { return react.ChatCircle; }
-});
-Object.defineProperty(exports, "Check", {
-  enumerable: true,
-  get: function () { return react.Check; }
-});
-Object.defineProperty(exports, "CheckCircle", {
-  enumerable: true,
-  get: function () { return react.CheckCircle; }
-});
-Object.defineProperty(exports, "CheckSquare", {
-  enumerable: true,
-  get: function () { return react.CheckSquare; }
-});
-Object.defineProperty(exports, "Circle", {
-  enumerable: true,
-  get: function () { return react.Circle; }
-});
-Object.defineProperty(exports, "Clock", {
-  enumerable: true,
-  get: function () { return react.Clock; }
-});
-Object.defineProperty(exports, "Copy", {
-  enumerable: true,
-  get: function () { return react.Copy; }
-});
-Object.defineProperty(exports, "Crosshair", {
-  enumerable: true,
-  get: function () { return react.Crosshair; }
-});
-Object.defineProperty(exports, "Database", {
-  enumerable: true,
-  get: function () { return react.Database; }
-});
-Object.defineProperty(exports, "DotsThree", {
-  enumerable: true,
-  get: function () { return react.DotsThree; }
-});
-Object.defineProperty(exports, "DotsThreeVertical", {
-  enumerable: true,
-  get: function () { return react.DotsThreeVertical; }
-});
-Object.defineProperty(exports, "Download", {
-  enumerable: true,
-  get: function () { return react.Download; }
-});
-Object.defineProperty(exports, "Envelope", {
-  enumerable: true,
-  get: function () { return react.Envelope; }
-});
-Object.defineProperty(exports, "EnvelopeSimple", {
-  enumerable: true,
-  get: function () { return react.EnvelopeSimple; }
-});
-Object.defineProperty(exports, "Eye", {
-  enumerable: true,
-  get: function () { return react.Eye; }
-});
-Object.defineProperty(exports, "EyeSlash", {
-  enumerable: true,
-  get: function () { return react.EyeSlash; }
-});
-Object.defineProperty(exports, "File", {
-  enumerable: true,
-  get: function () { return react.File; }
-});
-Object.defineProperty(exports, "FileText", {
-  enumerable: true,
-  get: function () { return react.FileText; }
-});
-Object.defineProperty(exports, "Files", {
-  enumerable: true,
-  get: function () { return react.Files; }
-});
-Object.defineProperty(exports, "FirstAid", {
-  enumerable: true,
-  get: function () { return react.FirstAid; }
-});
-Object.defineProperty(exports, "Funnel", {
-  enumerable: true,
-  get: function () { return react.Funnel; }
-});
-Object.defineProperty(exports, "Gear", {
-  enumerable: true,
-  get: function () { return react.Gear; }
-});
-Object.defineProperty(exports, "GearSix", {
-  enumerable: true,
-  get: function () { return react.GearSix; }
-});
-Object.defineProperty(exports, "Globe", {
-  enumerable: true,
-  get: function () { return react.Globe; }
-});
-Object.defineProperty(exports, "Handshake", {
-  enumerable: true,
-  get: function () { return react.Handshake; }
-});
-Object.defineProperty(exports, "House", {
-  enumerable: true,
-  get: function () { return react.House; }
-});
-Object.defineProperty(exports, "Info", {
-  enumerable: true,
-  get: function () { return react.Info; }
-});
-Object.defineProperty(exports, "Lightning", {
-  enumerable: true,
-  get: function () { return react.Lightning; }
-});
-Object.defineProperty(exports, "Link", {
-  enumerable: true,
-  get: function () { return react.Link; }
-});
-Object.defineProperty(exports, "LinkedinLogo", {
-  enumerable: true,
-  get: function () { return react.LinkedinLogo; }
-});
-Object.defineProperty(exports, "List", {
-  enumerable: true,
-  get: function () { return react.List; }
-});
-Object.defineProperty(exports, "MagnifyingGlass", {
-  enumerable: true,
-  get: function () { return react.MagnifyingGlass; }
-});
-Object.defineProperty(exports, "Minus", {
-  enumerable: true,
-  get: function () { return react.Minus; }
-});
-Object.defineProperty(exports, "Pause", {
-  enumerable: true,
-  get: function () { return react.Pause; }
-});
-Object.defineProperty(exports, "PencilSimple", {
-  enumerable: true,
-  get: function () { return react.PencilSimple; }
-});
-Object.defineProperty(exports, "Phone", {
-  enumerable: true,
-  get: function () { return react.Phone; }
-});
-Object.defineProperty(exports, "Play", {
-  enumerable: true,
-  get: function () { return react.Play; }
-});
-Object.defineProperty(exports, "Plus", {
-  enumerable: true,
-  get: function () { return react.Plus; }
-});
-Object.defineProperty(exports, "Question", {
-  enumerable: true,
-  get: function () { return react.Question; }
-});
-Object.defineProperty(exports, "Quotes", {
-  enumerable: true,
-  get: function () { return react.Quotes; }
-});
-Object.defineProperty(exports, "Receipt", {
-  enumerable: true,
-  get: function () { return react.Receipt; }
-});
-Object.defineProperty(exports, "Robot", {
-  enumerable: true,
-  get: function () { return react.Robot; }
-});
-Object.defineProperty(exports, "Rocket", {
-  enumerable: true,
-  get: function () { return react.Rocket; }
-});
-Object.defineProperty(exports, "ShieldCheck", {
-  enumerable: true,
-  get: function () { return react.ShieldCheck; }
-});
-Object.defineProperty(exports, "ShoppingCart", {
-  enumerable: true,
-  get: function () { return react.ShoppingCart; }
-});
-Object.defineProperty(exports, "SignIn", {
-  enumerable: true,
-  get: function () { return react.SignIn; }
-});
-Object.defineProperty(exports, "SignOut", {
-  enumerable: true,
-  get: function () { return react.SignOut; }
-});
-Object.defineProperty(exports, "SortAscending", {
-  enumerable: true,
-  get: function () { return react.SortAscending; }
-});
-Object.defineProperty(exports, "SortDescending", {
-  enumerable: true,
-  get: function () { return react.SortDescending; }
-});
-Object.defineProperty(exports, "Stop", {
-  enumerable: true,
-  get: function () { return react.Stop; }
-});
-Object.defineProperty(exports, "Target", {
-  enumerable: true,
-  get: function () { return react.Target; }
-});
-Object.defineProperty(exports, "Trash", {
-  enumerable: true,
-  get: function () { return react.Trash; }
-});
-Object.defineProperty(exports, "TrendUp", {
-  enumerable: true,
-  get: function () { return react.TrendUp; }
-});
-Object.defineProperty(exports, "Upload", {
-  enumerable: true,
-  get: function () { return react.Upload; }
-});
-Object.defineProperty(exports, "User", {
-  enumerable: true,
-  get: function () { return react.User; }
-});
-Object.defineProperty(exports, "UserCircleCheck", {
-  enumerable: true,
-  get: function () { return react.UserCircleCheck; }
-});
-Object.defineProperty(exports, "UserPlus", {
-  enumerable: true,
-  get: function () { return react.UserPlus; }
-});
-Object.defineProperty(exports, "Users", {
-  enumerable: true,
-  get: function () { return react.Users; }
-});
-Object.defineProperty(exports, "UsersThree", {
-  enumerable: true,
-  get: function () { return react.UsersThree; }
-});
-Object.defineProperty(exports, "VideoCamera", {
-  enumerable: true,
-  get: function () { return react.VideoCamera; }
-});
-Object.defineProperty(exports, "Wallet", {
-  enumerable: true,
-  get: function () { return react.Wallet; }
-});
-Object.defineProperty(exports, "Warning", {
-  enumerable: true,
-  get: function () { return react.Warning; }
-});
-Object.defineProperty(exports, "WarningCircle", {
-  enumerable: true,
-  get: function () { return react.WarningCircle; }
-});
-Object.defineProperty(exports, "X", {
-  enumerable: true,
-  get: function () { return react.X; }
-});
-Object.defineProperty(exports, "XLogo", {
-  enumerable: true,
-  get: function () { return react.XLogo; }
-});
+// src/index.ts
+__reExport(index_exports, icons_exports);
+
 exports.Accordion = Accordion;
 exports.AccordionContent = AccordionContent;
 exports.AccordionItem = AccordionItem;
@@ -2157,6 +2292,7 @@ exports.IconBox = IconBox;
 exports.Input = Input;
 exports.Label = Label2;
 exports.Logo = Logo;
+exports.MetricCard = MetricCard;
 exports.NavigationMenu = NavigationMenu;
 exports.NavigationMenuContent = NavigationMenuContent;
 exports.NavigationMenuIndicator = NavigationMenuIndicator;
@@ -2199,16 +2335,20 @@ exports.ToastProvider = ToastProvider;
 exports.ToastTitle = ToastTitle;
 exports.ToastViewport = ToastViewport;
 exports.Toaster = Toaster;
+exports.UsageBar = UsageBar;
+exports.UsageChart = UsageChart;
 exports.alertVariants = alertVariants;
 exports.badgeVariants = badgeVariants;
 exports.buttonVariants = buttonVariants;
 exports.cn = cn;
 exports.iconBoxVariants = iconBoxVariants;
+exports.metricCardVariants = metricCardVariants;
 exports.navigationMenuTriggerStyle = navigationMenuTriggerStyle;
 exports.progressVariants = progressVariants;
 exports.statVariants = statVariants;
 exports.tagVariants = tagVariants;
 exports.toast = toast;
+exports.usageBarVariants = usageBarVariants;
 exports.useToast = useToast;
 exports.valueVariants = valueVariants;
 //# sourceMappingURL=index.js.map

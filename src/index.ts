@@ -43,6 +43,15 @@ export type { TagProps } from './components/tag'
 export { Stat, statVariants, valueVariants } from './components/stat'
 export type { StatProps } from './components/stat'
 
+export { MetricCard, metricCardVariants } from './components/metric-card'
+export type { MetricCardProps } from './components/metric-card'
+
+export { UsageBar, usageBarVariants } from './components/usage-bar'
+export type { UsageBarProps } from './components/usage-bar'
+
+export { UsageChart } from './components/usage-chart'
+export type { UsageChartProps, UsageChartDataPoint } from './components/usage-chart'
+
 // Form Components
 export { Input } from './components/input'
 export type { InputProps } from './components/input'
