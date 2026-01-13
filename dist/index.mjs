@@ -1,15 +1,17 @@
-import * as React4 from 'react';
+import * as React21 from 'react';
 import { Slot, createSlot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
-import { X, CaretDown } from '@phosphor-icons/react';
+import { X, Check, CaretDown, CaretRight, Circle } from '@phosphor-icons/react';
 export { AddressBook, ArrowLeft, ArrowRight, ArrowSquareOut, ArrowUpRight, Brain, Briefcase, Buildings, Calendar, CaretDown, CaretRight, CaretUp, ChartBar, ChartLineUp, ChatCircle, Check, CheckCircle, CheckSquare, Circle, Clock, Copy, Crosshair, Database, DotsThree, DotsThreeVertical, Download, Envelope, EnvelopeSimple, Eye, EyeSlash, File, FileText, Files, FirstAid, Funnel, Gear, GearSix, Globe, Handshake, House, Info, Lightning, Link, LinkedinLogo, List, MagnifyingGlass, Minus, Pause, PencilSimple, Phone, Play, Plus, Question, Quotes, Receipt, Robot, Rocket, ShieldCheck, ShoppingCart, SignIn, SignOut, SortAscending, SortDescending, Stop, Target, Trash, TrendUp, Upload, User, UserCircleCheck, UserPlus, Users, UsersThree, VideoCamera, Wallet, Warning, WarningCircle, X, XLogo } from '@phosphor-icons/react';
 import 'react-dom';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
 // src/components/button.tsx
 function cn(...inputs) {
@@ -41,7 +43,7 @@ var buttonVariants = cva(
     }
   }
 );
-var Button = React4.forwardRef(
+var Button = React21.forwardRef(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return /* @__PURE__ */ jsx(
@@ -59,7 +61,7 @@ var Sheet = SheetPrimitive.Root;
 var SheetTrigger = SheetPrimitive.Trigger;
 var SheetClose = SheetPrimitive.Close;
 var SheetPortal = SheetPrimitive.Portal;
-var SheetOverlay = React4.forwardRef(({ className, ...props }, ref) => (
+var SheetOverlay = React21.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Overlay accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Overlay,
@@ -90,7 +92,7 @@ var sheetVariants = cva(
     }
   }
 );
-var SheetContent = React4.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxs(SheetPortal, { children: [
+var SheetContent = React21.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxs(SheetPortal, { children: [
   /* @__PURE__ */ jsx(SheetOverlay, {}),
   /* @__PURE__ */ jsxs(
     SheetPrimitive.Content,
@@ -137,7 +139,7 @@ var SheetFooter = ({
   }
 );
 SheetFooter.displayName = "SheetFooter";
-var SheetTitle = React4.forwardRef(({ className, ...props }, ref) => (
+var SheetTitle = React21.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Title accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Title,
@@ -149,7 +151,7 @@ var SheetTitle = React4.forwardRef(({ className, ...props }, ref) => (
   )
 ));
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
-var SheetDescription = React4.forwardRef(({ className, ...props }, ref) => (
+var SheetDescription = React21.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Description accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Description,
@@ -226,7 +228,7 @@ function Logo({
   return /* @__PURE__ */ jsx("div", { className: "inline-flex items-center", children: svgContent });
 }
 var badgeVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-md font-semibold transition-colors",
+  "inline-flex items-center gap-1.5 rounded-sm font-semibold transition-colors",
   {
     variants: {
       variant: {
@@ -249,7 +251,7 @@ var badgeVariants = cva(
     }
   }
 );
-var Badge = React4.forwardRef(
+var Badge = React21.forwardRef(
   ({ className, variant, size, pulse, pulseColor: pulseColorProp, children, ...props }, ref) => {
     const getPulseColorClass = () => {
       const color = pulseColorProp || variant || "default";
@@ -303,19 +305,19 @@ var Badge = React4.forwardRef(
   }
 );
 Badge.displayName = "Badge";
-var Card = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var Card = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
     className: cn(
-      "rounded-md border border-gray-200 bg-white shadow-sm",
+      "rounded-sm border border-gray-200 bg-white shadow-sm",
       className
     ),
     ...props
   }
 ));
 Card.displayName = "Card";
-var CardHeader = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardHeader = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
@@ -324,7 +326,7 @@ var CardHeader = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE_
   }
 ));
 CardHeader.displayName = "CardHeader";
-var CardTitle = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardTitle = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "h3",
   {
     ref,
@@ -336,7 +338,7 @@ var CardTitle = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__
   }
 ));
 CardTitle.displayName = "CardTitle";
-var CardDescription = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardDescription = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "p",
   {
     ref,
@@ -345,9 +347,9 @@ var CardDescription = React4.forwardRef(({ className, ...props }, ref) => /* @__
   }
 ));
 CardDescription.displayName = "CardDescription";
-var CardContent = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
+var CardContent = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
 CardContent.displayName = "CardContent";
-var CardFooter = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardFooter = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
@@ -370,7 +372,7 @@ var progressVariants = cva("h-full rounded-full transition-all duration-300", {
     variant: "default"
   }
 });
-var Progress = React4.forwardRef(
+var Progress = React21.forwardRef(
   ({ className, value, variant, showLabel, label = "Progress", size = "default", ...props }, ref) => {
     const clampedValue = Math.min(100, Math.max(0, value));
     const heightClass = {
@@ -425,18 +427,19 @@ var iconBoxVariants = cva(
       },
       rounded: {
         sm: "rounded-sm",
-        default: "rounded-md",
+        default: "rounded-sm",
+        md: "rounded-sm",
         full: "rounded-full"
       }
     },
     defaultVariants: {
       variant: "default",
       size: "default",
-      rounded: "default"
+      rounded: "sm"
     }
   }
 );
-var IconBox = React4.forwardRef(
+var IconBox = React21.forwardRef(
   ({ className, variant, size, rounded, children, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "div",
@@ -451,7 +454,7 @@ var IconBox = React4.forwardRef(
 );
 IconBox.displayName = "IconBox";
 var tagVariants = cva(
-  "inline-flex items-center gap-2 font-medium transition-colors cursor-pointer rounded-md",
+  "inline-flex items-center gap-2 font-medium transition-colors cursor-pointer rounded-sm",
   {
     variants: {
       variant: {
@@ -472,7 +475,7 @@ var tagVariants = cva(
     }
   }
 );
-var Tag = React4.forwardRef(
+var Tag = React21.forwardRef(
   ({ className, variant, size, icon, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxs(
       "span",
@@ -526,7 +529,7 @@ var valueVariants = cva("font-bold", {
     color: "default"
   }
 });
-var Stat = React4.forwardRef(
+var Stat = React21.forwardRef(
   ({
     className,
     variant,
@@ -567,7 +570,7 @@ var Stat = React4.forwardRef(
   }
 );
 Stat.displayName = "Stat";
-var Input = React4.forwardRef(
+var Input = React21.forwardRef(
   ({ className, type, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "input",
@@ -605,7 +608,7 @@ var NODES = [
 ];
 var Primitive = NODES.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React4.forwardRef((props, forwardedRef) => {
+  const Node = React21.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -617,7 +620,7 @@ var Primitive = NODES.reduce((primitive, node) => {
   return { ...primitive, [node]: Node };
 }, {});
 var NAME = "Label";
-var Label = React4.forwardRef((props, forwardedRef) => {
+var Label = React21.forwardRef((props, forwardedRef) => {
   return /* @__PURE__ */ jsx(
     Primitive.label,
     {
@@ -637,7 +640,7 @@ var Root2 = Label;
 var labelVariants = cva(
   "text-sm font-medium leading-none text-[var(--black)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label2 = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var Label2 = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   Root2,
   {
     ref,
@@ -646,7 +649,7 @@ var Label2 = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */
   }
 ));
 Label2.displayName = Root2.displayName;
-var Textarea = React4.forwardRef(
+var Textarea = React21.forwardRef(
   ({ className, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "textarea",
@@ -662,8 +665,39 @@ var Textarea = React4.forwardRef(
   }
 );
 Textarea.displayName = "Textarea";
+var Checkbox = React21.forwardRef(
+  ({ className, checked, onCheckedChange, ...props }, ref) => {
+    return /* @__PURE__ */ jsxs("label", { className: "relative inline-flex items-center cursor-pointer", children: [
+      /* @__PURE__ */ jsx(
+        "input",
+        {
+          type: "checkbox",
+          className: "sr-only peer",
+          checked,
+          onChange: (e) => onCheckedChange?.(e.target.checked),
+          ref,
+          ...props
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: cn(
+            "w-4 h-4 border-2 border-input rounded-sm flex items-center justify-center transition-colors",
+            "peer-checked:bg-primary peer-checked:border-primary",
+            "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          ),
+          children: checked && /* @__PURE__ */ jsx(Check, { className: "h-3 w-3 text-white", weight: "bold" })
+        }
+      )
+    ] });
+  }
+);
+Checkbox.displayName = "Checkbox";
 var Accordion = AccordionPrimitive.Root;
-var AccordionItem = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AccordionItem = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AccordionPrimitive.Item,
   {
     ref,
@@ -672,7 +706,7 @@ var AccordionItem = React4.forwardRef(({ className, ...props }, ref) => /* @__PU
   }
 ));
 AccordionItem.displayName = "AccordionItem";
-var AccordionTrigger = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
+var AccordionTrigger = React21.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
   AccordionPrimitive.Trigger,
   {
     ref,
@@ -688,7 +722,7 @@ var AccordionTrigger = React4.forwardRef(({ className, children, ...props }, ref
   }
 ) }));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-var AccordionContent = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
+var AccordionContent = React21.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
   AccordionPrimitive.Content,
   {
     ref,
@@ -719,7 +753,7 @@ var NODES2 = [
 ];
 var Primitive2 = NODES2.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React4.forwardRef((props, forwardedRef) => {
+  const Node = React21.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -733,7 +767,7 @@ var Primitive2 = NODES2.reduce((primitive, node) => {
 var NAME2 = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];
-var Separator = React4.forwardRef((props, forwardedRef) => {
+var Separator = React21.forwardRef((props, forwardedRef) => {
   const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
   const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
   const ariaOrientation = orientation === "vertical" ? orientation : void 0;
@@ -753,7 +787,7 @@ function isValidOrientation(orientation) {
   return ORIENTATIONS.includes(orientation);
 }
 var Root4 = Separator;
-var Separator2 = React4.forwardRef(
+var Separator2 = React21.forwardRef(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ jsx(
     Root4,
     {
@@ -770,7 +804,7 @@ var Separator2 = React4.forwardRef(
   )
 );
 Separator2.displayName = Root4.displayName;
-var NavigationMenu = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var NavigationMenu = React21.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   NavigationMenuPrimitive.Root,
   {
     ref,
@@ -786,7 +820,7 @@ var NavigationMenu = React4.forwardRef(({ className, children, ...props }, ref) 
   }
 ));
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
-var NavigationMenuList = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuList = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.List,
   {
     ref,
@@ -802,7 +836,7 @@ var NavigationMenuItem = NavigationMenuPrimitive.Item;
 var navigationMenuTriggerStyle = cva(
   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[var(--black)] transition-colors hover:bg-gray-100 hover:text-[var(--black)] focus:bg-gray-100 focus:text-[var(--black)] focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-[var(--black)] data-[state=open]:bg-gray-100/50 data-[state=open]:hover:bg-gray-100 data-[state=open]:focus:bg-gray-100"
 );
-var NavigationMenuTrigger = React4.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var NavigationMenuTrigger = React21.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   NavigationMenuPrimitive.Trigger,
   {
     ref,
@@ -822,7 +856,7 @@ var NavigationMenuTrigger = React4.forwardRef(({ className, children, ...props }
   }
 ));
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
-var NavigationMenuContent = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuContent = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Content,
   {
     ref,
@@ -835,7 +869,7 @@ var NavigationMenuContent = React4.forwardRef(({ className, ...props }, ref) => 
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
 var NavigationMenuLink = NavigationMenuPrimitive.Link;
-var NavigationMenuViewport = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsx(
+var NavigationMenuViewport = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Viewport,
   {
     className: cn(
@@ -847,7 +881,7 @@ var NavigationMenuViewport = React4.forwardRef(({ className, ...props }, ref) =>
   }
 ) }));
 NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayName;
-var NavigationMenuIndicator = React4.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuIndicator = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Indicator,
   {
     ref,
@@ -860,7 +894,289 @@ var NavigationMenuIndicator = React4.forwardRef(({ className, ...props }, ref) =
   }
 ));
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive.Indicator.displayName;
+var Avatar = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  AvatarPrimitive.Root,
+  {
+    ref,
+    className: cn(
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      className
+    ),
+    ...props
+  }
+));
+Avatar.displayName = AvatarPrimitive.Root.displayName;
+var AvatarImage = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  AvatarPrimitive.Image,
+  {
+    ref,
+    className: cn("aspect-square h-full w-full", className),
+    ...props
+  }
+));
+AvatarImage.displayName = AvatarPrimitive.Image.displayName;
+var AvatarFallback = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  AvatarPrimitive.Fallback,
+  {
+    ref,
+    className: cn(
+      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      className
+    ),
+    ...props
+  }
+));
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
+var DropdownMenu = DropdownMenuPrimitive.Root;
+var DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+var DropdownMenuGroup = DropdownMenuPrimitive.Group;
+var DropdownMenuPortal = DropdownMenuPrimitive.Portal;
+var DropdownMenuSub = DropdownMenuPrimitive.Sub;
+var DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+var DropdownMenuSubTrigger = React21.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+  DropdownMenuPrimitive.SubTrigger,
+  {
+    ref,
+    className: cn(
+      "flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      inset && "pl-8",
+      className
+    ),
+    ...props,
+    children: [
+      children,
+      /* @__PURE__ */ jsx(CaretRight, { className: "ml-auto" })
+    ]
+  }
+));
+DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
+var DropdownMenuSubContent = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  DropdownMenuPrimitive.SubContent,
+  {
+    ref,
+    className: cn(
+      "z-50 min-w-[8rem] overflow-hidden rounded-sm border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+      className
+    ),
+    ...props
+  }
+));
+DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName;
+var DropdownMenuContent = React21.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(DropdownMenuPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+  DropdownMenuPrimitive.Content,
+  {
+    ref,
+    sideOffset,
+    className: cn(
+      "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-sm border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+      className
+    ),
+    ...props
+  }
+) }));
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
+var DropdownMenuItem = React21.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
+  DropdownMenuPrimitive.Item,
+  {
+    ref,
+    className: cn(
+      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      inset && "pl-8",
+      className
+    ),
+    ...props
+  }
+));
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+var DropdownMenuCheckboxItem = React21.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxs(
+  DropdownMenuPrimitive.CheckboxItem,
+  {
+    ref,
+    className: cn(
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    ),
+    checked,
+    ...props,
+    children: [
+      /* @__PURE__ */ jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsx(DropdownMenuPrimitive.ItemIndicator, { children: /* @__PURE__ */ jsx(Check, { className: "h-4 w-4" }) }) }),
+      children
+    ]
+  }
+));
+DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName;
+var DropdownMenuRadioItem = React21.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+  DropdownMenuPrimitive.RadioItem,
+  {
+    ref,
+    className: cn(
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    ),
+    ...props,
+    children: [
+      /* @__PURE__ */ jsx("span", { className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center", children: /* @__PURE__ */ jsx(DropdownMenuPrimitive.ItemIndicator, { children: /* @__PURE__ */ jsx(Circle, { className: "h-2 w-2 fill-current" }) }) }),
+      children
+    ]
+  }
+));
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
+var DropdownMenuLabel = React21.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
+  DropdownMenuPrimitive.Label,
+  {
+    ref,
+    className: cn(
+      "px-2 py-1.5 text-sm font-semibold",
+      inset && "pl-8",
+      className
+    ),
+    ...props
+  }
+));
+DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
+var DropdownMenuSeparator = React21.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  DropdownMenuPrimitive.Separator,
+  {
+    ref,
+    className: cn("-mx-1 my-1 h-px bg-muted", className),
+    ...props
+  }
+));
+DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
+var DropdownMenuShortcut = ({
+  className,
+  ...props
+}) => {
+  return /* @__PURE__ */ jsx(
+    "span",
+    {
+      className: cn("ml-auto text-xs tracking-widest opacity-60", className),
+      ...props
+    }
+  );
+};
+DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
+var SidebarNavItem = React21.forwardRef(
+  ({ item, isActive, className, LinkComponent, ...props }, ref) => {
+    const Icon = item.icon;
+    const baseClassName = cn(
+      "flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors",
+      isActive ? "bg-muted text-foreground font-medium" : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+      className
+    );
+    if (LinkComponent) {
+      const Comp = LinkComponent;
+      return /* @__PURE__ */ jsxs(
+        Comp,
+        {
+          ref,
+          href: item.href,
+          className: baseClassName,
+          ...props,
+          children: [
+            /* @__PURE__ */ jsx(Icon, { className: "h-4 w-4", weight: isActive ? "fill" : "regular" }),
+            item.name
+          ]
+        }
+      );
+    }
+    return /* @__PURE__ */ jsxs(
+      "a",
+      {
+        ref,
+        href: item.href,
+        className: baseClassName,
+        ...props,
+        children: [
+          /* @__PURE__ */ jsx(Icon, { className: "h-4 w-4", weight: isActive ? "fill" : "regular" }),
+          item.name
+        ]
+      }
+    );
+  }
+);
+SidebarNavItem.displayName = "SidebarNavItem";
+var Sidebar = React21.forwardRef(
+  ({
+    mainNav = [],
+    bottomNav = [],
+    pathname,
+    searchButton,
+    helpLink,
+    header,
+    LinkComponent,
+    className,
+    children,
+    ...props
+  }, ref) => {
+    const isActive = (href) => {
+      if (!pathname) return false;
+      if (href === "/dashboard" || href === "/") {
+        return pathname === "/dashboard" || pathname === "/";
+      }
+      return pathname.startsWith(href);
+    };
+    return /* @__PURE__ */ jsxs(
+      "aside",
+      {
+        ref,
+        className: cn(
+          "flex h-full w-60 flex-col border-r bg-background/50",
+          className
+        ),
+        ...props,
+        children: [
+          header && /* @__PURE__ */ jsx("div", { className: "flex h-14 items-center px-4 border-b", children: header }),
+          searchButton && /* @__PURE__ */ jsx("div", { className: "px-3 py-3", children: /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: searchButton.onClick,
+              className: "flex w-full items-center gap-2 rounded-sm border bg-background px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors",
+              children: [
+                searchButton.label && /* @__PURE__ */ jsx("span", { children: searchButton.label }),
+                searchButton.shortcut && /* @__PURE__ */ jsx("kbd", { className: "ml-auto text-xs bg-muted px-1.5 py-0.5 rounded-sm", children: searchButton.shortcut })
+              ]
+            }
+          ) }),
+          mainNav.length > 0 && /* @__PURE__ */ jsx("nav", { className: "flex-1 px-3 space-y-1", children: mainNav.map((item) => /* @__PURE__ */ jsx(
+            SidebarNavItem,
+            {
+              item,
+              isActive: isActive(item.href),
+              LinkComponent
+            },
+            item.name
+          )) }),
+          children,
+          (bottomNav.length > 0 || helpLink) && /* @__PURE__ */ jsxs("div", { className: "px-3 pb-3 space-y-1 border-t pt-3", children: [
+            bottomNav.map((item) => /* @__PURE__ */ jsx(
+              SidebarNavItem,
+              {
+                item,
+                isActive: isActive(item.href),
+                LinkComponent
+              },
+              item.name
+            )),
+            helpLink && /* @__PURE__ */ jsxs(
+              "a",
+              {
+                href: helpLink.href,
+                className: "flex items-center gap-3 rounded-sm px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors",
+                children: [
+                  helpLink.icon && /* @__PURE__ */ jsx(helpLink.icon, { className: "h-4 w-4" }),
+                  helpLink.label
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    );
+  }
+);
+Sidebar.displayName = "Sidebar";
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, IconBox, Input, Label2 as Label, Logo, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, Separator2 as Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Stat, Tag, Textarea, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, IconBox, Input, Label2 as Label, Logo, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Progress, Separator2 as Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarNavItem, Stat, Tag, Textarea, badgeVariants, buttonVariants, cn, iconBoxVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

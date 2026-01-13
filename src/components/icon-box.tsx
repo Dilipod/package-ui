@@ -23,14 +23,15 @@ const iconBoxVariants = cva(
       },
       rounded: {
         sm: 'rounded-sm',
-        default: 'rounded-md',
+        default: 'rounded-sm',
+        md: 'rounded-sm',
         full: 'rounded-full',
       },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      rounded: 'default',
+      rounded: 'sm',
     },
   }
 )

@@ -53,6 +53,9 @@ export type { LabelProps } from '@radix-ui/react-label'
 export { Textarea } from './components/textarea'
 export type { TextareaProps } from './components/textarea'
 
+export { Checkbox } from './components/checkbox'
+export type { CheckboxProps } from './components/checkbox'
+
 // Navigation & Layout Components
 export {
   Accordion,
@@ -75,6 +78,40 @@ export {
   NavigationMenuIndicator,
   NavigationMenuViewport,
 } from './components/navigation-menu'
+
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from './components/avatar'
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+} from './components/dropdown-menu'
+
+export {
+  Sidebar,
+  SidebarNavItem,
+} from './components/sidebar'
+export type {
+  SidebarProps,
+  SidebarNavItem as SidebarNavItemType,
+  SidebarNavItemProps,
+} from './components/sidebar'
 
 // Utilities
 export { cn } from './lib/utils'
