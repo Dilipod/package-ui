@@ -29,6 +29,12 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
     label?: string
     icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { weight?: 'fill' | 'regular' }>
   }
+  /** Optional assistant button configuration */
+  assistantButton?: {
+    label?: string
+    icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { weight?: 'fill' | 'regular' }>
+    onClick?: () => void
+  }
   /** Header content (e.g., Logo) */
   header?: React.ReactNode
   /** Custom Link component (e.g., Next.js Link) */
@@ -92,6 +98,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
       pathname,
       searchButton,
       helpLink,
+      assistantButton,
       header,
       LinkComponent,
       className,
@@ -159,7 +166,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         {children}
 
         {/* Bottom Navigation */}
-        {(bottomNav.length > 0 || helpLink) && (
+        {(bottomNav.length > 0 || helpLink || assistantButton) && (
           <div className="px-3 pb-3 space-y-1 border-t pt-3">
             {bottomNav.map((item) => (
               <SidebarNavItem
@@ -169,6 +176,17 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 LinkComponent={LinkComponent}
               />
             ))}
+            {assistantButton && (
+              <button
+                onClick={assistantButton.onClick}
+                className="flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm bg-[var(--cyan)]/10 text-[var(--black)] hover:bg-[var(--cyan)]/20 transition-colors font-medium"
+              >
+                {assistantButton.icon && (
+                  <assistantButton.icon className="h-4 w-4 text-[var(--cyan)]" />
+                )}
+                {assistantButton.label}
+              </button>
+            )}
             {helpLink && (
               <a
                 href={helpLink.href}

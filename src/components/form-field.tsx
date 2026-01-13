@@ -3,16 +3,16 @@
 import * as React from 'react'
 import { cn } from '../lib/utils'
 import { Label } from './label'
-import { Input } from './input'
-import { Textarea } from './textarea'
 
 export interface FormFieldProps {
   /** Field label */
   label?: string
   /** Error message to display */
   error?: string
-  /** Helper text to display */
+  /** Helper text to display below the field */
   helperText?: string
+  /** Hint element to display on the right side of the label (e.g., link) */
+  hint?: React.ReactNode
   /** Whether the field is required */
   required?: boolean
   /** Field ID for accessibility */
@@ -24,7 +24,7 @@ export interface FormFieldProps {
 }
 
 const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
-  ({ label, error, helperText, required, id, className, children, ...props }, ref) => {
+  ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
     const fieldId = id || React.useId()
     const errorId = `${fieldId}-error`
     const helperId = `${fieldId}-helper`
@@ -48,10 +48,15 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
 
     return (
       <div ref={ref} className={cn('space-y-2', className)} {...props}>
-        {label && (
-          <Label htmlFor={fieldId} className={required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : ''}>
-            {label}
-          </Label>
+        {(label || hint) && (
+          <div className="flex items-center justify-between">
+            {label && (
+              <Label htmlFor={fieldId} className={required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : ''}>
+                {label}
+              </Label>
+            )}
+            {hint && <div>{hint}</div>}
+          </div>
         )}
         {enhancedChildren}
         {error && (
