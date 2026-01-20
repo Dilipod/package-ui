@@ -53,7 +53,7 @@ const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
   ({ item, isActive, className, LinkComponent, ...props }, ref) => {
     const Icon = item.icon as React.ComponentType<any>
     const baseClassName = cn(
-      'flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors',
+      'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors focus-visible:outline-none',
       isActive
         ? 'bg-muted text-foreground font-medium'
         : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
@@ -69,8 +69,8 @@ const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
           className={baseClassName}
           {...(props as any)}
         >
-          <Icon className="h-4 w-4" weight={isActive ? 'fill' : 'regular'} />
-          {item.name}
+          <Icon className="h-5 w-5 shrink-0" weight={isActive ? 'fill' : 'regular'} />
+          <span>{item.name}</span>
         </Comp>
       )
     }
@@ -82,8 +82,8 @@ const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
         className={baseClassName}
         {...(props as any)}
       >
-        <Icon className="h-4 w-4" weight={isActive ? 'fill' : 'regular'} />
-        {item.name}
+        <Icon className="h-5 w-5 shrink-0" weight={isActive ? 'fill' : 'regular'} />
+        <span>{item.name}</span>
       </a>
     )
   }
@@ -150,7 +150,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
 
         {/* Main Navigation */}
         {mainNav.length > 0 && (
-          <nav className="flex-1 px-3 space-y-1">
+          <nav className="flex-1 px-3 pt-4 space-y-1">
             {mainNav.map((item) => (
               <SidebarNavItem
                 key={item.name}

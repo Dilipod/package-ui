@@ -68,6 +68,12 @@ export type { SelectProps } from './components/select'
 export { Checkbox } from './components/checkbox'
 export type { CheckboxProps } from './components/checkbox'
 
+export { Switch, LabeledSwitch } from './components/switch'
+export type { SwitchProps, LabeledSwitchProps } from './components/switch'
+
+export { RadioGroup, RadioGroupItem, RadioGroupOption, RadioGroupCard } from './components/radio-group'
+export type { RadioGroupOptionProps, RadioGroupCardProps } from './components/radio-group'
+
 // Navigation & Layout Components
 export {
   Accordion,
@@ -115,13 +121,10 @@ export {
   DropdownMenuRadioGroup,
 } from './components/dropdown-menu'
 
-export {
-  Sidebar,
-  SidebarNavItem,
-} from './components/sidebar'
+export { Sidebar } from './components/sidebar'
 export type {
   SidebarProps,
-  SidebarNavItem as SidebarNavItemType,
+  SidebarNavItem,
   SidebarNavItemProps,
 } from './components/sidebar'
 
@@ -151,6 +154,16 @@ export {
 export { Divider } from './components/divider'
 export type { DividerProps } from './components/divider'
 
+// Tabs Components
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  TabsListUnderline,
+  TabsTriggerUnderline,
+} from './components/tabs'
+
 // Dialog Components
 export {
   Dialog,
@@ -164,6 +177,44 @@ export {
   DialogTitle,
   DialogDescription,
 } from './components/dialog'
+
+// Alert Dialog Components
+export {
+  AlertDialog,
+  AlertDialogPortal,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  ConfirmDialog,
+} from './components/alert-dialog'
+export type { ConfirmDialogProps } from './components/alert-dialog'
+
+// Popover Components
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverAnchor,
+  PopoverClose,
+  PopoverArrow,
+} from './components/popover'
+
+// Tooltip Components
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  TooltipArrow,
+  SimpleTooltip,
+} from './components/tooltip'
+export type { SimpleTooltipProps } from './components/tooltip'
 
 // Toast Components
 export {
@@ -180,6 +231,30 @@ export type { ToastProps, ToastActionElement } from './components/toast'
 
 export { Toaster } from './components/toaster'
 export { useToast, toast } from './components/use-toast'
+
+// Skeleton/Loading Components
+export { Skeleton, SkeletonText, SkeletonCard } from './components/skeleton'
+export type { SkeletonProps, SkeletonTextProps, SkeletonCardProps } from './components/skeleton'
+
+// Pagination Components
+export { Pagination, SimplePagination } from './components/pagination'
+export type { PaginationProps, SimplePaginationProps } from './components/pagination'
+
+// Step Progress Components
+export { StepProgress, StepDots } from './components/step-progress'
+export type { Step, StepProgressProps, StepDotsProps } from './components/step-progress'
+
+// Breadcrumb Components
+export { Breadcrumbs, BreadcrumbLink } from './components/breadcrumbs'
+export type { BreadcrumbItem, BreadcrumbsProps, BreadcrumbLinkProps } from './components/breadcrumbs'
+
+// Date Range Picker Components
+export { DateRangePicker, DateRangeSelect, getDateRangeFromPreset } from './components/date-range-picker'
+export type { DateRangePreset, DateRangePickerProps, DateRangeSelectProps } from './components/date-range-picker'
+
+// Settings Navigation Components
+export { SettingsNav, SettingsNavLink } from './components/settings-nav'
+export type { SettingsNavItem, SettingsNavGroup, SettingsNavProps, SettingsNavLinkProps } from './components/settings-nav'
 
 // Utilities
 export { cn } from './lib/utils'

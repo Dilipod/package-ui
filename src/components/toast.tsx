@@ -32,6 +32,7 @@ const toastVariants = cva(
         success: 'bg-[var(--black)] text-white',
         error: 'bg-[var(--black)] text-white',
         warning: 'bg-[var(--black)] text-white',
+        info: 'bg-[var(--black)] text-white',
       },
     },
     defaultVariants: {
@@ -117,7 +118,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
 // Toast icon helper
-const ToastIcon = ({ variant }: { variant?: 'default' | 'success' | 'error' | 'warning' }) => {
+const ToastIcon = ({ variant }: { variant?: 'default' | 'success' | 'error' | 'warning' | 'info' }) => {
   switch (variant) {
     case 'success':
       return <Check size={18} weight="bold" className="text-[var(--cyan)]" />
@@ -125,6 +126,8 @@ const ToastIcon = ({ variant }: { variant?: 'default' | 'success' | 'error' | 'w
       return <WarningCircle size={18} weight="fill" className="text-red-400" />
     case 'warning':
       return <WarningCircle size={18} weight="fill" className="text-amber-400" />
+    case 'info':
+      return <Info size={18} weight="fill" className="text-[var(--cyan)]" />
     default:
       return <Info size={18} weight="fill" className="text-white/70" />
   }
