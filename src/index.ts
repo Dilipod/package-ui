@@ -270,6 +270,10 @@ export type { SettingsNavItem, SettingsNavGroup, SettingsNavProps, SettingsNavLi
 export { ScenariosManager } from './components/scenarios-manager'
 export type { Scenario, ScenarioType, ScenarioSuggestion, ScenariosManagerProps } from './components/scenarios-manager'
 
+// Impact Metrics Components
+export { ImpactMetricsForm } from './components/impact-metrics-form'
+export type { ImpactMetrics, ImpactMetricsFormProps } from './components/impact-metrics-form'
+
 // Utilities
 export { cn } from './lib/utils'
 

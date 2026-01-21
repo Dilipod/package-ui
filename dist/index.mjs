@@ -108,6 +108,7 @@ __export(index_exports, {
   FilePreview: () => FilePreview,
   FormField: () => FormField,
   IconBox: () => IconBox,
+  ImpactMetricsForm: () => ImpactMetricsForm,
   Input: () => Input,
   Label: () => Label2,
   LabeledSwitch: () => LabeledSwitch,
@@ -4159,10 +4160,237 @@ function ScenariosManager({
     )
   ] });
 }
+var HOURS_PER_FTE_YEAR = 1880;
+var TIER_PRICING = {
+  starter: 29,
+  growth: 25,
+  scale: 21,
+  enterprise: 21
+};
+function ImpactMetricsForm({
+  workerId,
+  initialMetrics,
+  totalExecutions = 0,
+  customerPlan = "starter",
+  apiBasePath = "/api/workers",
+  onSave,
+  showToasts = true,
+  className
+}) {
+  const [metrics, setMetrics] = useState(initialMetrics);
+  const [savedMetrics, setSavedMetrics] = useState(initialMetrics);
+  const [isSaving, setIsSaving] = useState(false);
+  const isInitiallySaved = initialMetrics.time_saved_minutes_per_run !== 30 || initialMetrics.hourly_rate_euros !== 20 || initialMetrics.fte_equivalent !== 0.1;
+  const [isEditing, setIsEditing] = useState(!isInitiallySaved);
+  const workerCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter;
+  const workerCostPerYear = workerCostPerMonth * 12;
+  const calculateAnnualSavings = (fteEquivalent, hourlyRate) => {
+    const laborSavings = fteEquivalent * HOURS_PER_FTE_YEAR * hourlyRate;
+    return laborSavings - workerCostPerYear;
+  };
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const annualSavings = calculateAnnualSavings(
+        metrics.fte_equivalent,
+        metrics.hourly_rate_euros
+      );
+      const updatedMetrics = { ...metrics, estimated_annual_savings_euros: annualSavings };
+      let success = false;
+      if (onSave) {
+        success = await onSave(workerId, updatedMetrics);
+      } else {
+        const response = await fetch(`${apiBasePath}/${workerId}/impact-metrics`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedMetrics)
+        });
+        success = response.ok;
+      }
+      if (success) {
+        setMetrics(updatedMetrics);
+        setSavedMetrics(updatedMetrics);
+        setIsEditing(false);
+        if (showToasts) {
+          toast({
+            title: "Metrics saved",
+            description: "Impact metrics have been updated.",
+            variant: "success"
+          });
+        }
+      } else {
+        throw new Error("Failed to save");
+      }
+    } catch (error) {
+      console.error("Failed to save metrics:", error);
+      if (showToasts) {
+        toast({
+          title: "Failed to save",
+          description: "Could not save metrics. Please try again.",
+          variant: "error"
+        });
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const handleCancel = () => {
+    setMetrics(savedMetrics);
+    setIsEditing(false);
+  };
+  const hoursSavedPerYear = Math.round(metrics.fte_equivalent * HOURS_PER_FTE_YEAR);
+  const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros;
+  const netAnnualSavings = laborSavingsPerYear - workerCostPerYear;
+  return /* @__PURE__ */ jsxs(Card, { className: cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className), children: [
+    /* @__PURE__ */ jsx(CardHeader, { className: "pb-3", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs(CardTitle, { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(IconBox, { size: "sm", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "14", height: "14", fill: "currentColor", viewBox: "0 0 256 256", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-88a16,16,0,1,1-16-16A16,16,0,0,1,144,128Zm-56,0a16,16,0,1,1-16-16A16,16,0,0,1,88,128Zm112,0a16,16,0,1,1-16-16A16,16,0,0,1,200,128Z" }) }) }),
+        "Impact Metrics (ROI)"
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isEditing ? /* @__PURE__ */ jsxs(Fragment, { children: [
+        isInitiallySaved && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: handleCancel,
+            size: "sm",
+            variant: "ghost",
+            children: "Cancel"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: handleSave,
+            disabled: isSaving,
+            size: "sm",
+            children: isSaving ? "Saving..." : "Save"
+          }
+        )
+      ] }) : /* @__PURE__ */ jsx(
+        Button,
+        {
+          onClick: () => setIsEditing(true),
+          size: "sm",
+          variant: "outline",
+          children: "Edit"
+        }
+      ) })
+    ] }) }),
+    /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2 lg:grid-cols-4", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z" }) }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Time per Task" }),
+          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                type: "number",
+                value: metrics.time_saved_minutes_per_run,
+                onChange: (e) => setMetrics((prev) => ({
+                  ...prev,
+                  time_saved_minutes_per_run: parseInt(e.target.value) || 0
+                })),
+                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+                min: "0"
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "min" })
+          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+            metrics.time_saved_minutes_per_run,
+            " ",
+            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "min" })
+          ] }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-1", children: "How long manually" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z" }) }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Manual Cost" }),
+          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "\u20AC" }),
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                type: "number",
+                value: metrics.hourly_rate_euros,
+                onChange: (e) => setMetrics((prev) => ({
+                  ...prev,
+                  hourly_rate_euros: parseFloat(e.target.value) || 0
+                })),
+                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+                min: "0",
+                step: "0.5"
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "/hr" })
+          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+            "\u20AC",
+            metrics.hourly_rate_euros,
+            " ",
+            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "/hr" })
+          ] }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-1", children: "Employee hourly cost" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z" }) }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Job Portion" }),
+          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                type: "number",
+                value: Math.round(metrics.fte_equivalent * 100),
+                onChange: (e) => setMetrics((prev) => ({
+                  ...prev,
+                  fte_equivalent: (parseFloat(e.target.value) || 0) / 100
+                })),
+                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+                min: "0",
+                max: "1000",
+                step: "5"
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "%" })
+          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+            Math.round(metrics.fte_equivalent * 100),
+            " ",
+            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "%" })
+          ] }),
+          /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: [
+            "% of FTE (",
+            hoursSavedPerYear,
+            "h/year)"
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z" }) }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Net Annual Savings" }),
+          /* @__PURE__ */ jsxs("p", { className: cn("text-2xl font-bold", netAnnualSavings >= 0 ? "text-[var(--cyan)]" : "text-red-500"), children: [
+            "\u20AC",
+            netAnnualSavings.toLocaleString(void 0, { maximumFractionDigits: 0 })
+          ] }),
+          /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: [
+            "\u20AC",
+            laborSavingsPerYear.toLocaleString(void 0, { maximumFractionDigits: 0 }),
+            " labor \u2212 \u20AC",
+            workerCostPerYear,
+            " worker"
+          ] })
+        ] })
+      ] })
+    ] }) })
+  ] });
+}
 
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, Input, Label2 as Label, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
