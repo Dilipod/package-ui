@@ -46,6 +46,9 @@ export type { StatProps } from './components/stat'
 export { MetricCard, metricCardVariants } from './components/metric-card'
 export type { MetricCardProps } from './components/metric-card'
 
+export { MetricLabel, MetricValue, MetricSubtext, Metric } from './components/metric-label'
+export type { MetricLabelProps, MetricValueProps, MetricSubtextProps } from './components/metric-label'
+
 export { UsageBar, usageBarVariants } from './components/usage-bar'
 export type { UsageBarProps } from './components/usage-bar'
 
@@ -133,6 +136,9 @@ export type { AlertProps } from './components/alert'
 
 export { EmptyState } from './components/empty-state'
 export type { EmptyStateProps } from './components/empty-state'
+
+export { ErrorState } from './components/error-state'
+export type { ErrorStateProps } from './components/error-state'
 
 export { CodeBlock } from './components/code-block'
 export type { CodeBlockProps } from './components/code-block'
@@ -252,9 +258,17 @@ export type { BreadcrumbItem, BreadcrumbsProps, BreadcrumbLinkProps } from './co
 export { DateRangePicker, DateRangeSelect, getDateRangeFromPreset } from './components/date-range-picker'
 export type { DateRangePreset, DateRangePickerProps, DateRangeSelectProps } from './components/date-range-picker'
 
+// File Preview Components
+export { FilePreview } from './components/file-preview'
+export type { FilePreviewProps, UploadedFile } from './components/file-preview'
+
 // Settings Navigation Components
 export { SettingsNav, SettingsNavLink } from './components/settings-nav'
 export type { SettingsNavItem, SettingsNavGroup, SettingsNavProps, SettingsNavLinkProps } from './components/settings-nav'
+
+// Scenarios Manager Components
+export { ScenariosManager } from './components/scenarios-manager'
+export type { Scenario, ScenarioType, ScenarioSuggestion, ScenariosManagerProps } from './components/scenarios-manager'
 
 // Utilities
 export { cn } from './lib/utils'

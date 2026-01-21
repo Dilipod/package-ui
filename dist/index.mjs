@@ -1,5 +1,6 @@
 "use client";
-import * as React27 from 'react';
+import * as React28 from 'react';
+import { useState, useRef } from 'react';
 import { Slot, createSlot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
@@ -7,7 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle } from '@phosphor-icons/react';
+import { X, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, FileImage, FilePdf, FileDoc, Question, CheckCircle, Warning, PencilSimple, Trash } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
@@ -103,13 +104,19 @@ __export(index_exports, {
   DropdownMenuSubTrigger: () => DropdownMenuSubTrigger,
   DropdownMenuTrigger: () => DropdownMenuTrigger,
   EmptyState: () => EmptyState,
+  ErrorState: () => ErrorState,
+  FilePreview: () => FilePreview,
   FormField: () => FormField,
   IconBox: () => IconBox,
   Input: () => Input,
   Label: () => Label2,
   LabeledSwitch: () => LabeledSwitch,
   Logo: () => Logo,
+  Metric: () => Metric,
   MetricCard: () => MetricCard,
+  MetricLabel: () => MetricLabel,
+  MetricSubtext: () => MetricSubtext,
+  MetricValue: () => MetricValue,
   NavigationMenu: () => NavigationMenu,
   NavigationMenuContent: () => NavigationMenuContent,
   NavigationMenuIndicator: () => NavigationMenuIndicator,
@@ -130,6 +137,7 @@ __export(index_exports, {
   RadioGroupCard: () => RadioGroupCard,
   RadioGroupItem: () => RadioGroupItem,
   RadioGroupOption: () => RadioGroupOption,
+  ScenariosManager: () => ScenariosManager,
   Select: () => Select,
   Separator: () => Separator2,
   SettingsNav: () => SettingsNav,
@@ -231,7 +239,7 @@ var buttonVariants = cva(
     }
   }
 );
-var Button = React27.forwardRef(
+var Button = React28.forwardRef(
   ({ className, variant, size, asChild = false, loading, loadingText, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const isDisabled = disabled || loading;
@@ -284,7 +292,7 @@ var Sheet = SheetPrimitive.Root;
 var SheetTrigger = SheetPrimitive.Trigger;
 var SheetClose = SheetPrimitive.Close;
 var SheetPortal = SheetPrimitive.Portal;
-var SheetOverlay = React27.forwardRef(({ className, ...props }, ref) => (
+var SheetOverlay = React28.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Overlay accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Overlay,
@@ -315,7 +323,7 @@ var sheetVariants = cva(
     }
   }
 );
-var SheetContent = React27.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxs(SheetPortal, { children: [
+var SheetContent = React28.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxs(SheetPortal, { children: [
   /* @__PURE__ */ jsx(SheetOverlay, {}),
   /* @__PURE__ */ jsxs(
     SheetPrimitive.Content,
@@ -362,7 +370,7 @@ var SheetFooter = ({
   }
 );
 SheetFooter.displayName = "SheetFooter";
-var SheetTitle = React27.forwardRef(({ className, ...props }, ref) => (
+var SheetTitle = React28.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Title accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Title,
@@ -374,7 +382,7 @@ var SheetTitle = React27.forwardRef(({ className, ...props }, ref) => (
   )
 ));
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
-var SheetDescription = React27.forwardRef(({ className, ...props }, ref) => (
+var SheetDescription = React28.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Description accepts className at runtime
   /* @__PURE__ */ jsx(
     SheetPrimitive.Description,
@@ -474,7 +482,7 @@ var badgeVariants = cva(
     }
   }
 );
-var Badge = React27.forwardRef(
+var Badge = React28.forwardRef(
   ({ className, variant, size, pulse, pulseColor: pulseColorProp, children, ...props }, ref) => {
     const getPulseColorClass = () => {
       const color = pulseColorProp || variant || "default";
@@ -528,7 +536,7 @@ var Badge = React27.forwardRef(
   }
 );
 Badge.displayName = "Badge";
-var Card = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var Card = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
@@ -540,7 +548,7 @@ var Card = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ 
   }
 ));
 Card.displayName = "Card";
-var CardHeader = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardHeader = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
@@ -549,7 +557,7 @@ var CardHeader = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE
   }
 ));
 CardHeader.displayName = "CardHeader";
-var CardTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardTitle = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "h3",
   {
     ref,
@@ -561,7 +569,7 @@ var CardTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE_
   }
 ));
 CardTitle.displayName = "CardTitle";
-var CardDescription = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardDescription = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "p",
   {
     ref,
@@ -570,9 +578,9 @@ var CardDescription = React27.forwardRef(({ className, ...props }, ref) => /* @_
   }
 ));
 CardDescription.displayName = "CardDescription";
-var CardContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
+var CardContent = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
 CardContent.displayName = "CardContent";
-var CardFooter = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var CardFooter = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "div",
   {
     ref,
@@ -595,7 +603,7 @@ var progressVariants = cva("h-full rounded-full transition-all duration-300", {
     variant: "default"
   }
 });
-var Progress = React27.forwardRef(
+var Progress = React28.forwardRef(
   ({ className, value, variant, showLabel, label = "Progress", size = "default", ...props }, ref) => {
     const clampedValue = Math.min(100, Math.max(0, value));
     const heightClass = {
@@ -662,7 +670,7 @@ var iconBoxVariants = cva(
     }
   }
 );
-var IconBox = React27.forwardRef(
+var IconBox = React28.forwardRef(
   ({ className, variant, size, rounded, children, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "div",
@@ -698,7 +706,7 @@ var tagVariants = cva(
     }
   }
 );
-var Tag = React27.forwardRef(
+var Tag = React28.forwardRef(
   ({ className, variant, size, icon, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxs(
       "span",
@@ -752,7 +760,7 @@ var valueVariants = cva("font-bold", {
     color: "default"
   }
 });
-var Stat = React27.forwardRef(
+var Stat = React28.forwardRef(
   ({
     className,
     variant,
@@ -834,7 +842,7 @@ var iconVariants = cva("h-5 w-5", {
     color: "cyan"
   }
 });
-var MetricCard = React27.forwardRef(
+var MetricCard = React28.forwardRef(
   ({
     className,
     variant,
@@ -867,6 +875,75 @@ var MetricCard = React27.forwardRef(
   }
 );
 MetricCard.displayName = "MetricCard";
+var MetricLabel = React28.forwardRef(
+  ({ className, children, ...props }, ref) => {
+    return /* @__PURE__ */ jsx(
+      "p",
+      {
+        ref,
+        className: cn(
+          "text-xs text-muted-foreground uppercase tracking-wide",
+          className
+        ),
+        ...props,
+        children
+      }
+    );
+  }
+);
+MetricLabel.displayName = "MetricLabel";
+var MetricValue = React28.forwardRef(
+  ({ className, children, size = "default", highlight = false, ...props }, ref) => {
+    return /* @__PURE__ */ jsx(
+      "p",
+      {
+        ref,
+        className: cn(
+          "font-bold mt-1",
+          size === "lg" && "text-3xl",
+          size === "default" && "text-2xl",
+          size === "sm" && "text-xl",
+          highlight && "text-[#00e5cc]",
+          className
+        ),
+        ...props,
+        children
+      }
+    );
+  }
+);
+MetricValue.displayName = "MetricValue";
+var MetricSubtext = React28.forwardRef(
+  ({ className, children, ...props }, ref) => {
+    return /* @__PURE__ */ jsx(
+      "p",
+      {
+        ref,
+        className: cn(
+          "text-xs text-muted-foreground mt-1",
+          className
+        ),
+        ...props,
+        children
+      }
+    );
+  }
+);
+MetricSubtext.displayName = "MetricSubtext";
+var Metric = React28.forwardRef(
+  ({ className, children, ...props }, ref) => {
+    return /* @__PURE__ */ jsx(
+      "div",
+      {
+        ref,
+        className: cn(className),
+        ...props,
+        children
+      }
+    );
+  }
+);
+Metric.displayName = "Metric";
 var usageBarVariants = cva("space-y-3", {
   variants: {
     size: {
@@ -893,7 +970,7 @@ var progressColorVariants = cva("", {
     color: "cyan"
   }
 });
-var UsageBar = React27.forwardRef(
+var UsageBar = React28.forwardRef(
   ({
     className,
     size,
@@ -965,7 +1042,7 @@ var UsageBar = React27.forwardRef(
   }
 );
 UsageBar.displayName = "UsageBar";
-var UsageChart = React27.forwardRef(
+var UsageChart = React28.forwardRef(
   ({
     className,
     data,
@@ -976,8 +1053,8 @@ var UsageChart = React27.forwardRef(
     formatValue = (v) => v.toLocaleString(),
     ...props
   }, ref) => {
-    const [hoveredIndex, setHoveredIndex] = React27.useState(null);
-    const maxValue = React27.useMemo(() => {
+    const [hoveredIndex, setHoveredIndex] = React28.useState(null);
+    const maxValue = React28.useMemo(() => {
       return Math.max(
         ...data.map((d) => d.value + (d.secondaryValue || 0)),
         1
@@ -1104,7 +1181,7 @@ var UsageChart = React27.forwardRef(
   }
 );
 UsageChart.displayName = "UsageChart";
-var Input = React27.forwardRef(
+var Input = React28.forwardRef(
   ({ className, type, error, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "input",
@@ -1144,7 +1221,7 @@ var NODES = [
 ];
 var Primitive = NODES.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React27.forwardRef((props, forwardedRef) => {
+  const Node = React28.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1156,7 +1233,7 @@ var Primitive = NODES.reduce((primitive, node) => {
   return { ...primitive, [node]: Node };
 }, {});
 var NAME = "Label";
-var Label = React27.forwardRef((props, forwardedRef) => {
+var Label = React28.forwardRef((props, forwardedRef) => {
   return /* @__PURE__ */ jsx(
     Primitive.label,
     {
@@ -1176,7 +1253,7 @@ var Root2 = Label;
 var labelVariants = cva(
   "text-sm font-medium leading-none text-[var(--black)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label2 = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var Label2 = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   Root2,
   {
     ref,
@@ -1185,7 +1262,7 @@ var Label2 = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ *
   }
 ));
 Label2.displayName = Root2.displayName;
-var Textarea = React27.forwardRef(
+var Textarea = React28.forwardRef(
   ({ className, error, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "textarea",
@@ -1203,7 +1280,7 @@ var Textarea = React27.forwardRef(
   }
 );
 Textarea.displayName = "Textarea";
-var Select = React27.forwardRef(
+var Select = React28.forwardRef(
   ({ className, error, children, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "select",
@@ -1230,7 +1307,7 @@ Select.displayName = "Select";
 // src/icons.ts
 var icons_exports = {};
 __reExport(icons_exports, react_star);
-var Checkbox = React27.forwardRef(
+var Checkbox = React28.forwardRef(
   ({ className, checked, onCheckedChange, ...props }, ref) => {
     return /* @__PURE__ */ jsxs("label", { className: "relative inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsx(
@@ -1261,7 +1338,7 @@ var Checkbox = React27.forwardRef(
   }
 );
 Checkbox.displayName = "Checkbox";
-var Switch = React27.forwardRef(({ className, size = "default", ...props }, ref) => {
+var Switch = React28.forwardRef(({ className, size = "default", ...props }, ref) => {
   const sizeStyles = {
     sm: {
       root: "h-4 w-7",
@@ -1299,8 +1376,8 @@ var Switch = React27.forwardRef(({ className, size = "default", ...props }, ref)
   );
 });
 Switch.displayName = SwitchPrimitive.Root.displayName;
-var LabeledSwitch = React27.forwardRef(({ label, description, labelPosition = "right", className, id, ...props }, ref) => {
-  const switchId = id || React27.useId();
+var LabeledSwitch = React28.forwardRef(({ label, description, labelPosition = "right", className, id, ...props }, ref) => {
+  const switchId = id || React28.useId();
   const labelContent = /* @__PURE__ */ jsxs("div", { className: "space-y-0.5", children: [
     /* @__PURE__ */ jsx(
       "label",
@@ -1328,7 +1405,7 @@ var LabeledSwitch = React27.forwardRef(({ label, description, labelPosition = "r
   );
 });
 LabeledSwitch.displayName = "LabeledSwitch";
-var RadioGroup = React27.forwardRef(({ className, ...props }, ref) => {
+var RadioGroup = React28.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ jsx(
     RadioGroupPrimitive.Root,
     {
@@ -1339,7 +1416,7 @@ var RadioGroup = React27.forwardRef(({ className, ...props }, ref) => {
   );
 });
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
-var RadioGroupItem = React27.forwardRef(({ className, ...props }, ref) => {
+var RadioGroupItem = React28.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ jsx(
     RadioGroupPrimitive.Item,
     {
@@ -1354,8 +1431,8 @@ var RadioGroupItem = React27.forwardRef(({ className, ...props }, ref) => {
   );
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
-var RadioGroupOption = React27.forwardRef(({ label, description, className, id, ...props }, ref) => {
-  const optionId = id || React27.useId();
+var RadioGroupOption = React28.forwardRef(({ label, description, className, id, ...props }, ref) => {
+  const optionId = id || React28.useId();
   return /* @__PURE__ */ jsxs("div", { className: cn("flex items-start gap-3", className), children: [
     /* @__PURE__ */ jsx(RadioGroupItem, { ref, id: optionId, ...props }),
     /* @__PURE__ */ jsxs("div", { className: "space-y-0.5", children: [
@@ -1372,8 +1449,8 @@ var RadioGroupOption = React27.forwardRef(({ label, description, className, id, 
   ] });
 });
 RadioGroupOption.displayName = "RadioGroupOption";
-var RadioGroupCard = React27.forwardRef(({ label, description, children, className, id, ...props }, ref) => {
-  const cardId = id || React27.useId();
+var RadioGroupCard = React28.forwardRef(({ label, description, children, className, id, ...props }, ref) => {
+  const cardId = id || React28.useId();
   return /* @__PURE__ */ jsx(
     RadioGroupPrimitive.Item,
     {
@@ -1404,7 +1481,7 @@ var RadioGroupCard = React27.forwardRef(({ label, description, children, classNa
 });
 RadioGroupCard.displayName = "RadioGroupCard";
 var Accordion = AccordionPrimitive.Root;
-var AccordionItem = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AccordionItem = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AccordionPrimitive.Item,
   {
     ref,
@@ -1413,7 +1490,7 @@ var AccordionItem = React27.forwardRef(({ className, ...props }, ref) => /* @__P
   }
 ));
 AccordionItem.displayName = "AccordionItem";
-var AccordionTrigger = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
+var AccordionTrigger = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
   AccordionPrimitive.Trigger,
   {
     ref,
@@ -1429,7 +1506,7 @@ var AccordionTrigger = React27.forwardRef(({ className, children, ...props }, re
   }
 ) }));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-var AccordionContent = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
+var AccordionContent = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
   AccordionPrimitive.Content,
   {
     ref,
@@ -1460,7 +1537,7 @@ var NODES2 = [
 ];
 var Primitive2 = NODES2.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React27.forwardRef((props, forwardedRef) => {
+  const Node = React28.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1474,7 +1551,7 @@ var Primitive2 = NODES2.reduce((primitive, node) => {
 var NAME2 = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];
-var Separator = React27.forwardRef((props, forwardedRef) => {
+var Separator = React28.forwardRef((props, forwardedRef) => {
   const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
   const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
   const ariaOrientation = orientation === "vertical" ? orientation : void 0;
@@ -1494,7 +1571,7 @@ function isValidOrientation(orientation) {
   return ORIENTATIONS.includes(orientation);
 }
 var Root6 = Separator;
-var Separator2 = React27.forwardRef(
+var Separator2 = React28.forwardRef(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ jsx(
     Root6,
     {
@@ -1511,7 +1588,7 @@ var Separator2 = React27.forwardRef(
   )
 );
 Separator2.displayName = Root6.displayName;
-var NavigationMenu = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var NavigationMenu = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   NavigationMenuPrimitive.Root,
   {
     ref,
@@ -1527,7 +1604,7 @@ var NavigationMenu = React27.forwardRef(({ className, children, ...props }, ref)
   }
 ));
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
-var NavigationMenuList = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuList = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.List,
   {
     ref,
@@ -1543,7 +1620,7 @@ var NavigationMenuItem = NavigationMenuPrimitive.Item;
 var navigationMenuTriggerStyle = cva(
   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[var(--black)] transition-colors hover:bg-gray-100 hover:text-[var(--black)] focus:bg-gray-100 focus:text-[var(--black)] focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-[var(--black)] data-[state=open]:bg-gray-100/50 data-[state=open]:hover:bg-gray-100 data-[state=open]:focus:bg-gray-100"
 );
-var NavigationMenuTrigger = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var NavigationMenuTrigger = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   NavigationMenuPrimitive.Trigger,
   {
     ref,
@@ -1563,7 +1640,7 @@ var NavigationMenuTrigger = React27.forwardRef(({ className, children, ...props 
   }
 ));
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
-var NavigationMenuContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuContent = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Content,
   {
     ref,
@@ -1576,7 +1653,7 @@ var NavigationMenuContent = React27.forwardRef(({ className, ...props }, ref) =>
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
 var NavigationMenuLink = NavigationMenuPrimitive.Link;
-var NavigationMenuViewport = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsx(
+var NavigationMenuViewport = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Viewport,
   {
     className: cn(
@@ -1588,7 +1665,7 @@ var NavigationMenuViewport = React27.forwardRef(({ className, ...props }, ref) =
   }
 ) }));
 NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayName;
-var NavigationMenuIndicator = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var NavigationMenuIndicator = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   NavigationMenuPrimitive.Indicator,
   {
     ref,
@@ -1601,7 +1678,7 @@ var NavigationMenuIndicator = React27.forwardRef(({ className, ...props }, ref) 
   }
 ));
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive.Indicator.displayName;
-var Avatar = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var Avatar = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AvatarPrimitive.Root,
   {
     ref,
@@ -1613,7 +1690,7 @@ var Avatar = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ *
   }
 ));
 Avatar.displayName = AvatarPrimitive.Root.displayName;
-var AvatarImage = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AvatarImage = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AvatarPrimitive.Image,
   {
     ref,
@@ -1622,7 +1699,7 @@ var AvatarImage = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
-var AvatarFallback = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AvatarFallback = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AvatarPrimitive.Fallback,
   {
     ref,
@@ -1640,7 +1717,7 @@ var DropdownMenuGroup = DropdownMenuPrimitive.Group;
 var DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 var DropdownMenuSub = DropdownMenuPrimitive.Sub;
 var DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
-var DropdownMenuSubTrigger = React27.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var DropdownMenuSubTrigger = React28.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   DropdownMenuPrimitive.SubTrigger,
   {
     ref,
@@ -1657,7 +1734,7 @@ var DropdownMenuSubTrigger = React27.forwardRef(({ className, inset, children, .
   }
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
-var DropdownMenuSubContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var DropdownMenuSubContent = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   DropdownMenuPrimitive.SubContent,
   {
     ref,
@@ -1669,7 +1746,7 @@ var DropdownMenuSubContent = React27.forwardRef(({ className, ...props }, ref) =
   }
 ));
 DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName;
-var DropdownMenuContent = React27.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(DropdownMenuPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+var DropdownMenuContent = React28.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(DropdownMenuPrimitive.Portal, { children: /* @__PURE__ */ jsx(
   DropdownMenuPrimitive.Content,
   {
     ref,
@@ -1682,7 +1759,7 @@ var DropdownMenuContent = React27.forwardRef(({ className, sideOffset = 4, ...pr
   }
 ) }));
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
-var DropdownMenuItem = React27.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
+var DropdownMenuItem = React28.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
   DropdownMenuPrimitive.Item,
   {
     ref,
@@ -1695,7 +1772,7 @@ var DropdownMenuItem = React27.forwardRef(({ className, inset, ...props }, ref) 
   }
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
-var DropdownMenuCheckboxItem = React27.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxs(
+var DropdownMenuCheckboxItem = React28.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxs(
   DropdownMenuPrimitive.CheckboxItem,
   {
     ref,
@@ -1712,7 +1789,7 @@ var DropdownMenuCheckboxItem = React27.forwardRef(({ className, children, checke
   }
 ));
 DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName;
-var DropdownMenuRadioItem = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
+var DropdownMenuRadioItem = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(
   DropdownMenuPrimitive.RadioItem,
   {
     ref,
@@ -1728,7 +1805,7 @@ var DropdownMenuRadioItem = React27.forwardRef(({ className, children, ...props 
   }
 ));
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
-var DropdownMenuLabel = React27.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
+var DropdownMenuLabel = React28.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsx(
   DropdownMenuPrimitive.Label,
   {
     ref,
@@ -1741,7 +1818,7 @@ var DropdownMenuLabel = React27.forwardRef(({ className, inset, ...props }, ref)
   }
 ));
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
-var DropdownMenuSeparator = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var DropdownMenuSeparator = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   DropdownMenuPrimitive.Separator,
   {
     ref,
@@ -1763,7 +1840,7 @@ var DropdownMenuShortcut = ({
   );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
-var SidebarNavItem = React27.forwardRef(
+var SidebarNavItem = React28.forwardRef(
   ({ item, isActive, className, LinkComponent, ...props }, ref) => {
     const Icon = item.icon;
     const baseClassName = cn(
@@ -1803,7 +1880,7 @@ var SidebarNavItem = React27.forwardRef(
   }
 );
 SidebarNavItem.displayName = "SidebarNavItem";
-var Sidebar = React27.forwardRef(
+var Sidebar = React28.forwardRef(
   ({
     mainNav = [],
     bottomNav = [],
@@ -1913,7 +1990,7 @@ var alertVariants = cva(
     }
   }
 );
-var Alert = React27.forwardRef(
+var Alert = React28.forwardRef(
   ({ className, variant, icon, title, action, children, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "div",
@@ -1936,7 +2013,7 @@ var Alert = React27.forwardRef(
   }
 );
 Alert.displayName = "Alert";
-var EmptyState = React27.forwardRef(
+var EmptyState = React28.forwardRef(
   ({ className, icon, title, description, action, size = "default", ...props }, ref) => {
     const paddingClass = {
       sm: "p-8",
@@ -1964,7 +2041,70 @@ var EmptyState = React27.forwardRef(
   }
 );
 EmptyState.displayName = "EmptyState";
-var CodeBlock = React27.forwardRef(
+var ErrorState = React28.forwardRef(
+  ({
+    title = "Something went wrong",
+    description = "We encountered an error loading this page. Please try again.",
+    showRetry = true,
+    showHomeLink = true,
+    retryText = "Try again",
+    homeLinkText = "Go to dashboard",
+    onRetry,
+    onHomeClick,
+    icon,
+    actions,
+    className,
+    ...props
+  }, ref) => {
+    const defaultIcon = /* @__PURE__ */ jsx(
+      "svg",
+      {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "24",
+        height: "24",
+        fill: "currentColor",
+        viewBox: "0 0 256 256",
+        className: "text-red-500",
+        children: /* @__PURE__ */ jsx("path", { d: "M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z" })
+      }
+    );
+    const refreshIcon = /* @__PURE__ */ jsx(
+      "svg",
+      {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "16",
+        height: "16",
+        fill: "currentColor",
+        viewBox: "0 0 256 256",
+        className: "mr-2",
+        children: /* @__PURE__ */ jsx("path", { d: "M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64A80,80,0,1,0,207.6,176.16a8,8,0,1,1,13.54,8.49A96,96,0,1,1,227.59,64l.3-.31L208,44.31V56a8,8,0,0,0,8,8h16A8,8,0,0,0,240,56Z" })
+      }
+    );
+    const hasDefaultActions = showRetry && onRetry || showHomeLink && onHomeClick;
+    return /* @__PURE__ */ jsx(
+      "div",
+      {
+        ref,
+        className: cn("flex items-center justify-center min-h-[60vh]", className),
+        ...props,
+        children: /* @__PURE__ */ jsx(Card, { className: "max-w-md w-full", children: /* @__PURE__ */ jsxs(CardContent, { className: "p-8 text-center", children: [
+          /* @__PURE__ */ jsx(IconBox, { size: "lg", className: "mx-auto mb-4 bg-red-50", children: icon || defaultIcon }),
+          /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold text-[var(--black)] mb-2", children: title }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-6", children: description }),
+          actions ? /* @__PURE__ */ jsx("div", { className: "flex gap-3 justify-center", children: actions }) : hasDefaultActions ? /* @__PURE__ */ jsxs("div", { className: "flex gap-3 justify-center", children: [
+            showRetry && onRetry && /* @__PURE__ */ jsxs(Button, { variant: "outline", onClick: onRetry, children: [
+              refreshIcon,
+              retryText
+            ] }),
+            showHomeLink && onHomeClick && /* @__PURE__ */ jsx(Button, { onClick: onHomeClick, children: homeLinkText })
+          ] }) : null
+        ] }) })
+      }
+    );
+  }
+);
+ErrorState.displayName = "ErrorState";
+var CodeBlock = React28.forwardRef(
   ({ className, children, language, ...props }, ref) => {
     return /* @__PURE__ */ jsx(
       "pre",
@@ -1982,15 +2122,15 @@ var CodeBlock = React27.forwardRef(
   }
 );
 CodeBlock.displayName = "CodeBlock";
-var FormField = React27.forwardRef(
+var FormField = React28.forwardRef(
   ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
-    const fieldId = id || React27.useId();
+    const fieldId = id || React28.useId();
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
-    const enhancedChildren = React27.Children.map(children, (child) => {
-      if (React27.isValidElement(child)) {
+    const enhancedChildren = React28.Children.map(children, (child) => {
+      if (React28.isValidElement(child)) {
         const childProps = child.props;
-        return React27.cloneElement(child, {
+        return React28.cloneElement(child, {
           id: fieldId,
           "aria-invalid": error ? "true" : void 0,
           "aria-describedby": error ? errorId : helperText ? helperId : void 0,
@@ -2014,7 +2154,7 @@ var FormField = React27.forwardRef(
   }
 );
 FormField.displayName = "FormField";
-var Table = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsx(
+var Table = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsx(
   "table",
   {
     ref,
@@ -2023,11 +2163,11 @@ var Table = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */
   }
 ) }));
 Table.displayName = "Table";
-var TableHeader = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("thead", { ref, className: cn("", className), ...props }));
+var TableHeader = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("thead", { ref, className: cn("", className), ...props }));
 TableHeader.displayName = "TableHeader";
-var TableBody = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("tbody", { ref, className: cn("", className), ...props }));
+var TableBody = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx("tbody", { ref, className: cn("", className), ...props }));
 TableBody.displayName = "TableBody";
-var TableFooter = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TableFooter = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "tfoot",
   {
     ref,
@@ -2036,7 +2176,7 @@ var TableFooter = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 TableFooter.displayName = "TableFooter";
-var TableRow = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TableRow = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "tr",
   {
     ref,
@@ -2045,7 +2185,7 @@ var TableRow = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__
   }
 ));
 TableRow.displayName = "TableRow";
-var TableHead = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TableHead = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "th",
   {
     ref,
@@ -2057,7 +2197,7 @@ var TableHead = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE_
   }
 ));
 TableHead.displayName = "TableHead";
-var TableCell = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TableCell = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "td",
   {
     ref,
@@ -2066,7 +2206,7 @@ var TableCell = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE_
   }
 ));
 TableCell.displayName = "TableCell";
-var TableCaption = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TableCaption = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   "caption",
   {
     ref,
@@ -2075,7 +2215,7 @@ var TableCaption = React27.forwardRef(({ className, ...props }, ref) => /* @__PU
   }
 ));
 TableCaption.displayName = "TableCaption";
-var Divider = React27.forwardRef(
+var Divider = React28.forwardRef(
   ({ className, text, orientation = "horizontal", ...props }, ref) => {
     if (orientation === "vertical") {
       return /* @__PURE__ */ jsx(
@@ -2114,7 +2254,7 @@ var Divider = React27.forwardRef(
 );
 Divider.displayName = "Divider";
 var Tabs = TabsPrimitive.Root;
-var TabsList = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TabsList = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.List,
   {
     ref,
@@ -2126,7 +2266,7 @@ var TabsList = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__
   }
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
-var TabsTrigger = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TabsTrigger = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.Trigger,
   {
     ref,
@@ -2138,7 +2278,7 @@ var TabsTrigger = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-var TabsContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TabsContent = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.Content,
   {
     ref,
@@ -2150,7 +2290,7 @@ var TabsContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
-var TabsListUnderline = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TabsListUnderline = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.List,
   {
     ref,
@@ -2162,12 +2302,14 @@ var TabsListUnderline = React27.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 TabsListUnderline.displayName = "TabsListUnderline";
-var TabsTriggerUnderline = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TabsTriggerUnderline = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.Trigger,
   {
     ref,
     className: cn(
-      "inline-flex items-center justify-center whitespace-nowrap px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground border-b-2 border-transparent -mb-px data-[state=active]:text-foreground data-[state=active]:border-[var(--cyan)] disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:text-foreground border-b-2 border-transparent -mb-px",
+      "data-[state=active]:text-[var(--cyan)] data-[state=active]:border-[var(--cyan)] data-[state=active]:font-semibold",
+      "disabled:pointer-events-none disabled:opacity-50",
       className
     ),
     ...props
@@ -2178,7 +2320,7 @@ var Dialog = SheetPrimitive.Root;
 var DialogTrigger = SheetPrimitive.Trigger;
 var DialogPortal = SheetPrimitive.Portal;
 var DialogClose = SheetPrimitive.Close;
-var DialogOverlay = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var DialogOverlay = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   SheetPrimitive.Overlay,
   {
     ref,
@@ -2190,7 +2332,7 @@ var DialogOverlay = React27.forwardRef(({ className, ...props }, ref) => /* @__P
   }
 ));
 DialogOverlay.displayName = SheetPrimitive.Overlay.displayName;
-var DialogContent = React27.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(DialogPortal, { children: [
+var DialogContent = React28.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxs(DialogPortal, { children: [
   /* @__PURE__ */ jsx(DialogOverlay, {}),
   /* @__PURE__ */ jsxs(
     SheetPrimitive.Content,
@@ -2240,7 +2382,7 @@ var DialogFooter = ({
   }
 );
 DialogFooter.displayName = "DialogFooter";
-var DialogTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var DialogTitle = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   SheetPrimitive.Title,
   {
     ref,
@@ -2252,7 +2394,7 @@ var DialogTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 DialogTitle.displayName = SheetPrimitive.Title.displayName;
-var DialogDescription = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var DialogDescription = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   SheetPrimitive.Description,
   {
     ref,
@@ -2264,7 +2406,7 @@ DialogDescription.displayName = SheetPrimitive.Description.displayName;
 var AlertDialog = AlertDialogPrimitive.Root;
 var AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 var AlertDialogPortal = AlertDialogPrimitive.Portal;
-var AlertDialogOverlay = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AlertDialogOverlay = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AlertDialogPrimitive.Overlay,
   {
     className: cn(
@@ -2276,7 +2418,7 @@ var AlertDialogOverlay = React27.forwardRef(({ className, ...props }, ref) => /*
   }
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
-var AlertDialogContent = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxs(AlertDialogPortal, { children: [
+var AlertDialogContent = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxs(AlertDialogPortal, { children: [
   /* @__PURE__ */ jsx(AlertDialogOverlay, {}),
   /* @__PURE__ */ jsx(
     AlertDialogPrimitive.Content,
@@ -2319,7 +2461,7 @@ var AlertDialogFooter = ({
   }
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
-var AlertDialogTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AlertDialogTitle = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AlertDialogPrimitive.Title,
   {
     ref,
@@ -2328,7 +2470,7 @@ var AlertDialogTitle = React27.forwardRef(({ className, ...props }, ref) => /* @
   }
 ));
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
-var AlertDialogDescription = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AlertDialogDescription = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AlertDialogPrimitive.Description,
   {
     ref,
@@ -2337,7 +2479,7 @@ var AlertDialogDescription = React27.forwardRef(({ className, ...props }, ref) =
   }
 ));
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
-var AlertDialogAction = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AlertDialogAction = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AlertDialogPrimitive.Action,
   {
     ref,
@@ -2346,7 +2488,7 @@ var AlertDialogAction = React27.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
-var AlertDialogCancel = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var AlertDialogCancel = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   AlertDialogPrimitive.Cancel,
   {
     ref,
@@ -2407,7 +2549,7 @@ var Popover = PopoverPrimitive.Root;
 var PopoverTrigger = PopoverPrimitive.Trigger;
 var PopoverAnchor = PopoverPrimitive.Anchor;
 var PopoverClose = PopoverPrimitive.Close;
-var PopoverContent = React27.forwardRef(({ className, align = "center", sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+var PopoverContent = React28.forwardRef(({ className, align = "center", sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx(
   PopoverPrimitive.Content,
   {
     ref,
@@ -2421,7 +2563,7 @@ var PopoverContent = React27.forwardRef(({ className, align = "center", sideOffs
   }
 ) }));
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
-var PopoverArrow = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var PopoverArrow = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   PopoverPrimitive.Arrow,
   {
     ref,
@@ -2433,7 +2575,7 @@ PopoverArrow.displayName = PopoverPrimitive.Arrow.displayName;
 var TooltipProvider = TooltipPrimitive.Provider;
 var Tooltip = TooltipPrimitive.Root;
 var TooltipTrigger = TooltipPrimitive.Trigger;
-var TooltipContent = React27.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+var TooltipContent = React28.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx(
   TooltipPrimitive.Content,
   {
     ref,
@@ -2446,7 +2588,7 @@ var TooltipContent = React27.forwardRef(({ className, sideOffset = 4, ...props }
   }
 ) }));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
-var TooltipArrow = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var TooltipArrow = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TooltipPrimitive.Arrow,
   {
     ref,
@@ -2468,7 +2610,7 @@ function SimpleTooltip({
   ] }) });
 }
 var ToastProvider = ToastPrimitives.Provider;
-var ToastViewport = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var ToastViewport = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Viewport,
   {
     ref,
@@ -2497,7 +2639,7 @@ var toastVariants = cva(
     }
   }
 );
-var Toast = React27.forwardRef(({ className, variant, ...props }, ref) => {
+var Toast = React28.forwardRef(({ className, variant, ...props }, ref) => {
   return /* @__PURE__ */ jsx(
     ToastPrimitives.Root,
     {
@@ -2508,7 +2650,7 @@ var Toast = React27.forwardRef(({ className, variant, ...props }, ref) => {
   );
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
-var ToastAction = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var ToastAction = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Action,
   {
     ref,
@@ -2520,7 +2662,7 @@ var ToastAction = React27.forwardRef(({ className, ...props }, ref) => /* @__PUR
   }
 ));
 ToastAction.displayName = ToastPrimitives.Action.displayName;
-var ToastClose = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var ToastClose = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Close,
   {
     ref,
@@ -2534,7 +2676,7 @@ var ToastClose = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE
   }
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
-var ToastTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var ToastTitle = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Title,
   {
     ref,
@@ -2543,7 +2685,7 @@ var ToastTitle = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE
   }
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
-var ToastDescription = React27.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+var ToastDescription = React28.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Description,
   {
     ref,
@@ -2682,8 +2824,8 @@ function toast({ ...props }) {
   };
 }
 function useToast() {
-  const [state, setState] = React27.useState(memoryState);
-  React27.useEffect(() => {
+  const [state, setState] = React28.useState(memoryState);
+  React28.useEffect(() => {
     listeners.push(setState);
     return () => {
       const index = listeners.indexOf(setState);
@@ -2718,7 +2860,7 @@ function Toaster() {
     /* @__PURE__ */ jsx(ToastViewport, {})
   ] });
 }
-var Skeleton = React27.forwardRef(
+var Skeleton = React28.forwardRef(
   ({ className, variant = "default", width, height, animate = true, style, ...props }, ref) => {
     const variantStyles = {
       default: "rounded-sm",
@@ -2746,7 +2888,7 @@ var Skeleton = React27.forwardRef(
   }
 );
 Skeleton.displayName = "Skeleton";
-var SkeletonText = React27.forwardRef(
+var SkeletonText = React28.forwardRef(
   ({ lines = 3, gap = 8, className, ...props }, ref) => {
     return /* @__PURE__ */ jsx("div", { ref, className: cn("space-y-2", className), style: { gap }, children: Array.from({ length: lines }).map((_, i) => /* @__PURE__ */ jsx(
       Skeleton,
@@ -2760,7 +2902,7 @@ var SkeletonText = React27.forwardRef(
   }
 );
 SkeletonText.displayName = "SkeletonText";
-var SkeletonCard = React27.forwardRef(
+var SkeletonCard = React28.forwardRef(
   ({ hasHeader = true, hasAvatar = false, className, ...props }, ref) => {
     return /* @__PURE__ */ jsxs(
       "div",
@@ -2812,7 +2954,7 @@ function generatePagination(currentPage, totalPages, siblingCount) {
   );
   return [1, "ellipsis", ...middleRange, "ellipsis", totalPages];
 }
-var Pagination = React27.forwardRef(
+var Pagination = React28.forwardRef(
   ({
     currentPage,
     totalPages,
@@ -2889,7 +3031,7 @@ var Pagination = React27.forwardRef(
   }
 );
 Pagination.displayName = "Pagination";
-var SimplePagination = React27.forwardRef(
+var SimplePagination = React28.forwardRef(
   ({
     currentPage,
     totalPages,
@@ -2951,7 +3093,7 @@ var SimplePagination = React27.forwardRef(
   }
 );
 SimplePagination.displayName = "SimplePagination";
-var StepProgress = React27.forwardRef(
+var StepProgress = React28.forwardRef(
   ({
     steps,
     currentStep,
@@ -3071,7 +3213,7 @@ var StepProgress = React27.forwardRef(
   }
 );
 StepProgress.displayName = "StepProgress";
-var StepDots = React27.forwardRef(
+var StepDots = React28.forwardRef(
   ({ totalSteps, currentStep, onStepClick, className }, ref) => {
     return /* @__PURE__ */ jsx("div", { ref, className: cn("flex items-center gap-2", className), children: Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => {
       const isCompleted = step < currentStep;
@@ -3097,7 +3239,7 @@ var StepDots = React27.forwardRef(
   }
 );
 StepDots.displayName = "StepDots";
-var Breadcrumbs = React27.forwardRef(
+var Breadcrumbs = React28.forwardRef(
   ({
     items,
     LinkComponent,
@@ -3179,7 +3321,7 @@ var Breadcrumbs = React27.forwardRef(
   }
 );
 Breadcrumbs.displayName = "Breadcrumbs";
-var BreadcrumbLink = React27.forwardRef(
+var BreadcrumbLink = React28.forwardRef(
   ({ className, ...props }, ref) => /* @__PURE__ */ jsx(
     "a",
     {
@@ -3204,7 +3346,7 @@ var presetLabels = {
   "this-year": "This year",
   "custom": "Custom"
 };
-var DateRangePicker = React27.forwardRef(
+var DateRangePicker = React28.forwardRef(
   ({
     value,
     onChange,
@@ -3263,7 +3405,7 @@ var DateRangePicker = React27.forwardRef(
   }
 );
 DateRangePicker.displayName = "DateRangePicker";
-var DateRangeSelect = React27.forwardRef(
+var DateRangeSelect = React28.forwardRef(
   ({ value, onChange, presets = ["7d", "30d", "90d"], className }, ref) => {
     return /* @__PURE__ */ jsx(
       "select",
@@ -3315,7 +3457,294 @@ function getDateRangeFromPreset(preset) {
   }
   return { start, end };
 }
-var SettingsNav = React27.forwardRef(
+function getFileIcon(type) {
+  if (type.startsWith("video/") || type === "screen_recording") return FileVideo;
+  if (type.startsWith("image/") || type === "image") return FileImage;
+  if (type === "application/pdf" || type === "pdf") return FilePdf;
+  if (type.includes("document") || type === "document") return FileDoc;
+  return File;
+}
+function getTypeLabel(type) {
+  if (type.startsWith("video/") || type === "screen_recording") return "Video";
+  if (type.startsWith("audio/")) return "Audio";
+  if (type.startsWith("image/") || type === "image") return "Image";
+  if (type === "application/pdf" || type === "pdf") return "PDF";
+  if (type.includes("document") || type === "document") return "Document";
+  return "File";
+}
+function formatSize(size) {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+function canPreview(file) {
+  const ext = file.filename.toLowerCase().split(".").pop() || "";
+  if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext)) return true;
+  if (["mp4", "webm", "mov", "avi", "mkv"].includes(ext)) return true;
+  if (ext === "pdf") return true;
+  if (file.type.startsWith("image/") || file.type === "image") return true;
+  if (file.type.startsWith("video/") || file.type === "screen_recording") return true;
+  if (file.type === "application/pdf" || file.type === "pdf") return true;
+  return false;
+}
+function getPreviewType(file) {
+  const ext = file.filename.toLowerCase().split(".").pop() || "";
+  if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext) || file.type.startsWith("image/") || file.type === "image") return "image";
+  if (["mp4", "webm", "mov", "avi", "mkv"].includes(ext) || file.type.startsWith("video/") || file.type === "screen_recording") return "video";
+  if (ext === "pdf" || file.type === "application/pdf" || file.type === "pdf") return "pdf";
+  return "none";
+}
+function FilePreview({
+  files,
+  title = "Uploaded Files",
+  getSignedUrl,
+  showCard = true,
+  emptyMessage = "No files uploaded"
+}) {
+  const [previewFile, setPreviewFile] = useState(null);
+  const [videoError, setVideoError] = useState(false);
+  const [signedUrl, setSignedUrl] = useState(null);
+  const [loadingUrl, setLoadingUrl] = useState(false);
+  const [urlError, setUrlError] = useState(null);
+  const videoRef = useRef(null);
+  const handleOpenPreview = async (file) => {
+    setVideoError(false);
+    setPreviewFile(file);
+    setUrlError(null);
+    if (file.url) {
+      setSignedUrl(file.url);
+    } else if (getSignedUrl) {
+      setLoadingUrl(true);
+      try {
+        const url = await getSignedUrl(file.path);
+        if (url) {
+          setSignedUrl(url);
+        } else {
+          setUrlError("Failed to load file URL");
+        }
+      } catch (error) {
+        setUrlError(error instanceof Error ? error.message : "Failed to load file");
+      } finally {
+        setLoadingUrl(false);
+      }
+    } else {
+      setUrlError("No URL available for this file");
+    }
+  };
+  const handleClosePreview = () => {
+    setPreviewFile(null);
+    setSignedUrl(null);
+    setUrlError(null);
+    setLoadingUrl(false);
+    setVideoError(false);
+  };
+  const handleDownload = async (e, file) => {
+    e.stopPropagation();
+    let url = file.url;
+    if (!url && getSignedUrl) {
+      url = await getSignedUrl(file.path) || void 0;
+    }
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+  const content = /* @__PURE__ */ jsxs(Fragment, { children: [
+    files.length > 0 ? /* @__PURE__ */ jsx("div", { className: "space-y-2", children: files.map((file, i) => {
+      const FileIcon = getFileIcon(file.type);
+      const typeLabel = getTypeLabel(file.type);
+      const sizeLabel = formatSize(file.size);
+      const isPreviewable = canPreview(file);
+      const previewType = getPreviewType(file);
+      return /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: `flex items-center justify-between p-3 rounded-md bg-gray-50 transition-colors ${isPreviewable ? "hover:bg-gray-100 cursor-pointer" : ""}`,
+          onClick: () => isPreviewable && handleOpenPreview(file),
+          children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
+              /* @__PURE__ */ jsxs("div", { className: "relative shrink-0", children: [
+                /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-white border border-gray-200 flex items-center justify-center", children: /* @__PURE__ */ jsx(FileIcon, { className: "w-5 h-5 text-[var(--cyan)]", weight: "fill" }) }),
+                previewType === "video" && /* @__PURE__ */ jsx(Play, { className: "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 text-[var(--cyan)] bg-white rounded-full", weight: "fill" })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)] truncate", children: file.filename }),
+                /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                  typeLabel,
+                  " \xB7 ",
+                  sizeLabel,
+                  isPreviewable && /* @__PURE__ */ jsx("span", { className: "text-[var(--cyan)] ml-1", children: "\xB7 Click to preview" })
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                onClick: (e) => handleDownload(e, file),
+                className: "p-2 rounded-sm hover:bg-gray-200 transition-colors shrink-0",
+                title: "Download",
+                children: /* @__PURE__ */ jsx(Download, { className: "w-4 h-4 text-muted-foreground" })
+              }
+            )
+          ]
+        },
+        i
+      );
+    }) }) : /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-32 border border-dashed border-gray-200 rounded-md", children: /* @__PURE__ */ jsxs("div", { className: "text-center", children: [
+      /* @__PURE__ */ jsx(Folder, { size: 24, className: "text-gray-300 mx-auto mb-2" }),
+      /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: emptyMessage })
+    ] }) }),
+    previewFile && /* @__PURE__ */ jsx(
+      "div",
+      {
+        className: "fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4",
+        onClick: handleClosePreview,
+        children: /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "bg-white rounded-lg max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl",
+            onClick: (e) => e.stopPropagation(),
+            children: [
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between p-4 border-b border-gray-200", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
+                  (() => {
+                    const FileIcon = getFileIcon(previewFile.type);
+                    return /* @__PURE__ */ jsx(FileIcon, { className: "w-5 h-5 text-[var(--cyan)] flex-shrink-0", weight: "fill" });
+                  })(),
+                  /* @__PURE__ */ jsxs("div", { className: "min-w-0", children: [
+                    /* @__PURE__ */ jsx("p", { className: "font-medium text-[var(--black)] truncate", children: previewFile.filename }),
+                    /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                      getTypeLabel(previewFile.type),
+                      " \xB7 ",
+                      formatSize(previewFile.size)
+                    ] })
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1", children: [
+                  signedUrl && /* @__PURE__ */ jsxs(Fragment, { children: [
+                    /* @__PURE__ */ jsx(
+                      "a",
+                      {
+                        href: signedUrl,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        className: "p-2 rounded-md hover:bg-gray-100 transition-colors",
+                        title: "Open in new tab",
+                        children: /* @__PURE__ */ jsx(ArrowSquareOut, { className: "w-5 h-5 text-muted-foreground" })
+                      }
+                    ),
+                    /* @__PURE__ */ jsx(
+                      "a",
+                      {
+                        href: signedUrl,
+                        download: previewFile.filename,
+                        className: "p-2 rounded-md hover:bg-gray-100 transition-colors",
+                        title: "Download",
+                        children: /* @__PURE__ */ jsx(Download, { className: "w-5 h-5 text-muted-foreground" })
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsx(
+                    "button",
+                    {
+                      onClick: handleClosePreview,
+                      className: "p-2 rounded-md hover:bg-gray-100 transition-colors ml-2",
+                      children: /* @__PURE__ */ jsx(X, { className: "w-5 h-5" })
+                    }
+                  )
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "flex-1 overflow-auto p-4 bg-gray-900 flex items-center justify-center min-h-[400px]", children: [
+                loadingUrl && /* @__PURE__ */ jsxs("div", { className: "text-center text-white", children: [
+                  /* @__PURE__ */ jsx(CircleNotch, { className: "w-8 h-8 mx-auto mb-2 animate-spin text-[var(--cyan)]" }),
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: "Loading file..." })
+                ] }),
+                urlError && /* @__PURE__ */ jsxs("div", { className: "text-center text-white max-w-md", children: [
+                  /* @__PURE__ */ jsx(File, { className: "w-16 h-16 mx-auto mb-4 text-gray-500" }),
+                  /* @__PURE__ */ jsx("p", { className: "text-lg font-medium mb-2", children: "Failed to Load File" }),
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-400", children: urlError })
+                ] }),
+                signedUrl && !loadingUrl && !urlError && /* @__PURE__ */ jsxs(Fragment, { children: [
+                  getPreviewType(previewFile) === "image" && /* @__PURE__ */ jsx(
+                    "img",
+                    {
+                      src: signedUrl,
+                      alt: previewFile.filename,
+                      className: "max-w-full max-h-[70vh] object-contain rounded-md"
+                    }
+                  ),
+                  getPreviewType(previewFile) === "video" && !videoError && /* @__PURE__ */ jsx(
+                    "video",
+                    {
+                      ref: videoRef,
+                      src: signedUrl,
+                      controls: true,
+                      autoPlay: true,
+                      className: "w-full max-h-[70vh] rounded-md bg-black",
+                      onError: () => setVideoError(true),
+                      children: "Your browser does not support the video tag."
+                    }
+                  ),
+                  getPreviewType(previewFile) === "video" && videoError && /* @__PURE__ */ jsxs("div", { className: "text-center text-white max-w-md", children: [
+                    /* @__PURE__ */ jsx(FileVideo, { className: "w-16 h-16 mx-auto mb-4 text-gray-500" }),
+                    /* @__PURE__ */ jsx("p", { className: "text-lg font-medium mb-2", children: "Video Preview Not Available" }),
+                    /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-400 mb-6", children: [
+                      "This video format (.",
+                      previewFile.filename.split(".").pop(),
+                      ") cannot be played directly in the browser."
+                    ] }),
+                    /* @__PURE__ */ jsxs("div", { className: "flex gap-3 justify-center", children: [
+                      /* @__PURE__ */ jsxs(
+                        "a",
+                        {
+                          href: signedUrl,
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                          className: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors",
+                          children: [
+                            /* @__PURE__ */ jsx(ArrowSquareOut, { className: "w-4 h-4" }),
+                            "Open in New Tab"
+                          ]
+                        }
+                      ),
+                      /* @__PURE__ */ jsxs(
+                        "a",
+                        {
+                          href: signedUrl,
+                          download: previewFile.filename,
+                          className: "inline-flex items-center gap-2 px-4 py-2 bg-[var(--cyan)] text-gray-900 rounded-full text-sm font-medium hover:bg-[var(--cyan)]/90 transition-colors",
+                          children: [
+                            /* @__PURE__ */ jsx(Download, { className: "w-4 h-4" }),
+                            "Download"
+                          ]
+                        }
+                      )
+                    ] })
+                  ] }),
+                  getPreviewType(previewFile) === "pdf" && /* @__PURE__ */ jsx(
+                    "iframe",
+                    {
+                      src: signedUrl,
+                      className: "w-full h-[70vh] rounded-md border-0 bg-white",
+                      title: previewFile.filename
+                    }
+                  )
+                ] })
+              ] })
+            ]
+          }
+        )
+      }
+    )
+  ] });
+  if (!showCard) {
+    return content;
+  }
+  return /* @__PURE__ */ jsxs(Card, { children: [
+    /* @__PURE__ */ jsx(CardHeader, { className: "pb-3", children: /* @__PURE__ */ jsx(CardTitle, { className: "text-base", children: title }) }),
+    /* @__PURE__ */ jsx(CardContent, { children: content })
+  ] });
+}
+var SettingsNav = React28.forwardRef(
   ({ groups, LinkComponent, className, ...props }, ref) => {
     const Link2 = LinkComponent || "a";
     return /* @__PURE__ */ jsx("div", { ref, className: cn("space-y-8", className), ...props, children: groups.map((group) => /* @__PURE__ */ jsxs("div", { children: [
@@ -3346,7 +3775,7 @@ var SettingsNav = React27.forwardRef(
   }
 );
 SettingsNav.displayName = "SettingsNav";
-var SettingsNavLink = React27.forwardRef(
+var SettingsNavLink = React28.forwardRef(
   ({ title, description, icon, href, LinkComponent, className, ...props }, ref) => {
     const content = /* @__PURE__ */ jsxs(Fragment, { children: [
       icon && /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center w-10 h-10 rounded-sm bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors", children: /* @__PURE__ */ jsx("span", { className: "text-gray-600 group-hover:text-[var(--cyan)] transition-colors [&>svg]:w-5 [&>svg]:h-5", children: icon }) }),
@@ -3373,10 +3802,298 @@ var SettingsNavLink = React27.forwardRef(
   }
 );
 SettingsNavLink.displayName = "SettingsNavLink";
+var typeConfig = {
+  escalation: {
+    label: "Escalation",
+    icon: Warning,
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+    description: "When to ask me first"
+  },
+  default_behavior: {
+    label: "Default behavior",
+    icon: CheckCircle,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+    description: "What to do when data is missing"
+  },
+  quality_check: {
+    label: "Quality check",
+    icon: CheckCircle,
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50",
+    description: 'What "done right" looks like'
+  },
+  edge_case: {
+    label: "Edge case",
+    icon: Question,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+    description: "Judgment calls and past mistakes"
+  }
+};
+function ScenarioCard({
+  scenario,
+  onEdit,
+  onDelete
+}) {
+  const config = typeConfig[scenario.type];
+  const Icon = config.icon;
+  return /* @__PURE__ */ jsx("div", { className: "group relative border border-gray-200 rounded-sm p-4 hover:border-gray-300 transition-colors", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3 flex-1 min-w-0", children: [
+      /* @__PURE__ */ jsx("div", { className: cn("w-8 h-8 rounded-sm flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsx(Icon, { size: 16, weight: "fill", className: config.color }) }),
+      /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2 mb-1", children: /* @__PURE__ */ jsx(Badge, { variant: "outline", size: "sm", children: config.label }) }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm text-[var(--black)] font-medium", children: [
+          "When: ",
+          /* @__PURE__ */ jsx("span", { className: "font-normal", children: scenario.situation })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground mt-1", children: [
+          "Action: ",
+          /* @__PURE__ */ jsx("span", { className: "text-[var(--black)]", children: scenario.action })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity", children: [
+      /* @__PURE__ */ jsx(
+        Button,
+        {
+          variant: "ghost",
+          size: "icon",
+          className: "h-8 w-8",
+          onClick: onEdit,
+          children: /* @__PURE__ */ jsx(PencilSimple, { size: 16 })
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        Button,
+        {
+          variant: "ghost",
+          size: "icon",
+          className: "h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50",
+          onClick: onDelete,
+          children: /* @__PURE__ */ jsx(Trash, { size: 16 })
+        }
+      )
+    ] })
+  ] }) });
+}
+function SuggestionChip({
+  suggestion,
+  onAdd,
+  disabled
+}) {
+  const config = typeConfig[suggestion.type];
+  config.icon;
+  return /* @__PURE__ */ jsxs(
+    "button",
+    {
+      type: "button",
+      onClick: onAdd,
+      disabled,
+      className: cn(
+        "inline-flex items-center gap-2 px-3 py-2 rounded-sm border border-dashed border-gray-300",
+        "text-sm text-muted-foreground hover:border-[var(--cyan)] hover:text-[var(--cyan)] hover:bg-[var(--cyan)]/5",
+        "transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      ),
+      children: [
+        /* @__PURE__ */ jsx(Plus, { size: 14 }),
+        suggestion.situation
+      ]
+    }
+  );
+}
+function ScenarioDialog({
+  open,
+  onOpenChange,
+  scenario,
+  onSave,
+  isLoading
+}) {
+  const [type, setType] = React28.useState(scenario?.type || "escalation");
+  const [situation, setSituation] = React28.useState(scenario?.situation || "");
+  const [action, setAction] = React28.useState(scenario?.action || "");
+  const [isSaving, setIsSaving] = React28.useState(false);
+  React28.useEffect(() => {
+    if (open) {
+      setType(scenario?.type || "escalation");
+      setSituation(scenario?.situation || "");
+      setAction(scenario?.action || "");
+    }
+  }, [open, scenario]);
+  const handleSave = async () => {
+    if (!situation.trim() || !action.trim()) return;
+    setIsSaving(true);
+    try {
+      await onSave({ type, situation: situation.trim(), action: action.trim() });
+      onOpenChange(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const isValid = situation.trim() && action.trim();
+  return /* @__PURE__ */ jsx(Dialog, { open, onOpenChange, children: /* @__PURE__ */ jsxs(DialogContent, { className: "sm:max-w-md", style: { transform: "translate(-50%, -50%)" }, children: [
+    /* @__PURE__ */ jsxs(DialogHeader, { children: [
+      /* @__PURE__ */ jsx(DialogTitle, { children: scenario ? "Edit scenario" : "Add scenario" }),
+      /* @__PURE__ */ jsx(DialogDescription, { children: "Define when something happens and what action to take." })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "grid gap-4 py-4", children: [
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx("label", { className: "text-sm font-medium text-[var(--black)]", children: "Type" }),
+        /* @__PURE__ */ jsx(
+          Select,
+          {
+            value: type,
+            onChange: (e) => setType(e.target.value),
+            children: Object.entries(typeConfig).map(([key, config]) => /* @__PURE__ */ jsxs("option", { value: key, children: [
+              config.label,
+              " \u2014 ",
+              config.description
+            ] }, key))
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx("label", { className: "text-sm font-medium text-[var(--black)]", children: "When..." }),
+        /* @__PURE__ */ jsx(
+          Input,
+          {
+            placeholder: "e.g., Invoice amount doesn't match PO",
+            value: situation,
+            onChange: (e) => setSituation(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "Describe the situation or trigger" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsx("label", { className: "text-sm font-medium text-[var(--black)]", children: "Then..." }),
+        /* @__PURE__ */ jsx(
+          Input,
+          {
+            placeholder: "e.g., Flag for review, don't process",
+            value: action,
+            onChange: (e) => setAction(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "What should happen in this situation" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs(DialogFooter, { children: [
+      /* @__PURE__ */ jsx(Button, { variant: "outline", onClick: () => onOpenChange(false), children: "Cancel" }),
+      /* @__PURE__ */ jsx(
+        Button,
+        {
+          onClick: handleSave,
+          disabled: !isValid || isSaving,
+          loading: isSaving,
+          children: scenario ? "Save changes" : "Add scenario"
+        }
+      )
+    ] })
+  ] }) });
+}
+function ScenariosManager({
+  scenarios,
+  onAdd,
+  onUpdate,
+  onDelete,
+  suggestions = [],
+  isLoading,
+  className
+}) {
+  const [dialogOpen, setDialogOpen] = React28.useState(false);
+  const [editingScenario, setEditingScenario] = React28.useState(null);
+  const [deletingId, setDeletingId] = React28.useState(null);
+  const handleAddClick = () => {
+    setEditingScenario(null);
+    setDialogOpen(true);
+  };
+  const handleEditClick = (scenario) => {
+    setEditingScenario(scenario);
+    setDialogOpen(true);
+  };
+  const handleSave = async (data) => {
+    if (editingScenario) {
+      await onUpdate(editingScenario.id, data);
+    } else {
+      await onAdd(data);
+    }
+  };
+  const handleDelete = async (id) => {
+    setDeletingId(id);
+    try {
+      await onDelete(id);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  const handleSuggestionAdd = async (suggestion) => {
+    await onAdd(suggestion);
+  };
+  const filteredSuggestions = suggestions.filter(
+    (s) => !scenarios.some(
+      (existing) => existing.situation.toLowerCase() === s.situation.toLowerCase()
+    )
+  );
+  return /* @__PURE__ */ jsxs("div", { className: cn("space-y-4", className), children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx(Lightning, { size: 20, weight: "fill", className: "text-[var(--cyan)]" }) }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases and escalations" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
+        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1" }),
+        "Add scenario"
+      ] })
+    ] }),
+    scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "grid gap-3", children: scenarios.map((scenario) => /* @__PURE__ */ jsx(
+      ScenarioCard,
+      {
+        scenario,
+        onEdit: () => handleEditClick(scenario),
+        onDelete: () => handleDelete(scenario.id)
+      },
+      scenario.id
+    )) }),
+    scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-gray-300 rounded-sm p-8 text-center", children: [
+      /* @__PURE__ */ jsx(Lightning, { size: 32, className: "text-gray-300 mx-auto mb-3" }),
+      /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
+      /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
+        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1" }),
+        "Add your first scenario"
+      ] })
+    ] }),
+    filteredSuggestions.length > 0 && /* @__PURE__ */ jsxs("div", { className: "pt-2", children: [
+      /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mb-2", children: "Suggested scenarios:" }),
+      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: filteredSuggestions.map((suggestion, index) => /* @__PURE__ */ jsx(
+        SuggestionChip,
+        {
+          suggestion,
+          onAdd: () => handleSuggestionAdd(suggestion),
+          disabled: isLoading
+        },
+        index
+      )) })
+    ] }),
+    /* @__PURE__ */ jsx(
+      ScenarioDialog,
+      {
+        open: dialogOpen,
+        onOpenChange: setDialogOpen,
+        scenario: editingScenario,
+        onSave: handleSave,
+        isLoading
+      }
+    )
+  ] });
+}
 
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, FormField, IconBox, Input, Label2 as Label, LabeledSwitch, Logo, MetricCard, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, Input, Label2 as Label, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
