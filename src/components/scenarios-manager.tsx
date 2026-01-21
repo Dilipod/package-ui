@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Plus, PencilSimple, Trash, Warning, CheckCircle, Question, Lightning } from '@phosphor-icons/react'
+import { Plus, PencilSimple, Trash, Warning, CheckCircle, Question, Lightning, Check } from '@phosphor-icons/react'
 import { cn } from '../lib/utils'
 import { Button } from './button'
 import { Badge } from './badge'
@@ -37,8 +37,11 @@ export interface ScenariosManagerProps {
   onAdd: (scenario: Omit<Scenario, 'id'>) => Promise<void>
   onUpdate: (id: string, scenario: Omit<Scenario, 'id'>) => Promise<void>
   onDelete: (id: string) => Promise<void>
+  onComplete?: () => Promise<void>
   suggestions?: ScenarioSuggestion[]
   isLoading?: boolean
+  isComplete?: boolean
+  minScenariosToComplete?: number
   className?: string
 }
 
@@ -209,7 +212,7 @@ function ScenarioDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" style={{ transform: 'translate(-50%, -50%)' }}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{scenario ? 'Edit scenario' : 'Add scenario'}</DialogTitle>
           <DialogDescription>
@@ -276,13 +279,19 @@ export function ScenariosManager({
   onAdd,
   onUpdate,
   onDelete,
+  onComplete,
   suggestions = [],
   isLoading,
+  isComplete = false,
+  minScenariosToComplete = 1,
   className,
 }: ScenariosManagerProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false)
   const [editingScenario, setEditingScenario] = React.useState<Scenario | null>(null)
   const [deletingId, setDeletingId] = React.useState<string | null>(null)
+  const [isCompleting, setIsCompleting] = React.useState(false)
+
+  const canComplete = scenarios.length >= minScenariosToComplete && !isComplete && onComplete
 
   const handleAddClick = () => {
     setEditingScenario(null)
@@ -313,6 +322,16 @@ export function ScenariosManager({
 
   const handleSuggestionAdd = async (suggestion: ScenarioSuggestion) => {
     await onAdd(suggestion)
+  }
+
+  const handleComplete = async () => {
+    if (!onComplete) return
+    setIsCompleting(true)
+    try {
+      await onComplete()
+    } finally {
+      setIsCompleting(false)
+    }
   }
 
   // Filter out suggestions that already exist
@@ -374,7 +393,7 @@ export function ScenariosManager({
       )}
 
       {/* Suggestions */}
-      {filteredSuggestions.length > 0 && (
+      {filteredSuggestions.length > 0 && !isComplete && (
         <div className="pt-2">
           <p className="text-xs text-muted-foreground mb-2">Suggested scenarios:</p>
           <div className="flex flex-wrap gap-2">
@@ -387,6 +406,39 @@ export function ScenariosManager({
               />
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Complete button */}
+      {canComplete && (
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              Ready to proceed? Mark your scenarios as complete.
+            </p>
+            <Button 
+              onClick={handleComplete}
+              disabled={isCompleting}
+              loading={isCompleting}
+              size="sm"
+            >
+              <Check size={16} className="mr-1.5" />
+              Done with scenarios
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Complete state */}
+      {isComplete && (
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2 text-emerald-600">
+            <CheckCircle size={16} weight="fill" />
+            <p className="text-sm font-medium">Scenarios completed</p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            You can still add or edit scenarios while we build your worker.
+          </p>
         </div>
       )}
 
