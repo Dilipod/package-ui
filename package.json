@@ -46,6 +46,9 @@
     "build": "tsup && tsc --emitDeclarationOnly --declaration --declarationMap",
     "dev": "tsup --watch",
     "lint": "eslint src/",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "clean": "rm -rf dist",
@@ -89,9 +92,14 @@
     "@storybook/react": "8.6.14",
     "@storybook/react-vite": "8.6.14",
     "@storybook/test": "8.6.14",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.21",
+    "jsdom": "^23.0.0",
     "playwright": "^1.57.0",
     "postcss": "^8.5.4",
     "react": "^19.0.0",
@@ -99,6 +107,8 @@
     "storybook": "8.6.14",
     "tailwindcss": "^4.1.8",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "^7.3.1",
+    "vitest": "^1.2.0"
   }
 }

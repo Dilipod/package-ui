@@ -1,7 +1,7 @@
 "use client";
 import * as React50 from 'react';
 import { useState, useRef } from 'react';
-import { Slot, createSlot } from '@radix-ui/react-slot';
+import { Slot, Slottable, createSlot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -219,7 +219,7 @@ var buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-[var(--black)] text-white border-2 border-[var(--black)] hover:bg-gray-800 hover:border-gray-800 active:scale-95",
-        primary: "bg-[var(--cyan)] text-[var(--black)] border-2 border-[var(--cyan)] hover:bg-[var(--cyan-dark)] hover:border-[var(--cyan-dark)] active:scale-95",
+        primary: "bg-[var(--cyan)] text-white border-2 border-[var(--cyan)] hover:bg-[var(--cyan-dark)] hover:border-[var(--cyan-dark)] active:scale-95",
         destructive: "bg-red-600 text-white border-2 border-red-600 hover:bg-red-700 hover:border-red-700 active:scale-95",
         outline: "border-2 border-gray-300 bg-transparent hover:bg-gray-100 active:scale-95",
         secondary: "bg-gray-100 text-[var(--black)] border-2 border-gray-100 hover:bg-gray-200 hover:border-gray-200 active:scale-95",
@@ -240,9 +240,55 @@ var buttonVariants = cva(
   }
 );
 var Button = React50.forwardRef(
-  ({ className, variant, size, asChild = false, loading, loadingText, children, disabled, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading, loadingText, icon, iconAfter, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const isDisabled = disabled || loading;
+    const LoadingSpinner = /* @__PURE__ */ jsxs(
+      "svg",
+      {
+        className: "animate-spin h-4 w-4",
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        children: [
+          /* @__PURE__ */ jsx(
+            "circle",
+            {
+              className: "opacity-25",
+              cx: "12",
+              cy: "12",
+              r: "10",
+              stroke: "currentColor",
+              strokeWidth: "4"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "path",
+            {
+              className: "opacity-75",
+              fill: "currentColor",
+              d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            }
+          )
+        ]
+      }
+    );
+    if (asChild && (icon || iconAfter || loading)) {
+      return /* @__PURE__ */ jsxs(
+        Slot,
+        {
+          className: cn(buttonVariants({ variant, size, className })),
+          ref,
+          ...props,
+          children: [
+            loading && LoadingSpinner,
+            !loading && icon,
+            /* @__PURE__ */ jsx(Slottable, { children }),
+            !loading && iconAfter
+          ]
+        }
+      );
+    }
     return /* @__PURE__ */ jsxs(
       Comp,
       {
@@ -251,37 +297,10 @@ var Button = React50.forwardRef(
         disabled: isDisabled,
         ...props,
         children: [
-          loading && /* @__PURE__ */ jsxs(
-            "svg",
-            {
-              className: "animate-spin h-4 w-4",
-              xmlns: "http://www.w3.org/2000/svg",
-              fill: "none",
-              viewBox: "0 0 24 24",
-              children: [
-                /* @__PURE__ */ jsx(
-                  "circle",
-                  {
-                    className: "opacity-25",
-                    cx: "12",
-                    cy: "12",
-                    r: "10",
-                    stroke: "currentColor",
-                    strokeWidth: "4"
-                  }
-                ),
-                /* @__PURE__ */ jsx(
-                  "path",
-                  {
-                    className: "opacity-75",
-                    fill: "currentColor",
-                    d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  }
-                )
-              ]
-            }
-          ),
-          loading ? loadingText || children : children
+          loading && LoadingSpinner,
+          !loading && icon,
+          loading ? loadingText || children : children,
+          !loading && iconAfter
         ]
       }
     );
@@ -3822,8 +3841,8 @@ var typeConfig = {
   default_behavior: {
     label: "Handle it",
     icon: CheckCircle,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
+    color: "text-[var(--cyan)]",
+    bgColor: "bg-[var(--cyan)]/10",
     description: "Proceed automatically using this rule"
   },
   quality_check: {
@@ -3836,8 +3855,8 @@ var typeConfig = {
   edge_case: {
     label: "Watch out",
     icon: Question,
-    color: "text-purple-600",
-    bgColor: "bg-purple-50",
+    color: "text-muted-foreground",
+    bgColor: "bg-muted",
     description: "Common mistakes or tricky situations"
   }
 };
@@ -3848,18 +3867,20 @@ function ScenarioCard({
 }) {
   const config = typeConfig[scenario.type];
   const Icon = config.icon;
-  return /* @__PURE__ */ jsx("div", { className: "group relative border border-gray-200 rounded-sm p-4 hover:border-gray-300 transition-colors", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+  return /* @__PURE__ */ jsx("div", { className: "group relative border border-border rounded-sm p-4 hover:border-[var(--cyan)]/30 hover:bg-[var(--cyan)]/[0.02] transition-all", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between gap-3", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3 flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsx("div", { className: cn("w-8 h-8 rounded-sm flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsx(Icon, { size: 16, weight: "fill", className: config.color }) }),
+      /* @__PURE__ */ jsx("div", { className: cn("w-9 h-9 rounded-sm flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsx(Icon, { size: 18, weight: "fill", className: config.color }) }),
       /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2 mb-1", children: /* @__PURE__ */ jsx(Badge, { variant: "outline", size: "sm", children: config.label }) }),
-        /* @__PURE__ */ jsxs("p", { className: "text-sm text-[var(--black)] font-medium", children: [
-          "When: ",
-          /* @__PURE__ */ jsx("span", { className: "font-normal", children: scenario.situation })
+        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2 mb-1.5", children: /* @__PURE__ */ jsx(Badge, { variant: "outline", size: "sm", className: "font-medium", children: config.label }) }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm text-[var(--black)]", children: [
+          /* @__PURE__ */ jsx("span", { className: "font-medium", children: "When:" }),
+          " ",
+          scenario.situation
         ] }),
         /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground mt-1", children: [
-          "Action: ",
-          /* @__PURE__ */ jsx("span", { className: "text-[var(--black)]", children: scenario.action })
+          /* @__PURE__ */ jsx("span", { className: "text-[var(--black)] font-medium", children: "Action:" }),
+          " ",
+          scenario.action
         ] })
       ] })
     ] }),
@@ -3869,7 +3890,7 @@ function ScenarioCard({
         {
           variant: "ghost",
           size: "icon",
-          className: "h-8 w-8",
+          className: "h-8 w-8 text-muted-foreground hover:text-[var(--black)]",
           onClick: onEdit,
           children: /* @__PURE__ */ jsx(PencilSimple, { size: 16 })
         }
@@ -3879,7 +3900,7 @@ function ScenarioCard({
         {
           variant: "ghost",
           size: "icon",
-          className: "h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50",
+          className: "h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50",
           onClick: onDelete,
           children: /* @__PURE__ */ jsx(Trash, { size: 16 })
         }
@@ -3892,8 +3913,6 @@ function SuggestionChip({
   onAdd,
   disabled
 }) {
-  const config = typeConfig[suggestion.type];
-  config.icon;
   return /* @__PURE__ */ jsxs(
     "button",
     {
@@ -3901,12 +3920,12 @@ function SuggestionChip({
       onClick: onAdd,
       disabled,
       className: cn(
-        "inline-flex items-center gap-2 px-3 py-2 rounded-sm border border-dashed border-gray-300",
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm border border-dashed border-border",
         "text-sm text-muted-foreground hover:border-[var(--cyan)] hover:text-[var(--cyan)] hover:bg-[var(--cyan)]/5",
-        "transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        "transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       ),
       children: [
-        /* @__PURE__ */ jsx(Plus, { size: 14 }),
+        /* @__PURE__ */ jsx(Plus, { size: 14, weight: "bold" }),
         suggestion.situation
       ]
     }
@@ -4081,11 +4100,11 @@ function ScenariosManager({
       },
       scenario.id
     )) }),
-    scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-gray-300 rounded-sm p-8 text-center", children: [
-      /* @__PURE__ */ jsx(Lightning, { size: 32, className: "text-gray-300 mx-auto mb-3" }),
+    scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-border rounded-sm p-8 text-center", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3", children: /* @__PURE__ */ jsx(Lightning, { size: 24, className: "text-muted-foreground" }) }),
       /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
       /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
-        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1" }),
+        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
         "Add your first scenario"
       ] })
     ] }),
@@ -4101,8 +4120,11 @@ function ScenariosManager({
         index
       )) })
     ] }),
-    canComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-gray-100", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-      /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Ready to proceed? Mark your scenarios as complete." }),
+    canComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1", children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)]", children: "Ready to proceed?" }),
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Mark your scenarios as complete to continue with the onboarding." })
+      ] }),
       /* @__PURE__ */ jsxs(
         Button,
         {
@@ -4110,15 +4132,16 @@ function ScenariosManager({
           disabled: isCompleting,
           loading: isCompleting,
           size: "sm",
+          className: "shrink-0",
           children: [
             /* @__PURE__ */ jsx(Check, { size: 16, className: "mr-1.5" }),
-            "Done with scenarios"
+            "Mark complete"
           ]
         }
       )
     ] }) }),
-    isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-4 border-t border-gray-100", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-emerald-600", children: [
+    isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-4 border-t border-border", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-[var(--cyan)]", children: [
         /* @__PURE__ */ jsx(CheckCircle, { size: 16, weight: "fill" }),
         /* @__PURE__ */ jsx("p", { className: "text-sm font-medium", children: "Scenarios completed" })
       ] }),
