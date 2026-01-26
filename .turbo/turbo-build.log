@@ -1,6 +1,6 @@
 
-> @dilipod/ui@0.1.0 build
-> tsup
+> @dilipod/ui@0.4.9 build
+> tsup && tsc --emitDeclarationOnly --declaration --declarationMap
 
 CLI Building entry: src/index.ts
 CLI Using tsconfig: tsconfig.json
@@ -10,13 +10,11 @@ CLI Target: es2020
 CLI Cleaning output folder
 CJS Build start
 ESM Build start
-ESM dist/index.mjs     17.85 KB
-ESM dist/index.mjs.map 34.74 KB
-ESM ⚡️ Build success in 411ms
-CJS dist/index.js     27.33 KB
-CJS dist/index.js.map 34.86 KB
-CJS ⚡️ Build success in 411ms
-DTS Build start
-DTS ⚡️ Build success in 2367ms
-DTS dist/index.d.ts  8.56 KB
-DTS dist/index.d.mts 8.56 KB
+CJS dist/index.js     233.12 KB
+CJS dist/index.js.map 449.82 KB
+CJS ⚡️ Build success in 2733ms
+ESM dist/index.mjs     215.06 KB
+ESM dist/index.mjs.map 448.23 KB
+ESM ⚡️ Build success in 2732ms
+Added "use client" directive to index.js
+Added "use client" directive to index.mjs
