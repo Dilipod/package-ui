@@ -48,21 +48,47 @@ export interface N8nWorkflow {
   tags?: Array<{ name: string }>
 }
 
+/**
+ * Sim Studio workflow state format
+ * Uses blocks (object keyed by ID) and edges (array)
+ */
 export interface SimWorkflow {
-  name: string
+  // Actual Sim Studio state format
+  blocks?: Record<string, {
+    id: string
+    type: string
+    name: string
+    position?: { x: number; y: number }
+    subBlocks?: Record<string, unknown>
+    outputs?: Record<string, unknown>
+    enabled?: boolean
+  }>
+  edges?: Array<{
+    id?: string
+    source?: string
+    target?: string
+    sourceHandle?: string
+    targetHandle?: string
+    // Legacy format support
+    from?: string
+    to?: string
+  }>
+  loops?: Record<string, unknown>
+  parallels?: Record<string, unknown>
+  variables?: Record<string, unknown>
+  lastSaved?: number
+  isDeployed?: boolean
+  // Legacy format (for backwards compatibility)
+  name?: string
   description?: string
   trigger?: {
     type: string
     config?: Record<string, unknown>
   }
-  nodes: Array<{
+  nodes?: Array<{
     id: string
     type: string
     config?: Record<string, unknown>
-  }>
-  edges?: Array<{
-    from: string
-    to: string
   }>
 }
 
@@ -350,10 +376,38 @@ function N8nWorkflowSummary({ workflow, showFlow = false }: { workflow: N8nWorkf
 // ============================================
 
 function SimWorkflowSummary({ workflow }: { workflow: SimWorkflow }) {
-  const nodes = workflow.nodes || []
-  
-  const aiNodes = nodes.filter(n => n.type === 'llm')
-  const httpNodes = nodes.filter(n => n.type === 'http_request')
+  // Handle actual Sim Studio format (blocks object) or legacy format (nodes array)
+  const blocks = workflow.blocks || {}
+  const blockList = Object.values(blocks)
+  const edges = workflow.edges || []
+
+  // Fall back to legacy nodes array if no blocks
+  const legacyNodes = workflow.nodes || []
+  const hasBlocks = blockList.length > 0
+  const displayNodes = hasBlocks ? blockList : legacyNodes
+
+  // Find trigger block (usually 'starter' type)
+  const triggerBlock = blockList.find(b => b.type === 'starter' || b.type === 'webhook' || b.type === 'api')
+  const triggerType = triggerBlock?.type || workflow.trigger?.type
+
+  // Count AI and HTTP blocks
+  const aiBlocks = blockList.filter(b => b.type === 'agent' || b.type === 'llm' || b.type === 'openai' || b.type === 'anthropic')
+  const httpBlocks = blockList.filter(b => b.type === 'api' || b.type === 'http_request')
+
+  // Check if workflow is empty
+  const isEmpty = displayNodes.length === 0
+
+  if (isEmpty) {
+    return (
+      <div className="py-8 text-center">
+        <TreeStructure size={32} className="mx-auto mb-3 text-muted-foreground/50" />
+        <p className="text-sm text-muted-foreground mb-1">No workflow blocks yet</p>
+        <p className="text-xs text-muted-foreground">
+          Open the workflow in Sim Studio to build it, then click &quot;Pull from Sim&quot; to sync changes.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -364,55 +418,77 @@ function SimWorkflowSummary({ workflow }: { workflow: SimWorkflow }) {
             <span className="text-xs font-medium">Trigger</span>
           </div>
           <p className="text-sm font-semibold">
-            {workflow.trigger?.type ? getSimNodeTypeLabel(workflow.trigger.type) : 'Manual'}
+            {triggerType ? getSimNodeTypeLabel(triggerType) : 'Manual'}
           </p>
         </div>
-        
+
         <div className="bg-muted/50 rounded-lg p-3">
           <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <TreeStructure size={16} />
-            <span className="text-xs font-medium">Steps</span>
+            <span className="text-xs font-medium">Blocks</span>
           </div>
-          <p className="text-sm font-semibold">{nodes.length} nodes</p>
+          <p className="text-sm font-semibold">{displayNodes.length} blocks</p>
         </div>
-        
-        {aiNodes.length > 0 && (
+
+        {edges.length > 0 && (
+          <div className="bg-muted/50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <GitBranch size={16} />
+              <span className="text-xs font-medium">Edges</span>
+            </div>
+            <p className="text-sm font-semibold">{edges.length} connections</p>
+          </div>
+        )}
+
+        {aiBlocks.length > 0 && (
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-purple-600 mb-1">
               <Robot size={16} weight="fill" />
               <span className="text-xs font-medium">AI</span>
             </div>
             <p className="text-sm font-semibold text-purple-700">
-              {aiNodes.length} LLM {aiNodes.length === 1 ? 'node' : 'nodes'}
+              {aiBlocks.length} {aiBlocks.length === 1 ? 'block' : 'blocks'}
             </p>
           </div>
         )}
-        
-        {httpNodes.length > 0 && (
+
+        {httpBlocks.length > 0 && (
           <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-2 text-blue-600 mb-1">
               <Globe size={16} weight="fill" />
               <span className="text-xs font-medium">APIs</span>
             </div>
             <p className="text-sm font-semibold text-blue-700">
-              {httpNodes.length} {httpNodes.length === 1 ? 'request' : 'requests'}
+              {httpBlocks.length} {httpBlocks.length === 1 ? 'request' : 'requests'}
             </p>
           </div>
         )}
       </div>
-      
+
       <div className="space-y-2">
-        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Workflow Nodes</h4>
+        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Workflow Blocks</h4>
         <div className="flex flex-wrap gap-2">
-          {nodes.map((node) => (
-            <div 
-              key={node.id} 
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300"
-            >
-              <Package size={14} />
-              <span className="font-medium">{getSimNodeTypeLabel(node.type)}</span>
-            </div>
-          ))}
+          {hasBlocks ? (
+            blockList.map((block) => (
+              <div
+                key={block.id}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300"
+              >
+                <Package size={14} />
+                <span className="font-medium">{block.name || getSimNodeTypeLabel(block.type)}</span>
+              </div>
+            ))
+          ) : (
+            legacyNodes.map((node) => (
+              <div
+                key={node.id}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300"
+              >
+                <Package size={14} />
+                <span className="font-medium">{getSimNodeTypeLabel(node.type)}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

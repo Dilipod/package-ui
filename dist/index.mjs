@@ -2118,7 +2118,7 @@ var Sidebar = React50.forwardRef(
       {
         ref,
         className: cn(
-          "relative flex h-full w-60 flex-col border-r bg-background/50",
+          "relative flex h-full w-60 flex-col border-r border-border bg-background",
           className
         ),
         ...props,
@@ -4830,9 +4830,24 @@ function N8nWorkflowSummary({ workflow, showFlow = false }) {
   ] });
 }
 function SimWorkflowSummary({ workflow }) {
-  const nodes = workflow.nodes || [];
-  const aiNodes = nodes.filter((n) => n.type === "llm");
-  const httpNodes = nodes.filter((n) => n.type === "http_request");
+  const blocks = workflow.blocks || {};
+  const blockList = Object.values(blocks);
+  const edges = workflow.edges || [];
+  const legacyNodes = workflow.nodes || [];
+  const hasBlocks = blockList.length > 0;
+  const displayNodes = hasBlocks ? blockList : legacyNodes;
+  const triggerBlock = blockList.find((b) => b.type === "starter" || b.type === "webhook" || b.type === "api");
+  const triggerType = triggerBlock?.type || workflow.trigger?.type;
+  const aiBlocks = blockList.filter((b) => b.type === "agent" || b.type === "llm" || b.type === "openai" || b.type === "anthropic");
+  const httpBlocks = blockList.filter((b) => b.type === "api" || b.type === "http_request");
+  const isEmpty = displayNodes.length === 0;
+  if (isEmpty) {
+    return /* @__PURE__ */ jsxs("div", { className: "py-8 text-center", children: [
+      /* @__PURE__ */ jsx(TreeStructure, { size: 32, className: "mx-auto mb-3 text-muted-foreground/50" }),
+      /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-1", children: "No workflow blocks yet" }),
+      /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: 'Open the workflow in Sim Studio to build it, then click "Pull from Sim" to sync changes.' })
+    ] });
+  }
   return /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
     /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [
       /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
@@ -4840,44 +4855,64 @@ function SimWorkflowSummary({ workflow }) {
           /* @__PURE__ */ jsx(WebhooksLogo, { size: 16, weight: "fill" }),
           /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Trigger" })
         ] }),
-        /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold", children: workflow.trigger?.type ? getSimNodeTypeLabel(workflow.trigger.type) : "Manual" })
+        /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold", children: triggerType ? getSimNodeTypeLabel(triggerType) : "Manual" })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
           /* @__PURE__ */ jsx(TreeStructure, { size: 16 }),
-          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Steps" })
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Blocks" })
         ] }),
         /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold", children: [
-          nodes.length,
-          " nodes"
+          displayNodes.length,
+          " blocks"
         ] })
       ] }),
-      aiNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-purple-50 rounded-lg p-3", children: [
+      edges.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
+          /* @__PURE__ */ jsx(GitBranch, { size: 16 }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Edges" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold", children: [
+          edges.length,
+          " connections"
+        ] })
+      ] }),
+      aiBlocks.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-purple-50 rounded-lg p-3", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-purple-600 mb-1", children: [
           /* @__PURE__ */ jsx(Robot, { size: 16, weight: "fill" }),
           /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "AI" })
         ] }),
         /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-purple-700", children: [
-          aiNodes.length,
-          " LLM ",
-          aiNodes.length === 1 ? "node" : "nodes"
+          aiBlocks.length,
+          " ",
+          aiBlocks.length === 1 ? "block" : "blocks"
         ] })
       ] }),
-      httpNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-blue-50 rounded-lg p-3", children: [
+      httpBlocks.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-blue-50 rounded-lg p-3", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-blue-600 mb-1", children: [
           /* @__PURE__ */ jsx(Globe, { size: 16, weight: "fill" }),
           /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "APIs" })
         ] }),
         /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-blue-700", children: [
-          httpNodes.length,
+          httpBlocks.length,
           " ",
-          httpNodes.length === 1 ? "request" : "requests"
+          httpBlocks.length === 1 ? "request" : "requests"
         ] })
       ] })
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-      /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Workflow Nodes" }),
-      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: nodes.map((node) => /* @__PURE__ */ jsxs(
+      /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Workflow Blocks" }),
+      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: hasBlocks ? blockList.map((block) => /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300",
+          children: [
+            /* @__PURE__ */ jsx(Package, { size: 14 }),
+            /* @__PURE__ */ jsx("span", { className: "font-medium", children: block.name || getSimNodeTypeLabel(block.type) })
+          ]
+        },
+        block.id
+      )) : legacyNodes.map((node) => /* @__PURE__ */ jsxs(
         "div",
         {
           className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300",
