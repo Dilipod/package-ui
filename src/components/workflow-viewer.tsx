@@ -7,25 +7,30 @@ import { Badge } from './badge'
 import { Textarea } from './textarea'
 import { Alert } from './alert'
 import { Select } from './select'
-import { 
-  WebhooksLogo, 
-  Timer, 
-  GitBranch, 
-  Globe, 
-  Robot, 
-  Code, 
-  CheckCircle, 
-  Package, 
-  CloudArrowUp, 
-  CloudArrowDown, 
-  Copy, 
-  PencilSimple, 
-  Eye, 
+import {
+  WebhooksLogo,
+  Timer,
+  GitBranch,
+  Globe,
+  Robot,
+  Code,
+  CheckCircle,
+  Package,
+  CloudArrowUp,
+  CloudArrowDown,
+  Copy,
+  PencilSimple,
+  Eye,
   TreeStructure,
   DownloadSimple,
   ArrowSquareOut,
   ClockCounterClockwise,
   ArrowsClockwise,
+  ArrowsLeftRight,
+  Plus,
+  Minus,
+  Pencil,
+  X,
 } from '@phosphor-icons/react'
 
 // Lazy load the flow visualization to avoid SSR issues
@@ -151,6 +156,8 @@ export interface WorkflowViewerProps {
     exportFromSim?: (workflowDefId: string) => Promise<{ success: boolean; error?: string; backup?: { id: string; version: number; exportedAt: string }; workflow?: { blocksCount: number; edgesCount: number } }>
     /** Get backup history for Sim workflow */
     getSimBackups?: (workflowDefId: string) => Promise<{ success: boolean; error?: string; backups?: Array<{ id: string; version: number; versionLabel?: string; workflowName: string; isDeployed: boolean; exportedAt: string }> }>
+    /** Get a specific backup's full state */
+    getBackupState?: (workflowDefId: string, backupId: string) => Promise<{ success: boolean; error?: string; backup?: { id: string; version: number; versionLabel?: string; workflowName: string; isDeployed: boolean; exportedAt: string; state: SimWorkflow | null } }>
     /** Push workflow to Sim Studio */
     pushToSim?: (workflowDefId: string) => Promise<{ success: boolean; error?: string; workflowId?: string }>
     /** Pull workflow from Sim Studio */
@@ -259,6 +266,82 @@ function defaultFormatDistance(date: Date, options?: { addSuffix?: boolean }): s
   else result = `${diffDays} day${diffDays > 1 ? 's' : ''}`
   
   return options?.addSuffix ? `${result} ago` : result
+}
+
+// ============================================
+// Diff Utilities
+// ============================================
+
+interface DiffResult {
+  blocksAdded: string[]
+  blocksRemoved: string[]
+  blocksModified: string[]
+  edgesAdded: number
+  edgesRemoved: number
+  summary: string
+}
+
+function computeWorkflowDiff(stateA: SimWorkflow | null, stateB: SimWorkflow | null): DiffResult {
+  if (!stateA || !stateB) {
+    return {
+      blocksAdded: [],
+      blocksRemoved: [],
+      blocksModified: [],
+      edgesAdded: 0,
+      edgesRemoved: 0,
+      summary: 'Unable to compare - missing workflow data',
+    }
+  }
+
+  const blocksA = stateA.blocks || {}
+  const blocksB = stateB.blocks || {}
+  const edgesA = stateA.edges || []
+  const edgesB = stateB.edges || []
+
+  const blockIdsA = new Set(Object.keys(blocksA))
+  const blockIdsB = new Set(Object.keys(blocksB))
+
+  const blocksAdded = [...blockIdsB].filter(id => !blockIdsA.has(id))
+  const blocksRemoved = [...blockIdsA].filter(id => !blockIdsB.has(id))
+
+  // Check for modified blocks (blocks that exist in both but have different content)
+  const blocksModified: string[] = []
+  for (const id of blockIdsA) {
+    if (blockIdsB.has(id)) {
+      const blockA = blocksA[id]
+      const blockB = blocksB[id]
+      // Deep compare by stringifying
+      if (JSON.stringify(blockA) !== JSON.stringify(blockB)) {
+        blocksModified.push(id)
+      }
+    }
+  }
+
+  // Compare edges by creating a signature for each
+  const edgeSignature = (e: { source?: string; target?: string; from?: string; to?: string }) =>
+    `${e.source || e.from}->${e.target || e.to}`
+  const edgeSigsA = new Set(edgesA.map(edgeSignature))
+  const edgeSigsB = new Set(edgesB.map(edgeSignature))
+
+  const edgesAdded = [...edgeSigsB].filter(sig => !edgeSigsA.has(sig)).length
+  const edgesRemoved = [...edgeSigsA].filter(sig => !edgeSigsB.has(sig)).length
+
+  // Generate summary
+  const changes: string[] = []
+  if (blocksAdded.length > 0) changes.push(`+${blocksAdded.length} block${blocksAdded.length > 1 ? 's' : ''}`)
+  if (blocksRemoved.length > 0) changes.push(`-${blocksRemoved.length} block${blocksRemoved.length > 1 ? 's' : ''}`)
+  if (blocksModified.length > 0) changes.push(`~${blocksModified.length} modified`)
+  if (edgesAdded > 0) changes.push(`+${edgesAdded} edge${edgesAdded > 1 ? 's' : ''}`)
+  if (edgesRemoved > 0) changes.push(`-${edgesRemoved} edge${edgesRemoved > 1 ? 's' : ''}`)
+
+  return {
+    blocksAdded,
+    blocksRemoved,
+    blocksModified,
+    edgesAdded,
+    edgesRemoved,
+    summary: changes.length > 0 ? changes.join(', ') : 'No changes detected',
+  }
 }
 
 // ============================================
@@ -542,7 +625,14 @@ export function WorkflowViewer({
   const [pushingToSim, setPushingToSim] = useState(false)
   const [pullingFromSim, setPullingFromSim] = useState(false)
   const [switchingPlatform, setSwitchingPlatform] = useState(false)
-  
+  // Diff comparison state
+  const [diffMode, setDiffMode] = useState(false)
+  const [selectedBackupA, setSelectedBackupA] = useState<string | null>(null)
+  const [selectedBackupB, setSelectedBackupB] = useState<string | null>(null)
+  const [backupStateA, setBackupStateA] = useState<SimWorkflow | null>(null)
+  const [backupStateB, setBackupStateB] = useState<SimWorkflow | null>(null)
+  const [loadingDiff, setLoadingDiff] = useState(false)
+
   const [localPlatform, setLocalPlatform] = useState<'n8n' | 'sim'>(platform)
   const [localIsActive, setLocalIsActive] = useState(isActive ?? true)
   
@@ -629,8 +719,9 @@ export function WorkflowViewer({
           throw new Error('n8n workflow must have a nodes array')
         }
       } else {
-        if (!parsed.nodes || !Array.isArray(parsed.nodes)) {
-          throw new Error('Sim workflow must have a nodes array')
+        // Sim Studio uses blocks object (not nodes array)
+        if (!parsed.blocks || typeof parsed.blocks !== 'object') {
+          throw new Error('Sim workflow must have a blocks object')
         }
       }
       return parsed
@@ -781,6 +872,46 @@ export function WorkflowViewer({
   function showBackups() {
     setViewMode('backups')
     loadBackups()
+  }
+
+  async function loadBackupForDiff(backupId: string, slot: 'A' | 'B') {
+    if (!workflowDefinitionId || !apiHandlers?.getBackupState) {
+      return
+    }
+
+    setLoadingDiff(true)
+    try {
+      const result = await apiHandlers.getBackupState(workflowDefinitionId, backupId)
+      if (result.success && result.backup) {
+        if (slot === 'A') {
+          setBackupStateA(result.backup.state)
+          setSelectedBackupA(backupId)
+        } else {
+          setBackupStateB(result.backup.state)
+          setSelectedBackupB(backupId)
+        }
+      }
+    } catch {
+      console.error('Failed to load backup for diff')
+    } finally {
+      setLoadingDiff(false)
+    }
+  }
+
+  function startDiffMode() {
+    setDiffMode(true)
+    setSelectedBackupA(null)
+    setSelectedBackupB(null)
+    setBackupStateA(null)
+    setBackupStateB(null)
+  }
+
+  function exitDiffMode() {
+    setDiffMode(false)
+    setSelectedBackupA(null)
+    setSelectedBackupB(null)
+    setBackupStateA(null)
+    setBackupStateB(null)
   }
 
   function openInSimStudio() {
@@ -1115,19 +1246,17 @@ export function WorkflowViewer({
                     <Eye size={14} />
                     Summary
                   </button>
-                  {platform === 'n8n' && (
-                    <button
-                      onClick={() => setViewMode('flow')}
-                      className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-l border-border ${
-                        viewMode === 'flow' 
-                          ? 'bg-primary text-white' 
-                          : 'bg-background hover:bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      <TreeStructure size={14} />
-                      Diagram
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setViewMode('flow')}
+                    className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-l border-border ${
+                      viewMode === 'flow'
+                        ? 'bg-primary text-white'
+                        : 'bg-background hover:bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    <TreeStructure size={14} />
+                    Diagram
+                  </button>
                   <button
                     onClick={() => setViewMode('json')}
                     className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-l border-border ${
@@ -1274,13 +1403,14 @@ export function WorkflowViewer({
                 {pushingToSim ? 'Pushing...' : 'Push to Sim'}
               </Button>
             )}
-            {simWorkflowId && apiHandlers?.pullFromSim && (
-              <Button 
-                onClick={pullFromSim} 
-                disabled={pullingFromSim} 
-                variant="outline" 
-                size="sm" 
+            {apiHandlers?.pullFromSim && (
+              <Button
+                onClick={pullFromSim}
+                disabled={pullingFromSim || !simWorkflowId}
+                variant="outline"
+                size="sm"
                 icon={<CloudArrowDown size={16} />}
+                title={!simWorkflowId ? 'No Sim workflow linked yet. Push to Sim first.' : undefined}
               >
                 {pullingFromSim ? 'Pulling...' : 'Pull from Sim'}
               </Button>
@@ -1357,57 +1487,231 @@ export function WorkflowViewer({
               </pre>
             </div>
           ) : viewMode === 'flow' ? (
-            platform === 'n8n' && (
-              <Suspense fallback={loadingComponent || DefaultLoading}>
-                <WorkflowFlow workflow={workflow as any} height={380} />
-              </Suspense>
-            )
+            <Suspense fallback={loadingComponent || DefaultLoading}>
+              <WorkflowFlow workflow={workflow as any} height={380} platform={platform} />
+            </Suspense>
           ) : viewMode === 'backups' ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium">Backup History</h4>
-                <Button 
-                  onClick={() => setViewMode('summary')} 
-                  variant="outline" 
-                  size="sm"
-                >
-                  Back to Summary
-                </Button>
-              </div>
-              {loadingBackups ? (
-                <div className="py-8 text-center text-muted-foreground">Loading backups...</div>
-              ) : backups.length === 0 ? (
-                <div className="py-8 text-center text-muted-foreground">
-                  <ClockCounterClockwise size={32} className="mx-auto mb-2 opacity-50" />
-                  <p>No backups yet</p>
-                  <p className="text-xs mt-1">Click &quot;Export from Sim&quot; to create a backup</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {backups.map((backup) => (
-                    <div 
-                      key={backup.id}
-                      className="flex items-center justify-between p-3 bg-muted/50 rounded border border-border"
+                <h4 className="text-sm font-medium">
+                  {diffMode ? 'Compare Versions' : 'Backup History'}
+                </h4>
+                <div className="flex items-center gap-2">
+                  {!diffMode && backups.length >= 2 && apiHandlers?.getBackupState && (
+                    <Button
+                      onClick={startDiffMode}
+                      variant="outline"
+                      size="sm"
+                      icon={<ArrowsLeftRight size={14} />}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded bg-primary/10 text-primary text-sm font-semibold">
-                          v{backup.version}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            {backup.versionLabel || backup.workflowName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDistance(new Date(backup.exportedAt), { addSuffix: true })}
-                            {backup.isDeployed && (
-                              <Badge variant="success" size="sm" className="ml-2">Deployed</Badge>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                      Compare
+                    </Button>
+                  )}
+                  {diffMode && (
+                    <Button
+                      onClick={exitDiffMode}
+                      variant="outline"
+                      size="sm"
+                      icon={<X size={14} />}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => { exitDiffMode(); setViewMode('summary'); }}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Back to Summary
+                  </Button>
                 </div>
+              </div>
+
+              {/* Diff mode: version selection and results */}
+              {diffMode && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/50 rounded border border-border">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">From (older)</p>
+                      <Select
+                        value={selectedBackupA || ''}
+                        onChange={(e) => loadBackupForDiff(e.target.value, 'A')}
+                        disabled={loadingDiff}
+                        className="w-full"
+                      >
+                        <option value="">Select version...</option>
+                        {backups.map((b) => (
+                          <option key={b.id} value={b.id} disabled={b.id === selectedBackupB}>
+                            v{b.version} - {b.versionLabel || b.workflowName}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="p-3 bg-muted/50 rounded border border-border">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">To (newer)</p>
+                      <Select
+                        value={selectedBackupB || ''}
+                        onChange={(e) => loadBackupForDiff(e.target.value, 'B')}
+                        disabled={loadingDiff}
+                        className="w-full"
+                      >
+                        <option value="">Select version...</option>
+                        {backups.map((b) => (
+                          <option key={b.id} value={b.id} disabled={b.id === selectedBackupA}>
+                            v{b.version} - {b.versionLabel || b.workflowName}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Diff results */}
+                  {loadingDiff ? (
+                    <div className="py-4 text-center text-muted-foreground">Loading versions...</div>
+                  ) : backupStateA && backupStateB ? (
+                    (() => {
+                      const diff = computeWorkflowDiff(backupStateA, backupStateB)
+                      return (
+                        <div className="space-y-3">
+                          <div className="p-3 bg-muted/30 rounded border border-border">
+                            <p className="text-sm font-medium mb-2">Changes Summary</p>
+                            <p className="text-sm text-muted-foreground">{diff.summary}</p>
+                          </div>
+
+                          {diff.blocksAdded.length > 0 && (
+                            <div className="p-3 bg-green-500/10 rounded border border-green-500/30">
+                              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+                                <Plus size={14} />
+                                <span className="text-xs font-medium">Blocks Added ({diff.blocksAdded.length})</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {diff.blocksAdded.map((id) => {
+                                  const block = backupStateB?.blocks?.[id]
+                                  return (
+                                    <Badge key={id} variant="success" size="sm">
+                                      {block?.name || id}
+                                    </Badge>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {diff.blocksRemoved.length > 0 && (
+                            <div className="p-3 bg-red-500/10 rounded border border-red-500/30">
+                              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 mb-2">
+                                <Minus size={14} />
+                                <span className="text-xs font-medium">Blocks Removed ({diff.blocksRemoved.length})</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {diff.blocksRemoved.map((id) => {
+                                  const block = backupStateA?.blocks?.[id]
+                                  return (
+                                    <Badge key={id} variant="error" size="sm">
+                                      {block?.name || id}
+                                    </Badge>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {diff.blocksModified.length > 0 && (
+                            <div className="p-3 bg-amber-500/10 rounded border border-amber-500/30">
+                              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
+                                <Pencil size={14} />
+                                <span className="text-xs font-medium">Blocks Modified ({diff.blocksModified.length})</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {diff.blocksModified.map((id) => {
+                                  const block = backupStateB?.blocks?.[id]
+                                  return (
+                                    <Badge key={id} variant="warning" size="sm">
+                                      {block?.name || id}
+                                    </Badge>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {(diff.edgesAdded > 0 || diff.edgesRemoved > 0) && (
+                            <div className="p-3 bg-muted/30 rounded border border-border">
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Connection Changes</p>
+                              <div className="flex gap-3 text-sm">
+                                {diff.edgesAdded > 0 && (
+                                  <span className="text-green-600 dark:text-green-400">+{diff.edgesAdded} added</span>
+                                )}
+                                {diff.edgesRemoved > 0 && (
+                                  <span className="text-red-600 dark:text-red-400">-{diff.edgesRemoved} removed</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })()
+                  ) : selectedBackupA || selectedBackupB ? (
+                    <div className="py-4 text-center text-muted-foreground text-sm">
+                      Select both versions to compare
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              {/* Regular backup list (when not in diff mode) */}
+              {!diffMode && (
+                <>
+                  {loadingBackups ? (
+                    <div className="py-8 text-center text-muted-foreground">Loading backups...</div>
+                  ) : backups.length === 0 ? (
+                    <div className="py-8 text-center text-muted-foreground">
+                      <ClockCounterClockwise size={32} className="mx-auto mb-2 opacity-50" />
+                      <p>No backups yet</p>
+                      <p className="text-xs mt-1">Click &quot;Export from Sim&quot; to create a backup</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {backups.map((backup, index) => (
+                        <div
+                          key={backup.id}
+                          className="flex items-center justify-between p-3 bg-muted/50 rounded border border-border"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-center w-8 h-8 rounded bg-primary/10 text-primary text-sm font-semibold">
+                              v{backup.version}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">
+                                {backup.versionLabel || backup.workflowName}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatDistance(new Date(backup.exportedAt), { addSuffix: true })}
+                                {backup.isDeployed && (
+                                  <Badge variant="success" size="sm" className="ml-2">Deployed</Badge>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          {index < backups.length - 1 && apiHandlers?.getBackupState && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                startDiffMode()
+                                loadBackupForDiff(backups[index + 1].id, 'A')
+                                loadBackupForDiff(backup.id, 'B')
+                              }}
+                              icon={<ArrowsLeftRight size={14} />}
+                            >
+                              Diff
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ) : (

@@ -31,13 +31,38 @@ export interface N8nWorkflow {
   connections: Record<string, Record<string, Array<Array<{ node: string; type: string; index: number }>>>>
 }
 
+export interface SimBlock {
+  id: string
+  type: string
+  name: string
+  position?: { x: number; y: number }
+  subBlocks?: Record<string, unknown>
+  outputs?: Record<string, unknown>
+  enabled?: boolean
+}
+
+export interface SimWorkflow {
+  blocks?: Record<string, SimBlock>
+  edges?: Array<{
+    id?: string
+    source?: string
+    target?: string
+    sourceHandle?: string
+    targetHandle?: string
+  }>
+  loops?: Record<string, unknown>
+  parallels?: Record<string, unknown>
+}
+
 export interface WorkflowFlowProps {
-  /** The n8n workflow to visualize */
-  workflow: N8nWorkflow
+  /** The workflow to visualize (n8n or Sim format) */
+  workflow: N8nWorkflow | SimWorkflow
   /** Height of the flow diagram container */
   height?: number
   /** Additional CSS class name */
   className?: string
+  /** Platform type */
+  platform?: 'n8n' | 'sim'
 }
 
 // ============================================
@@ -46,6 +71,7 @@ export interface WorkflowFlowProps {
 
 function getNodeTypeLabel(type: string): string {
   const labels: Record<string, string> = {
+    // n8n types
     'n8n-nodes-base.webhook': 'Webhook',
     'n8n-nodes-base.scheduleTrigger': 'Schedule',
     'n8n-nodes-base.if': 'Condition',
@@ -56,6 +82,21 @@ function getNodeTypeLabel(type: string): string {
     '@n8n/n8n-nodes-langchain.agent': 'AI Agent',
     '@n8n/n8n-nodes-langchain.lmChatOpenAi': 'OpenAI',
     '@n8n/n8n-nodes-langchain.lmChatAnthropic': 'Anthropic',
+    // Sim Studio types
+    'starter': 'Webhook',
+    'webhook': 'Webhook',
+    'agent': 'AI Agent',
+    'llm': 'LLM',
+    'openai': 'OpenAI',
+    'anthropic': 'Anthropic',
+    'api': 'API Request',
+    'http_request': 'HTTP Request',
+    'condition': 'Condition',
+    'code': 'Code',
+    'response': 'Response',
+    'function': 'Function',
+    'evaluator': 'Evaluator',
+    'router': 'Router',
   }
   return labels[type] || type.split('.').pop()?.replace(/([A-Z])/g, ' $1').trim() || type
 }
@@ -85,10 +126,127 @@ const nodeTypes = { custom: CustomNode }
 // Main Component
 // ============================================
 
-export function WorkflowFlow({ workflow, height = 350, className = '' }: WorkflowFlowProps) {
+export function WorkflowFlow({ workflow, height = 350, className = '', platform = 'n8n' }: WorkflowFlowProps) {
   const { initialNodes, initialEdges } = useMemo(() => {
-    const n8nNodes = workflow.nodes || []
-    const connections = workflow.connections || {}
+    // Handle Sim Studio format (blocks object + edges array)
+    if (platform === 'sim') {
+      const simWorkflow = workflow as SimWorkflow
+      const blocks = simWorkflow.blocks || {}
+      const simEdges = simWorkflow.edges || []
+      const blockList = Object.values(blocks)
+
+      if (blockList.length === 0) {
+        return { initialNodes: [], initialEdges: [] }
+      }
+
+      // Build adjacency for layout
+      const forwardEdges = new Map<string, string[]>()
+      const backwardEdges = new Map<string, string[]>()
+
+      simEdges.forEach(edge => {
+        const from = edge.source
+        const to = edge.target
+        if (from && to) {
+          if (!forwardEdges.has(from)) forwardEdges.set(from, [])
+          forwardEdges.get(from)!.push(to)
+          if (!backwardEdges.has(to)) backwardEdges.set(to, [])
+          backwardEdges.get(to)!.push(from)
+        }
+      })
+
+      // Find trigger blocks
+      const triggerBlocks = blockList.filter(b =>
+        b.type === 'starter' || b.type === 'webhook' || b.type === 'api'
+      )
+
+      const roots = triggerBlocks.length > 0
+        ? triggerBlocks
+        : blockList.filter(b => !backwardEdges.has(b.id) || backwardEdges.get(b.id)!.length === 0)
+
+      // BFS to assign levels
+      const levels = new Map<string, number>()
+      const queue: string[] = []
+
+      roots.forEach(r => {
+        levels.set(r.id, 0)
+        queue.push(r.id)
+      })
+
+      const visited = new Set<string>()
+      while (queue.length > 0) {
+        const id = queue.shift()!
+        if (visited.has(id)) continue
+        visited.add(id)
+
+        const children = forwardEdges.get(id) || []
+        const myLevel = levels.get(id) || 0
+
+        children.forEach(child => {
+          const childLevel = levels.get(child)
+          if (childLevel === undefined || myLevel + 1 > childLevel) {
+            levels.set(child, myLevel + 1)
+          }
+          if (!visited.has(child)) {
+            queue.push(child)
+          }
+        })
+      }
+
+      // Handle disconnected blocks
+      blockList.forEach(block => {
+        if (!levels.has(block.id)) {
+          const maxLevel = Math.max(0, ...Array.from(levels.values()))
+          levels.set(block.id, maxLevel + 1)
+        }
+      })
+
+      // Group by level and position
+      const nodesByLevel = new Map<number, string[]>()
+      levels.forEach((level, id) => {
+        if (!nodesByLevel.has(level)) nodesByLevel.set(level, [])
+        nodesByLevel.get(level)!.push(id)
+      })
+
+      const xGap = 170
+      const yGap = 70
+      const positions = new Map<string, { x: number; y: number }>()
+
+      const sortedLevels = Array.from(nodesByLevel.keys()).sort((a, b) => a - b)
+      sortedLevels.forEach(level => {
+        const nodesInLevel = nodesByLevel.get(level)!
+        const totalHeight = (nodesInLevel.length - 1) * yGap
+        const startY = -totalHeight / 2
+        nodesInLevel.forEach((id, i) => {
+          positions.set(id, { x: level * xGap, y: startY + i * yGap })
+        })
+      })
+
+      // Create ReactFlow nodes
+      const nodes: Node[] = blockList.map(block => ({
+        id: block.id,
+        type: 'custom',
+        position: positions.get(block.id) || { x: 0, y: 0 },
+        data: { label: block.name || block.type, type: block.type },
+      }))
+
+      // Create edges
+      const edges: Edge[] = simEdges.map((edge, idx) => ({
+        id: edge.id || `edge-${idx}`,
+        source: edge.source || '',
+        target: edge.target || '',
+        type: 'smoothstep',
+        pathOptions: { borderRadius: 20 },
+        style: { stroke: '#94a3b8', strokeWidth: 1.5 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#94a3b8', width: 14, height: 14 },
+      })).filter(e => e.source && e.target)
+
+      return { initialNodes: nodes, initialEdges: edges }
+    }
+
+    // Handle n8n format (nodes array + connections object)
+    const n8nWorkflow = workflow as N8nWorkflow
+    const n8nNodes = n8nWorkflow.nodes || []
+    const connections = n8nWorkflow.connections || {}
     const nodeIdMap = new Map(n8nNodes.map(n => [n.name, n.id || n.name]))
     
     // Build adjacency lists (forward and backward)

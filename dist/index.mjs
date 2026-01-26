@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, CheckCircle, PaperPlaneTilt, CaretUp, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
+import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, CheckCircle, PaperPlaneTilt, CaretUp, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
@@ -53,6 +53,7 @@ __export(workflow_flow_exports, {
 });
 function getNodeTypeLabel(type) {
   const labels = {
+    // n8n types
     "n8n-nodes-base.webhook": "Webhook",
     "n8n-nodes-base.scheduleTrigger": "Schedule",
     "n8n-nodes-base.if": "Condition",
@@ -62,7 +63,22 @@ function getNodeTypeLabel(type) {
     "n8n-nodes-base.respondToWebhook": "Response",
     "@n8n/n8n-nodes-langchain.agent": "AI Agent",
     "@n8n/n8n-nodes-langchain.lmChatOpenAi": "OpenAI",
-    "@n8n/n8n-nodes-langchain.lmChatAnthropic": "Anthropic"
+    "@n8n/n8n-nodes-langchain.lmChatAnthropic": "Anthropic",
+    // Sim Studio types
+    "starter": "Webhook",
+    "webhook": "Webhook",
+    "agent": "AI Agent",
+    "llm": "LLM",
+    "openai": "OpenAI",
+    "anthropic": "Anthropic",
+    "api": "API Request",
+    "http_request": "HTTP Request",
+    "condition": "Condition",
+    "code": "Code",
+    "response": "Response",
+    "function": "Function",
+    "evaluator": "Evaluator",
+    "router": "Router"
   };
   return labels[type] || type.split(".").pop()?.replace(/([A-Z])/g, " $1").trim() || type;
 }
@@ -74,10 +90,98 @@ function CustomNode({ data }) {
     /* @__PURE__ */ jsx(Handle, { type: "source", position: Position.Right, className: "!bg-slate-300 !w-1.5 !h-1.5 !border-0" })
   ] });
 }
-function WorkflowFlow({ workflow, height = 350, className = "" }) {
+function WorkflowFlow({ workflow, height = 350, className = "", platform = "n8n" }) {
   const { initialNodes, initialEdges } = useMemo(() => {
-    const n8nNodes = workflow.nodes || [];
-    const connections = workflow.connections || {};
+    if (platform === "sim") {
+      const simWorkflow = workflow;
+      const blocks = simWorkflow.blocks || {};
+      const simEdges = simWorkflow.edges || [];
+      const blockList = Object.values(blocks);
+      if (blockList.length === 0) {
+        return { initialNodes: [], initialEdges: [] };
+      }
+      const forwardEdges2 = /* @__PURE__ */ new Map();
+      const backwardEdges2 = /* @__PURE__ */ new Map();
+      simEdges.forEach((edge) => {
+        const from = edge.source;
+        const to = edge.target;
+        if (from && to) {
+          if (!forwardEdges2.has(from)) forwardEdges2.set(from, []);
+          forwardEdges2.get(from).push(to);
+          if (!backwardEdges2.has(to)) backwardEdges2.set(to, []);
+          backwardEdges2.get(to).push(from);
+        }
+      });
+      const triggerBlocks = blockList.filter(
+        (b) => b.type === "starter" || b.type === "webhook" || b.type === "api"
+      );
+      const roots2 = triggerBlocks.length > 0 ? triggerBlocks : blockList.filter((b) => !backwardEdges2.has(b.id) || backwardEdges2.get(b.id).length === 0);
+      const levels2 = /* @__PURE__ */ new Map();
+      const queue2 = [];
+      roots2.forEach((r) => {
+        levels2.set(r.id, 0);
+        queue2.push(r.id);
+      });
+      const visited2 = /* @__PURE__ */ new Set();
+      while (queue2.length > 0) {
+        const id = queue2.shift();
+        if (visited2.has(id)) continue;
+        visited2.add(id);
+        const children = forwardEdges2.get(id) || [];
+        const myLevel = levels2.get(id) || 0;
+        children.forEach((child) => {
+          const childLevel = levels2.get(child);
+          if (childLevel === void 0 || myLevel + 1 > childLevel) {
+            levels2.set(child, myLevel + 1);
+          }
+          if (!visited2.has(child)) {
+            queue2.push(child);
+          }
+        });
+      }
+      blockList.forEach((block) => {
+        if (!levels2.has(block.id)) {
+          const maxLevel = Math.max(0, ...Array.from(levels2.values()));
+          levels2.set(block.id, maxLevel + 1);
+        }
+      });
+      const nodesByLevel2 = /* @__PURE__ */ new Map();
+      levels2.forEach((level, id) => {
+        if (!nodesByLevel2.has(level)) nodesByLevel2.set(level, []);
+        nodesByLevel2.get(level).push(id);
+      });
+      const xGap2 = 170;
+      const yGap2 = 70;
+      const positions2 = /* @__PURE__ */ new Map();
+      const sortedLevels2 = Array.from(nodesByLevel2.keys()).sort((a, b) => a - b);
+      sortedLevels2.forEach((level) => {
+        const nodesInLevel = nodesByLevel2.get(level);
+        const totalHeight = (nodesInLevel.length - 1) * yGap2;
+        const startY = -totalHeight / 2;
+        nodesInLevel.forEach((id, i) => {
+          positions2.set(id, { x: level * xGap2, y: startY + i * yGap2 });
+        });
+      });
+      const nodes3 = blockList.map((block) => ({
+        id: block.id,
+        type: "custom",
+        position: positions2.get(block.id) || { x: 0, y: 0 },
+        data: { label: block.name || block.type, type: block.type }
+      }));
+      const edges3 = simEdges.map((edge, idx) => ({
+        id: edge.id || `edge-${idx}`,
+        source: edge.source || "",
+        target: edge.target || "",
+        type: "smoothstep",
+        pathOptions: { borderRadius: 20 },
+        style: { stroke: "#94a3b8", strokeWidth: 1.5 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#94a3b8", width: 14, height: 14 }
+      })).filter((e) => e.source && e.target);
+      return { initialNodes: nodes3, initialEdges: edges3 };
+    }
+    const n8nWorkflow = workflow;
+    const n8nNodes = n8nWorkflow.nodes || [];
+    const connections = n8nWorkflow.connections || {};
     const nodeIdMap = new Map(n8nNodes.map((n) => [n.name, n.id || n.name]));
     const forwardEdges = /* @__PURE__ */ new Map();
     const backwardEdges = /* @__PURE__ */ new Map();
@@ -4748,6 +4852,55 @@ function defaultFormatDistance(date, options) {
   else result = `${diffDays} day${diffDays > 1 ? "s" : ""}`;
   return options?.addSuffix ? `${result} ago` : result;
 }
+function computeWorkflowDiff(stateA, stateB) {
+  if (!stateA || !stateB) {
+    return {
+      blocksAdded: [],
+      blocksRemoved: [],
+      blocksModified: [],
+      edgesAdded: 0,
+      edgesRemoved: 0,
+      summary: "Unable to compare - missing workflow data"
+    };
+  }
+  const blocksA = stateA.blocks || {};
+  const blocksB = stateB.blocks || {};
+  const edgesA = stateA.edges || [];
+  const edgesB = stateB.edges || [];
+  const blockIdsA = new Set(Object.keys(blocksA));
+  const blockIdsB = new Set(Object.keys(blocksB));
+  const blocksAdded = [...blockIdsB].filter((id) => !blockIdsA.has(id));
+  const blocksRemoved = [...blockIdsA].filter((id) => !blockIdsB.has(id));
+  const blocksModified = [];
+  for (const id of blockIdsA) {
+    if (blockIdsB.has(id)) {
+      const blockA = blocksA[id];
+      const blockB = blocksB[id];
+      if (JSON.stringify(blockA) !== JSON.stringify(blockB)) {
+        blocksModified.push(id);
+      }
+    }
+  }
+  const edgeSignature = (e) => `${e.source || e.from}->${e.target || e.to}`;
+  const edgeSigsA = new Set(edgesA.map(edgeSignature));
+  const edgeSigsB = new Set(edgesB.map(edgeSignature));
+  const edgesAdded = [...edgeSigsB].filter((sig) => !edgeSigsA.has(sig)).length;
+  const edgesRemoved = [...edgeSigsA].filter((sig) => !edgeSigsB.has(sig)).length;
+  const changes = [];
+  if (blocksAdded.length > 0) changes.push(`+${blocksAdded.length} block${blocksAdded.length > 1 ? "s" : ""}`);
+  if (blocksRemoved.length > 0) changes.push(`-${blocksRemoved.length} block${blocksRemoved.length > 1 ? "s" : ""}`);
+  if (blocksModified.length > 0) changes.push(`~${blocksModified.length} modified`);
+  if (edgesAdded > 0) changes.push(`+${edgesAdded} edge${edgesAdded > 1 ? "s" : ""}`);
+  if (edgesRemoved > 0) changes.push(`-${edgesRemoved} edge${edgesRemoved > 1 ? "s" : ""}`);
+  return {
+    blocksAdded,
+    blocksRemoved,
+    blocksModified,
+    edgesAdded,
+    edgesRemoved,
+    summary: changes.length > 0 ? changes.join(", ") : "No changes detected"
+  };
+}
 function N8nWorkflowSummary({ workflow, showFlow = false }) {
   const nodes = workflow.nodes || [];
   const triggerNode = nodes.find(
@@ -4969,6 +5122,12 @@ function WorkflowViewer({
   const [pushingToSim, setPushingToSim] = useState(false);
   const [pullingFromSim, setPullingFromSim] = useState(false);
   const [switchingPlatform, setSwitchingPlatform] = useState(false);
+  const [diffMode, setDiffMode] = useState(false);
+  const [selectedBackupA, setSelectedBackupA] = useState(null);
+  const [selectedBackupB, setSelectedBackupB] = useState(null);
+  const [backupStateA, setBackupStateA] = useState(null);
+  const [backupStateB, setBackupStateB] = useState(null);
+  const [loadingDiff, setLoadingDiff] = useState(false);
   const [localPlatform, setLocalPlatform] = useState(platform);
   const [localIsActive, setLocalIsActive] = useState(isActive ?? true);
   const hasUnsavedChanges = localPlatform !== platform || localIsActive !== (isActive ?? true);
@@ -5040,8 +5199,8 @@ function WorkflowViewer({
           throw new Error("n8n workflow must have a nodes array");
         }
       } else {
-        if (!parsed.nodes || !Array.isArray(parsed.nodes)) {
-          throw new Error("Sim workflow must have a nodes array");
+        if (!parsed.blocks || typeof parsed.blocks !== "object") {
+          throw new Error("Sim workflow must have a blocks object");
         }
       }
       return parsed;
@@ -5170,6 +5329,42 @@ function WorkflowViewer({
   function showBackups() {
     setViewMode("backups");
     loadBackups();
+  }
+  async function loadBackupForDiff(backupId, slot) {
+    if (!workflowDefinitionId || !apiHandlers?.getBackupState) {
+      return;
+    }
+    setLoadingDiff(true);
+    try {
+      const result = await apiHandlers.getBackupState(workflowDefinitionId, backupId);
+      if (result.success && result.backup) {
+        if (slot === "A") {
+          setBackupStateA(result.backup.state);
+          setSelectedBackupA(backupId);
+        } else {
+          setBackupStateB(result.backup.state);
+          setSelectedBackupB(backupId);
+        }
+      }
+    } catch {
+      console.error("Failed to load backup for diff");
+    } finally {
+      setLoadingDiff(false);
+    }
+  }
+  function startDiffMode() {
+    setDiffMode(true);
+    setSelectedBackupA(null);
+    setSelectedBackupB(null);
+    setBackupStateA(null);
+    setBackupStateB(null);
+  }
+  function exitDiffMode() {
+    setDiffMode(false);
+    setSelectedBackupA(null);
+    setSelectedBackupB(null);
+    setBackupStateA(null);
+    setBackupStateB(null);
   }
   function openInSimStudio() {
     if (simStudioUrl && simWorkflowId) {
@@ -5427,7 +5622,7 @@ function WorkflowViewer({
               ]
             }
           ),
-          platform === "n8n" && /* @__PURE__ */ jsxs(
+          /* @__PURE__ */ jsxs(
             "button",
             {
               onClick: () => setViewMode("flow"),
@@ -5551,14 +5746,15 @@ function WorkflowViewer({
             children: pushingToSim ? "Pushing..." : "Push to Sim"
           }
         ),
-        simWorkflowId && apiHandlers?.pullFromSim && /* @__PURE__ */ jsx(
+        apiHandlers?.pullFromSim && /* @__PURE__ */ jsx(
           Button,
           {
             onClick: pullFromSim,
-            disabled: pullingFromSim,
+            disabled: pullingFromSim || !simWorkflowId,
             variant: "outline",
             size: "sm",
             icon: /* @__PURE__ */ jsx(CloudArrowDown, { size: 16 }),
+            title: !simWorkflowId ? "No Sim workflow linked yet. Push to Sim first." : void 0,
             children: pullingFromSim ? "Pulling..." : "Pull from Sim"
           }
         ),
@@ -5624,43 +5820,196 @@ function WorkflowViewer({
           )
         ] }),
         /* @__PURE__ */ jsx("pre", { className: "p-4 bg-[var(--black)] text-gray-100 text-xs overflow-auto max-h-[500px] font-mono", children: JSON.stringify(workflow, null, 2) })
-      ] }) : viewMode === "flow" ? platform === "n8n" && /* @__PURE__ */ jsx(Suspense, { fallback: loadingComponent || DefaultLoading, children: /* @__PURE__ */ jsx(WorkflowFlow2, { workflow, height: 380 }) }) : viewMode === "backups" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+      ] }) : viewMode === "flow" ? /* @__PURE__ */ jsx(Suspense, { fallback: loadingComponent || DefaultLoading, children: /* @__PURE__ */ jsx(WorkflowFlow2, { workflow, height: 380, platform }) }) : viewMode === "backups" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium", children: "Backup History" }),
-          /* @__PURE__ */ jsx(
-            Button,
-            {
-              onClick: () => setViewMode("summary"),
-              variant: "outline",
-              size: "sm",
-              children: "Back to Summary"
-            }
-          )
+          /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium", children: diffMode ? "Compare Versions" : "Backup History" }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            !diffMode && backups.length >= 2 && apiHandlers?.getBackupState && /* @__PURE__ */ jsx(
+              Button,
+              {
+                onClick: startDiffMode,
+                variant: "outline",
+                size: "sm",
+                icon: /* @__PURE__ */ jsx(ArrowsLeftRight, { size: 14 }),
+                children: "Compare"
+              }
+            ),
+            diffMode && /* @__PURE__ */ jsx(
+              Button,
+              {
+                onClick: exitDiffMode,
+                variant: "outline",
+                size: "sm",
+                icon: /* @__PURE__ */ jsx(X, { size: 14 }),
+                children: "Cancel"
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              Button,
+              {
+                onClick: () => {
+                  exitDiffMode();
+                  setViewMode("summary");
+                },
+                variant: "outline",
+                size: "sm",
+                children: "Back to Summary"
+              }
+            )
+          ] })
         ] }),
-        loadingBackups ? /* @__PURE__ */ jsx("div", { className: "py-8 text-center text-muted-foreground", children: "Loading backups..." }) : backups.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "py-8 text-center text-muted-foreground", children: [
+        diffMode && /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+          /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ jsxs("div", { className: "p-3 bg-muted/50 rounded border border-border", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground mb-2", children: "From (older)" }),
+              /* @__PURE__ */ jsxs(
+                Select,
+                {
+                  value: selectedBackupA || "",
+                  onChange: (e) => loadBackupForDiff(e.target.value, "A"),
+                  disabled: loadingDiff,
+                  className: "w-full",
+                  children: [
+                    /* @__PURE__ */ jsx("option", { value: "", children: "Select version..." }),
+                    backups.map((b) => /* @__PURE__ */ jsxs("option", { value: b.id, disabled: b.id === selectedBackupB, children: [
+                      "v",
+                      b.version,
+                      " - ",
+                      b.versionLabel || b.workflowName
+                    ] }, b.id))
+                  ]
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "p-3 bg-muted/50 rounded border border-border", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground mb-2", children: "To (newer)" }),
+              /* @__PURE__ */ jsxs(
+                Select,
+                {
+                  value: selectedBackupB || "",
+                  onChange: (e) => loadBackupForDiff(e.target.value, "B"),
+                  disabled: loadingDiff,
+                  className: "w-full",
+                  children: [
+                    /* @__PURE__ */ jsx("option", { value: "", children: "Select version..." }),
+                    backups.map((b) => /* @__PURE__ */ jsxs("option", { value: b.id, disabled: b.id === selectedBackupA, children: [
+                      "v",
+                      b.version,
+                      " - ",
+                      b.versionLabel || b.workflowName
+                    ] }, b.id))
+                  ]
+                }
+              )
+            ] })
+          ] }),
+          loadingDiff ? /* @__PURE__ */ jsx("div", { className: "py-4 text-center text-muted-foreground", children: "Loading versions..." }) : backupStateA && backupStateB ? (() => {
+            const diff = computeWorkflowDiff(backupStateA, backupStateB);
+            return /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+              /* @__PURE__ */ jsxs("div", { className: "p-3 bg-muted/30 rounded border border-border", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium mb-2", children: "Changes Summary" }),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: diff.summary })
+              ] }),
+              diff.blocksAdded.length > 0 && /* @__PURE__ */ jsxs("div", { className: "p-3 bg-green-500/10 rounded border border-green-500/30", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-green-600 dark:text-green-400 mb-2", children: [
+                  /* @__PURE__ */ jsx(Plus, { size: 14 }),
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs font-medium", children: [
+                    "Blocks Added (",
+                    diff.blocksAdded.length,
+                    ")"
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1", children: diff.blocksAdded.map((id) => {
+                  const block = backupStateB?.blocks?.[id];
+                  return /* @__PURE__ */ jsx(Badge, { variant: "success", size: "sm", children: block?.name || id }, id);
+                }) })
+              ] }),
+              diff.blocksRemoved.length > 0 && /* @__PURE__ */ jsxs("div", { className: "p-3 bg-red-500/10 rounded border border-red-500/30", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-red-600 dark:text-red-400 mb-2", children: [
+                  /* @__PURE__ */ jsx(Minus, { size: 14 }),
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs font-medium", children: [
+                    "Blocks Removed (",
+                    diff.blocksRemoved.length,
+                    ")"
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1", children: diff.blocksRemoved.map((id) => {
+                  const block = backupStateA?.blocks?.[id];
+                  return /* @__PURE__ */ jsx(Badge, { variant: "error", size: "sm", children: block?.name || id }, id);
+                }) })
+              ] }),
+              diff.blocksModified.length > 0 && /* @__PURE__ */ jsxs("div", { className: "p-3 bg-amber-500/10 rounded border border-amber-500/30", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2", children: [
+                  /* @__PURE__ */ jsx(Pencil, { size: 14 }),
+                  /* @__PURE__ */ jsxs("span", { className: "text-xs font-medium", children: [
+                    "Blocks Modified (",
+                    diff.blocksModified.length,
+                    ")"
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1", children: diff.blocksModified.map((id) => {
+                  const block = backupStateB?.blocks?.[id];
+                  return /* @__PURE__ */ jsx(Badge, { variant: "warning", size: "sm", children: block?.name || id }, id);
+                }) })
+              ] }),
+              (diff.edgesAdded > 0 || diff.edgesRemoved > 0) && /* @__PURE__ */ jsxs("div", { className: "p-3 bg-muted/30 rounded border border-border", children: [
+                /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground mb-1", children: "Connection Changes" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex gap-3 text-sm", children: [
+                  diff.edgesAdded > 0 && /* @__PURE__ */ jsxs("span", { className: "text-green-600 dark:text-green-400", children: [
+                    "+",
+                    diff.edgesAdded,
+                    " added"
+                  ] }),
+                  diff.edgesRemoved > 0 && /* @__PURE__ */ jsxs("span", { className: "text-red-600 dark:text-red-400", children: [
+                    "-",
+                    diff.edgesRemoved,
+                    " removed"
+                  ] })
+                ] })
+              ] })
+            ] });
+          })() : selectedBackupA || selectedBackupB ? /* @__PURE__ */ jsx("div", { className: "py-4 text-center text-muted-foreground text-sm", children: "Select both versions to compare" }) : null
+        ] }),
+        !diffMode && /* @__PURE__ */ jsx(Fragment, { children: loadingBackups ? /* @__PURE__ */ jsx("div", { className: "py-8 text-center text-muted-foreground", children: "Loading backups..." }) : backups.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "py-8 text-center text-muted-foreground", children: [
           /* @__PURE__ */ jsx(ClockCounterClockwise, { size: 32, className: "mx-auto mb-2 opacity-50" }),
           /* @__PURE__ */ jsx("p", { children: "No backups yet" }),
           /* @__PURE__ */ jsx("p", { className: "text-xs mt-1", children: 'Click "Export from Sim" to create a backup' })
-        ] }) : /* @__PURE__ */ jsx("div", { className: "space-y-2", children: backups.map((backup) => /* @__PURE__ */ jsx(
+        ] }) : /* @__PURE__ */ jsx("div", { className: "space-y-2", children: backups.map((backup, index) => /* @__PURE__ */ jsxs(
           "div",
           {
             className: "flex items-center justify-between p-3 bg-muted/50 rounded border border-border",
-            children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center w-8 h-8 rounded bg-primary/10 text-primary text-sm font-semibold", children: [
-                "v",
-                backup.version
-              ] }),
-              /* @__PURE__ */ jsxs("div", { children: [
-                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium", children: backup.versionLabel || backup.workflowName }),
-                /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground", children: [
-                  formatDistance(new Date(backup.exportedAt), { addSuffix: true }),
-                  backup.isDeployed && /* @__PURE__ */ jsx(Badge, { variant: "success", size: "sm", className: "ml-2", children: "Deployed" })
+            children: [
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center w-8 h-8 rounded bg-primary/10 text-primary text-sm font-semibold", children: [
+                  "v",
+                  backup.version
+                ] }),
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("p", { className: "text-sm font-medium", children: backup.versionLabel || backup.workflowName }),
+                  /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                    formatDistance(new Date(backup.exportedAt), { addSuffix: true }),
+                    backup.isDeployed && /* @__PURE__ */ jsx(Badge, { variant: "success", size: "sm", className: "ml-2", children: "Deployed" })
+                  ] })
                 ] })
-              ] })
-            ] })
+              ] }),
+              index < backups.length - 1 && apiHandlers?.getBackupState && /* @__PURE__ */ jsx(
+                Button,
+                {
+                  variant: "ghost",
+                  size: "sm",
+                  onClick: () => {
+                    startDiffMode();
+                    loadBackupForDiff(backups[index + 1].id, "A");
+                    loadBackupForDiff(backup.id, "B");
+                  },
+                  icon: /* @__PURE__ */ jsx(ArrowsLeftRight, { size: 14 }),
+                  children: "Diff"
+                }
+              )
+            ]
           },
           backup.id
-        )) })
+        )) }) })
       ] }) : platform === "n8n" ? /* @__PURE__ */ jsx(N8nWorkflowSummary, { workflow, showFlow: false }) : /* @__PURE__ */ jsx(SimWorkflowSummary, { workflow }) })
     ] })
   ] });
