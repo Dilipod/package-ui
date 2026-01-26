@@ -274,6 +274,22 @@ export type { Scenario, ScenarioType, ScenarioSuggestion, ScenariosManagerProps 
 export { ImpactMetricsForm } from './components/impact-metrics-form'
 export type { ImpactMetrics, ImpactMetricsFormProps } from './components/impact-metrics-form'
 
+// Activity Timeline Components
+export { ActivityTimeline } from './components/activity-timeline'
+export type { Activity, ActivityTimelineProps } from './components/activity-timeline'
+
+// Workflow Components
+export { WorkflowFlow } from './components/workflow-flow'
+export type { WorkflowFlowProps, N8nWorkflow as WorkflowFlowN8nWorkflow, N8nNode } from './components/workflow-flow'
+
+export { WorkflowViewer } from './components/workflow-viewer'
+export type { 
+  WorkflowViewerProps, 
+  N8nWorkflow, 
+  SimWorkflow, 
+  WorkflowTemplate 
+} from './components/workflow-viewer'
+
 // Utilities
 export { cn } from './lib/utils'
 

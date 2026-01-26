@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from './card'
+import { Card, CardContent } from './card'
 import { Button } from './button'
-import { IconBox } from './icon-box'
 import { toast } from './use-toast'
 import { cn } from '../lib/utils'
 
@@ -138,6 +137,13 @@ export function ImpactMetricsForm({
   // Calculate hours saved per year based on FTE
   const hoursSavedPerYear = Math.round(metrics.fte_equivalent * HOURS_PER_FTE_YEAR)
   
+  // Calculate implied frequency based on time per task and FTE%
+  const timePerTaskHours = metrics.time_saved_minutes_per_run / 60
+  const impliedFrequencyPerYear = timePerTaskHours > 0 
+    ? Math.round(hoursSavedPerYear / timePerTaskHours) 
+    : 0
+  const impliedFrequencyPerMonth = Math.round(impliedFrequencyPerYear / 12)
+  
   // Calculate labor savings (before worker cost)
   const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros
   
@@ -146,16 +152,10 @@ export function ImpactMetricsForm({
 
   return (
     <Card className={cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className)}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <IconBox size="sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-88a16,16,0,1,1-16-16A16,16,0,0,1,144,128Zm-56,0a16,16,0,1,1-16-16A16,16,0,0,1,88,128Zm112,0a16,16,0,1,1-16-16A16,16,0,0,1,200,128Z"/>
-              </svg>
-            </IconBox>
-            Impact Metrics (ROI)
-          </CardTitle>
+      <CardContent className="p-5">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Impact Metrics (ROI)</p>
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
@@ -187,127 +187,104 @@ export function ImpactMetricsForm({
             )}
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Time per task */}
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" className="text-[var(--cyan)]">
-                <path d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"/>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <label className="text-sm text-muted-foreground block mb-1">Time per Task</label>
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={metrics.time_saved_minutes_per_run}
-                    onChange={(e) => setMetrics(prev => ({ 
-                      ...prev, 
-                      time_saved_minutes_per_run: parseInt(e.target.value) || 0 
-                    }))}
-                    className="w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
-                    min="0"
-                  />
-                  <span className="text-muted-foreground">min</span>
-                </div>
-              ) : (
-                <p className="text-2xl font-bold">
-                  {metrics.time_saved_minutes_per_run} <span className="text-base font-normal text-muted-foreground">min</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">How long manually</p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Time per Task</p>
+            {isEditing ? (
+              <div className="flex items-baseline gap-1">
+                <input
+                  type="number"
+                  value={metrics.time_saved_minutes_per_run}
+                  onChange={(e) => setMetrics(prev => ({ 
+                    ...prev, 
+                    time_saved_minutes_per_run: parseInt(e.target.value) || 0 
+                  }))}
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  min="0"
+                />
+                <span className="text-sm text-muted-foreground">min</span>
+              </div>
+            ) : (
+              <p className="text-2xl font-bold">
+                {metrics.time_saved_minutes_per_run}<span className="text-sm font-normal text-muted-foreground ml-1">min</span>
+              </p>
+            )}
           </div>
 
           {/* Manual cost */}
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" className="text-[var(--cyan)]">
-                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z"/>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <label className="text-sm text-muted-foreground block mb-1">Manual Cost</label>
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">€</span>
-                  <input
-                    type="number"
-                    value={metrics.hourly_rate_euros}
-                    onChange={(e) => setMetrics(prev => ({ 
-                      ...prev, 
-                      hourly_rate_euros: parseFloat(e.target.value) || 0 
-                    }))}
-                    className="w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
-                    min="0"
-                    step="0.5"
-                  />
-                  <span className="text-muted-foreground">/hr</span>
-                </div>
-              ) : (
-                <p className="text-2xl font-bold">
-                  €{metrics.hourly_rate_euros} <span className="text-base font-normal text-muted-foreground">/hr</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">Employee hourly cost</p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Manual Cost</p>
+            {isEditing ? (
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-muted-foreground">€</span>
+                <input
+                  type="number"
+                  value={metrics.hourly_rate_euros}
+                  onChange={(e) => setMetrics(prev => ({ 
+                    ...prev, 
+                    hourly_rate_euros: parseFloat(e.target.value) || 0 
+                  }))}
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  min="0"
+                  step="0.5"
+                />
+                <span className="text-sm text-muted-foreground">/hr</span>
+              </div>
+            ) : (
+              <p className="text-2xl font-bold">
+                €{metrics.hourly_rate_euros}<span className="text-sm font-normal text-muted-foreground ml-1">/hr</span>
+              </p>
+            )}
           </div>
 
           {/* Job portion */}
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" className="text-[var(--cyan)]">
-                <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <label className="text-sm text-muted-foreground block mb-1">Job Portion</label>
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={Math.round(metrics.fte_equivalent * 100)}
-                    onChange={(e) => setMetrics(prev => ({ 
-                      ...prev, 
-                      fte_equivalent: (parseFloat(e.target.value) || 0) / 100
-                    }))}
-                    className="w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
-                    min="0"
-                    max="1000"
-                    step="5"
-                  />
-                  <span className="text-muted-foreground">%</span>
-                </div>
-              ) : (
-                <p className="text-2xl font-bold">
-                  {Math.round(metrics.fte_equivalent * 100)} <span className="text-base font-normal text-muted-foreground">%</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">% of FTE ({hoursSavedPerYear}h/year)</p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Job Portion</p>
+            {isEditing ? (
+              <div className="flex items-baseline gap-1">
+                <input
+                  type="number"
+                  value={Math.round(metrics.fte_equivalent * 100)}
+                  onChange={(e) => setMetrics(prev => ({ 
+                    ...prev, 
+                    fte_equivalent: (parseFloat(e.target.value) || 0) / 100
+                  }))}
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  min="0"
+                  max="1000"
+                  step="5"
+                />
+                <span className="text-sm text-muted-foreground">%</span>
+              </div>
+            ) : (
+              <p className="text-2xl font-bold">
+                {Math.round(metrics.fte_equivalent * 100)}<span className="text-sm font-normal text-muted-foreground ml-1">%</span>
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground mt-0.5">{hoursSavedPerYear}h/year</p>
           </div>
 
           {/* Net Annual Savings */}
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" className="text-[var(--cyan)]">
-                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z"/>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <label className="text-sm text-muted-foreground block mb-1">Net Annual Savings</label>
-              <p className={cn("text-2xl font-bold", netAnnualSavings >= 0 ? "text-[var(--cyan)]" : "text-red-500")}>
-                €{netAnnualSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} labor − €{workerCostPerYear} worker
-              </p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Net Annual Savings</p>
+            <p className={cn("text-2xl font-bold", netAnnualSavings >= 0 ? "text-[var(--cyan)]" : "text-red-500")}>
+              €{netAnnualSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} − €{workerCostPerYear}
+            </p>
           </div>
         </div>
+
+        {/* Implied frequency indicator */}
+        {impliedFrequencyPerYear > 0 && (
+          <p className="text-xs text-muted-foreground mt-4 pt-3 border-t border-border/50">
+            Implied: ~{impliedFrequencyPerMonth}×/month ({impliedFrequencyPerYear}×/year)
+          </p>
+        )}
       </CardContent>
     </Card>
   )

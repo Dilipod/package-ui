@@ -1,14 +1,16 @@
 "use client";
 import * as React50 from 'react';
-import { useState, useRef } from 'react';
+import { lazy, useMemo, useState, useRef, Suspense } from 'react';
+import { MarkerType, useNodesState, useEdgesState, ReactFlow, Background, Handle, Position } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
 import { Slot, Slottable, createSlot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, CheckCircle, FileImage, FilePdf, FileDoc, Question, Warning, PencilSimple, Trash } from '@phosphor-icons/react';
+import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, CheckCircle, PaperPlaneTilt, CaretUp, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
@@ -26,6 +28,9 @@ var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -40,6 +45,181 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget);
 
+// src/components/workflow-flow.tsx
+var workflow_flow_exports = {};
+__export(workflow_flow_exports, {
+  WorkflowFlow: () => WorkflowFlow,
+  default: () => workflow_flow_default
+});
+function getNodeTypeLabel(type) {
+  const labels = {
+    "n8n-nodes-base.webhook": "Webhook",
+    "n8n-nodes-base.scheduleTrigger": "Schedule",
+    "n8n-nodes-base.if": "Condition",
+    "n8n-nodes-base.httpRequest": "HTTP Request",
+    "n8n-nodes-base.set": "Set Data",
+    "n8n-nodes-base.code": "Code",
+    "n8n-nodes-base.respondToWebhook": "Response",
+    "@n8n/n8n-nodes-langchain.agent": "AI Agent",
+    "@n8n/n8n-nodes-langchain.lmChatOpenAi": "OpenAI",
+    "@n8n/n8n-nodes-langchain.lmChatAnthropic": "Anthropic"
+  };
+  return labels[type] || type.split(".").pop()?.replace(/([A-Z])/g, " $1").trim() || type;
+}
+function CustomNode({ data }) {
+  return /* @__PURE__ */ jsxs("div", { className: "px-3 py-2 rounded bg-white border border-slate-200 shadow-sm min-w-[110px] text-center", children: [
+    /* @__PURE__ */ jsx(Handle, { type: "target", position: Position.Left, className: "!bg-slate-300 !w-1.5 !h-1.5 !border-0" }),
+    /* @__PURE__ */ jsx("div", { className: "text-xs font-medium text-slate-700 truncate max-w-[130px]", children: data.label }),
+    /* @__PURE__ */ jsx("div", { className: "text-[10px] text-slate-400 truncate max-w-[130px]", children: getNodeTypeLabel(data.type) }),
+    /* @__PURE__ */ jsx(Handle, { type: "source", position: Position.Right, className: "!bg-slate-300 !w-1.5 !h-1.5 !border-0" })
+  ] });
+}
+function WorkflowFlow({ workflow, height = 350, className = "" }) {
+  const { initialNodes, initialEdges } = useMemo(() => {
+    const n8nNodes = workflow.nodes || [];
+    const connections = workflow.connections || {};
+    const nodeIdMap = new Map(n8nNodes.map((n) => [n.name, n.id || n.name]));
+    const forwardEdges = /* @__PURE__ */ new Map();
+    const backwardEdges = /* @__PURE__ */ new Map();
+    const allEdgeData = [];
+    Object.entries(connections).forEach(([fromNodeName, outputTypes]) => {
+      Object.entries(outputTypes).forEach(([outputType, outputs]) => {
+        if (!Array.isArray(outputs)) return;
+        outputs.forEach((outputArray, oi) => {
+          if (!Array.isArray(outputArray)) return;
+          outputArray.forEach((conn, ci) => {
+            if (!forwardEdges.has(fromNodeName)) forwardEdges.set(fromNodeName, []);
+            forwardEdges.get(fromNodeName).push(conn.node);
+            if (!backwardEdges.has(conn.node)) backwardEdges.set(conn.node, []);
+            backwardEdges.get(conn.node).push(fromNodeName);
+            allEdgeData.push({ from: fromNodeName, to: conn.node, outputType, oi, ci });
+          });
+        });
+      });
+    });
+    const triggerNodes = n8nNodes.filter(
+      (n) => n.type.includes("webhook") || n.type.includes("Trigger") || n.type.includes("schedule")
+    );
+    const roots = triggerNodes.length > 0 ? triggerNodes : n8nNodes.filter((n) => !backwardEdges.has(n.name) || backwardEdges.get(n.name).length === 0);
+    const levels = /* @__PURE__ */ new Map();
+    const queue = [];
+    roots.forEach((r) => {
+      levels.set(r.name, 0);
+      queue.push(r.name);
+    });
+    const visited = /* @__PURE__ */ new Set();
+    while (queue.length > 0) {
+      const name = queue.shift();
+      if (visited.has(name)) continue;
+      visited.add(name);
+      const children = forwardEdges.get(name) || [];
+      const myLevel = levels.get(name) || 0;
+      children.forEach((child) => {
+        const childLevel = levels.get(child);
+        if (childLevel === void 0 || myLevel + 1 > childLevel) {
+          levels.set(child, myLevel + 1);
+        }
+        if (!visited.has(child)) {
+          queue.push(child);
+        }
+      });
+    }
+    n8nNodes.forEach((node) => {
+      if (!levels.has(node.name)) {
+        const targets = forwardEdges.get(node.name) || [];
+        if (targets.length > 0) {
+          const targetLevels = targets.map((t) => levels.get(t) ?? 0);
+          const targetLevel = Math.min(...targetLevels);
+          levels.set(node.name, Math.max(0, targetLevel - 1));
+        } else {
+          const maxLevel = Math.max(0, ...Array.from(levels.values()));
+          levels.set(node.name, maxLevel);
+        }
+      }
+    });
+    const nodesByLevel = /* @__PURE__ */ new Map();
+    levels.forEach((level, name) => {
+      if (!nodesByLevel.has(level)) nodesByLevel.set(level, []);
+      nodesByLevel.get(level).push(name);
+    });
+    const sortedLevels = Array.from(nodesByLevel.keys()).sort((a, b) => a - b);
+    sortedLevels.forEach((level, levelIdx) => {
+      if (levelIdx === 0) return;
+      const nodesInLevel = nodesByLevel.get(level);
+      const prevLevel = sortedLevels[levelIdx - 1];
+      const prevNodes = nodesByLevel.get(prevLevel) || [];
+      const prevPositions = new Map(prevNodes.map((n, i) => [n, i]));
+      nodesInLevel.sort((a, b) => {
+        const parentsA = backwardEdges.get(a) || [];
+        const parentsB = backwardEdges.get(b) || [];
+        const avgA = parentsA.length > 0 ? parentsA.reduce((sum, p) => sum + (prevPositions.get(p) ?? 0), 0) / parentsA.length : 0;
+        const avgB = parentsB.length > 0 ? parentsB.reduce((sum, p) => sum + (prevPositions.get(p) ?? 0), 0) / parentsB.length : 0;
+        return avgA - avgB;
+      });
+    });
+    const positions = /* @__PURE__ */ new Map();
+    const xGap = 170;
+    const yGap = 70;
+    sortedLevels.forEach((level) => {
+      const nodesInLevel = nodesByLevel.get(level);
+      const totalHeight = (nodesInLevel.length - 1) * yGap;
+      const startY = -totalHeight / 2;
+      nodesInLevel.forEach((name, i) => {
+        positions.set(name, { x: level * xGap, y: startY + i * yGap });
+      });
+    });
+    const nodes2 = n8nNodes.map((node) => ({
+      id: node.id || node.name,
+      type: "custom",
+      position: positions.get(node.name) || { x: 0, y: 0 },
+      data: { label: node.name, type: node.type }
+    }));
+    const edges2 = allEdgeData.map(({ from, to, oi, ci }) => {
+      const fromId = nodeIdMap.get(from);
+      const toId = nodeIdMap.get(to);
+      return {
+        id: `${fromId}-${toId}-${oi}-${ci}`,
+        source: fromId,
+        target: toId,
+        type: "smoothstep",
+        pathOptions: { borderRadius: 20 },
+        style: { stroke: "#94a3b8", strokeWidth: 1.5 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#94a3b8", width: 14, height: 14 }
+      };
+    });
+    return { initialNodes: nodes2, initialEdges: edges2 };
+  }, [workflow]);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  return /* @__PURE__ */ jsx("div", { style: { height }, className: `bg-slate-50 rounded-lg border border-slate-200 overflow-hidden ${className}`, children: /* @__PURE__ */ jsx(
+    ReactFlow,
+    {
+      nodes,
+      edges,
+      onNodesChange,
+      onEdgesChange,
+      nodeTypes,
+      fitView: true,
+      fitViewOptions: { padding: 0.1, minZoom: 0.8 },
+      minZoom: 0.5,
+      maxZoom: 2,
+      proOptions: { hideAttribution: true },
+      defaultEdgeOptions: {
+        type: "smoothstep"
+      },
+      children: /* @__PURE__ */ jsx(Background, { color: "#e2e8f0", gap: 24, size: 1 })
+    }
+  ) });
+}
+var nodeTypes, workflow_flow_default;
+var init_workflow_flow = __esm({
+  "src/components/workflow-flow.tsx"() {
+    "use client";
+    nodeTypes = { custom: CustomNode };
+    workflow_flow_default = WorkflowFlow;
+  }
+});
+
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
@@ -47,6 +227,7 @@ __export(index_exports, {
   AccordionContent: () => AccordionContent,
   AccordionItem: () => AccordionItem,
   AccordionTrigger: () => AccordionTrigger,
+  ActivityTimeline: () => ActivityTimeline,
   Alert: () => Alert,
   AlertDialog: () => AlertDialog,
   AlertDialogAction: () => AlertDialogAction,
@@ -195,6 +376,8 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
+  WorkflowFlow: () => WorkflowFlow,
+  WorkflowViewer: () => WorkflowViewer,
   alertVariants: () => alertVariants,
   badgeVariants: () => badgeVariants,
   buttonVariants: () => buttonVariants,
@@ -1241,7 +1424,7 @@ var NODES = [
 ];
 var Primitive = NODES.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React50.forwardRef((props, forwardedRef) => {
+  const Node2 = React50.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1249,8 +1432,8 @@ var Primitive = NODES.reduce((primitive, node) => {
     }
     return /* @__PURE__ */ jsx(Comp, { ...primitiveProps, ref: forwardedRef });
   });
-  Node.displayName = `Primitive.${node}`;
-  return { ...primitive, [node]: Node };
+  Node2.displayName = `Primitive.${node}`;
+  return { ...primitive, [node]: Node2 };
 }, {});
 var NAME = "Label";
 var Label = React50.forwardRef((props, forwardedRef) => {
@@ -1566,7 +1749,7 @@ var NODES2 = [
 ];
 var Primitive2 = NODES2.reduce((primitive, node) => {
   const Slot2 = createSlot(`Primitive.${node}`);
-  const Node = React50.forwardRef((props, forwardedRef) => {
+  const Node2 = React50.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1574,8 +1757,8 @@ var Primitive2 = NODES2.reduce((primitive, node) => {
     }
     return /* @__PURE__ */ jsx(Comp, { ...primitiveProps, ref: forwardedRef });
   });
-  Node.displayName = `Primitive.${node}`;
-  return { ...primitive, [node]: Node };
+  Node2.displayName = `Primitive.${node}`;
+  return { ...primitive, [node]: Node2 };
 }, {});
 var NAME2 = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
@@ -4239,14 +4422,14 @@ function ImpactMetricsForm({
     setIsEditing(false);
   };
   const hoursSavedPerYear = Math.round(metrics.fte_equivalent * HOURS_PER_FTE_YEAR);
+  const timePerTaskHours = metrics.time_saved_minutes_per_run / 60;
+  const impliedFrequencyPerYear = timePerTaskHours > 0 ? Math.round(hoursSavedPerYear / timePerTaskHours) : 0;
+  const impliedFrequencyPerMonth = Math.round(impliedFrequencyPerYear / 12);
   const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros;
   const netAnnualSavings = laborSavingsPerYear - workerCostPerYear;
-  return /* @__PURE__ */ jsxs(Card, { className: cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className), children: [
-    /* @__PURE__ */ jsx(CardHeader, { className: "pb-3", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-      /* @__PURE__ */ jsxs(CardTitle, { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx(IconBox, { size: "sm", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "14", height: "14", fill: "currentColor", viewBox: "0 0 256 256", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-88a16,16,0,1,1-16-16A16,16,0,0,1,144,128Zm-56,0a16,16,0,1,1-16-16A16,16,0,0,1,88,128Zm112,0a16,16,0,1,1-16-16A16,16,0,0,1,200,128Z" }) }) }),
-        "Impact Metrics (ROI)"
-      ] }),
+  return /* @__PURE__ */ jsx(Card, { className: cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className), children: /* @__PURE__ */ jsxs(CardContent, { className: "p-5", children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-4", children: [
+      /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Impact Metrics (ROI)" }),
       /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isEditing ? /* @__PURE__ */ jsxs(Fragment, { children: [
         isInitiallySaved && /* @__PURE__ */ jsx(
           Button,
@@ -4275,122 +4458,1182 @@ function ImpactMetricsForm({
           children: "Edit"
         }
       ) })
-    ] }) }),
-    /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2 lg:grid-cols-4", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z" }) }) }),
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Time per Task" }),
-          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx(
-              "input",
-              {
-                type: "number",
-                value: metrics.time_saved_minutes_per_run,
-                onChange: (e) => setMetrics((prev) => ({
-                  ...prev,
-                  time_saved_minutes_per_run: parseInt(e.target.value) || 0
-                })),
-                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
-                min: "0"
-              }
-            ),
-            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "min" })
-          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
-            metrics.time_saved_minutes_per_run,
-            " ",
-            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "min" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-1", children: "How long manually" })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 lg:grid-cols-4 gap-6", children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground uppercase tracking-wide mb-1", children: "Time per Task" }),
+        isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-baseline gap-1", children: [
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "number",
+              value: metrics.time_saved_minutes_per_run,
+              onChange: (e) => setMetrics((prev) => ({
+                ...prev,
+                time_saved_minutes_per_run: parseInt(e.target.value) || 0
+              })),
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              min: "0"
+            }
+          ),
+          /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground", children: "min" })
+        ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+          metrics.time_saved_minutes_per_run,
+          /* @__PURE__ */ jsx("span", { className: "text-sm font-normal text-muted-foreground ml-1", children: "min" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z" }) }) }),
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Manual Cost" }),
-          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "\u20AC" }),
-            /* @__PURE__ */ jsx(
-              "input",
-              {
-                type: "number",
-                value: metrics.hourly_rate_euros,
-                onChange: (e) => setMetrics((prev) => ({
-                  ...prev,
-                  hourly_rate_euros: parseFloat(e.target.value) || 0
-                })),
-                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
-                min: "0",
-                step: "0.5"
-              }
-            ),
-            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "/hr" })
-          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
-            "\u20AC",
-            metrics.hourly_rate_euros,
-            " ",
-            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "/hr" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-1", children: "Employee hourly cost" })
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground uppercase tracking-wide mb-1", children: "Manual Cost" }),
+        isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-baseline gap-1", children: [
+          /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground", children: "\u20AC" }),
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "number",
+              value: metrics.hourly_rate_euros,
+              onChange: (e) => setMetrics((prev) => ({
+                ...prev,
+                hourly_rate_euros: parseFloat(e.target.value) || 0
+              })),
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              min: "0",
+              step: "0.5"
+            }
+          ),
+          /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground", children: "/hr" })
+        ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+          "\u20AC",
+          metrics.hourly_rate_euros,
+          /* @__PURE__ */ jsx("span", { className: "text-sm font-normal text-muted-foreground ml-1", children: "/hr" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z" }) }) }),
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Job Portion" }),
-          isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsx(
-              "input",
-              {
-                type: "number",
-                value: Math.round(metrics.fte_equivalent * 100),
-                onChange: (e) => setMetrics((prev) => ({
-                  ...prev,
-                  fte_equivalent: (parseFloat(e.target.value) || 0) / 100
-                })),
-                className: "w-16 px-2 py-1 text-lg font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
-                min: "0",
-                max: "1000",
-                step: "5"
-              }
-            ),
-            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "%" })
-          ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
-            Math.round(metrics.fte_equivalent * 100),
-            " ",
-            /* @__PURE__ */ jsx("span", { className: "text-base font-normal text-muted-foreground", children: "%" })
-          ] }),
-          /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: [
-            "% of FTE (",
-            hoursSavedPerYear,
-            "h/year)"
-          ] })
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground uppercase tracking-wide mb-1", children: "Job Portion" }),
+        isEditing ? /* @__PURE__ */ jsxs("div", { className: "flex items-baseline gap-1", children: [
+          /* @__PURE__ */ jsx(
+            "input",
+            {
+              type: "number",
+              value: Math.round(metrics.fte_equivalent * 100),
+              onChange: (e) => setMetrics((prev) => ({
+                ...prev,
+                fte_equivalent: (parseFloat(e.target.value) || 0) / 100
+              })),
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              min: "0",
+              max: "1000",
+              step: "5"
+            }
+          ),
+          /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground", children: "%" })
+        ] }) : /* @__PURE__ */ jsxs("p", { className: "text-2xl font-bold", children: [
+          Math.round(metrics.fte_equivalent * 100),
+          /* @__PURE__ */ jsx("span", { className: "text-sm font-normal text-muted-foreground ml-1", children: "%" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+          hoursSavedPerYear,
+          "h/year"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
-        /* @__PURE__ */ jsx("div", { className: "p-2 rounded-sm bg-[var(--cyan)]/10 shrink-0", children: /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "20", height: "20", fill: "currentColor", viewBox: "0 0 256 256", className: "text-[var(--cyan)]", children: /* @__PURE__ */ jsx("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a8,8,0,0,1,8,8v4.4c14.25,3.14,24,14.43,24,30.6,0,4.42-3.58,8-8,8s-8-3.58-8-8c0-8.64-7.18-13-16-13s-16,4.36-16,13,7.18,13,16,13c17.64,0,32,11.35,32,29,0,16.17-9.75,27.46-24,30.6V192a8,8,0,0,1-16,0v-4.4c-14.25-3.14-24-14.43-24-30.6a8,8,0,0,1,16,0c0,8.64,7.18,13,16,13s16-4.36,16-13-7.18-13-16-13c-17.64,0-32-11.35-32-29,0-16.17,9.75-27.46,24-30.6V80A8,8,0,0,1,128,72Z" }) }) }),
-        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-sm text-muted-foreground block mb-1", children: "Net Annual Savings" }),
-          /* @__PURE__ */ jsxs("p", { className: cn("text-2xl font-bold", netAnnualSavings >= 0 ? "text-[var(--cyan)]" : "text-red-500"), children: [
-            "\u20AC",
-            netAnnualSavings.toLocaleString(void 0, { maximumFractionDigits: 0 })
-          ] }),
-          /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: [
-            "\u20AC",
-            laborSavingsPerYear.toLocaleString(void 0, { maximumFractionDigits: 0 }),
-            " labor \u2212 \u20AC",
-            workerCostPerYear,
-            " worker"
-          ] })
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground uppercase tracking-wide mb-1", children: "Net Annual Savings" }),
+        /* @__PURE__ */ jsxs("p", { className: cn("text-2xl font-bold", netAnnualSavings >= 0 ? "text-[var(--cyan)]" : "text-red-500"), children: [
+          "\u20AC",
+          netAnnualSavings.toLocaleString(void 0, { maximumFractionDigits: 0 })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+          "\u20AC",
+          laborSavingsPerYear.toLocaleString(void 0, { maximumFractionDigits: 0 }),
+          " \u2212 \u20AC",
+          workerCostPerYear
         ] })
       ] })
-    ] }) })
+    ] }),
+    impliedFrequencyPerYear > 0 && /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-4 pt-3 border-t border-border/50", children: [
+      "Implied: ~",
+      impliedFrequencyPerMonth,
+      "\xD7/month (",
+      impliedFrequencyPerYear,
+      "\xD7/year)"
+    ] })
+  ] }) });
+}
+function defaultFormatDate(date) {
+  const d = typeof date === "string" ? new Date(date) : date;
+  const now = /* @__PURE__ */ new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMins = Math.floor(diffMs / 6e4);
+  const diffHours = Math.floor(diffMs / 36e5);
+  const diffDays = Math.floor(diffMs / 864e5);
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return d.toLocaleDateString();
+}
+function ActivityTimeline({
+  activities,
+  loading = false,
+  activityLabels = {},
+  collapsedCount = 3,
+  showNoteInput = true,
+  notePlaceholder = "Add a note...",
+  onAddNote,
+  submitting = false,
+  formatDate = defaultFormatDate,
+  loadingComponent,
+  emptyMessage = "No activity yet",
+  className = ""
+}) {
+  const [newNote, setNewNote] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleAddNote = async () => {
+    if (!newNote.trim() || !onAddNote) return;
+    setIsSubmitting(true);
+    try {
+      await onAddNote(newNote.trim());
+      setNewNote("");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      handleAddNote();
+    }
+  };
+  const visibleActivities = expanded ? activities : activities.slice(0, collapsedCount);
+  const hasMore = activities.length > collapsedCount;
+  const isCurrentlySubmitting = submitting || isSubmitting;
+  const DefaultLoading = /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center py-4", children: /* @__PURE__ */ jsx(CircleNotch, { className: "w-5 h-5 animate-spin text-muted-foreground" }) });
+  return /* @__PURE__ */ jsxs("div", { className: `space-y-3 ${className}`, children: [
+    showNoteInput && onAddNote && /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+      /* @__PURE__ */ jsx(
+        Textarea,
+        {
+          value: newNote,
+          onChange: (e) => setNewNote(e.target.value),
+          onKeyDown: handleKeyDown,
+          placeholder: notePlaceholder,
+          rows: 1,
+          className: "resize-none min-h-[36px] py-2"
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        Button,
+        {
+          onClick: handleAddNote,
+          disabled: isCurrentlySubmitting || !newNote.trim(),
+          size: "sm",
+          className: "flex-shrink-0 h-9",
+          children: isCurrentlySubmitting ? /* @__PURE__ */ jsx(CircleNotch, { className: "w-4 h-4 animate-spin" }) : /* @__PURE__ */ jsx(PaperPlaneTilt, { className: "w-4 h-4", weight: "bold" })
+        }
+      )
+    ] }),
+    loading ? loadingComponent || DefaultLoading : activities.length === 0 ? /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground text-center py-2", children: emptyMessage }) : /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+      visibleActivities.map((activity) => {
+        const label = activityLabels[activity.activity_type] || "";
+        return /* @__PURE__ */ jsxs("div", { className: "text-sm border-l-2 border-gray-200 pl-3 py-1", children: [
+          /* @__PURE__ */ jsxs("p", { className: "text-gray-700", children: [
+            label && /* @__PURE__ */ jsxs("span", { className: "text-muted-foreground", children: [
+              label,
+              " "
+            ] }),
+            activity.content
+          ] }),
+          /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+            activity.user,
+            " \xB7 ",
+            formatDate(activity.created_at)
+          ] })
+        ] }, activity.id);
+      }),
+      hasMore && /* @__PURE__ */ jsx(
+        "button",
+        {
+          onClick: () => setExpanded(!expanded),
+          className: "flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors",
+          children: expanded ? /* @__PURE__ */ jsxs(Fragment, { children: [
+            /* @__PURE__ */ jsx(CaretUp, { className: "w-3 h-3" }),
+            "Show less"
+          ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+            /* @__PURE__ */ jsx(CaretDown, { className: "w-3 h-3" }),
+            "Show ",
+            activities.length - collapsedCount,
+            " more"
+          ] })
+        }
+      )
+    ] })
+  ] });
+}
+
+// src/index.ts
+init_workflow_flow();
+var WorkflowFlow2 = lazy(() => Promise.resolve().then(() => (init_workflow_flow(), workflow_flow_exports)).then((m) => ({ default: m.WorkflowFlow })));
+var BLANK_N8N_WORKFLOW = {
+  name: "New Workflow",
+  nodes: [
+    {
+      id: "webhook-trigger",
+      name: "Webhook",
+      type: "n8n-nodes-base.webhook",
+      parameters: {
+        httpMethod: "POST",
+        path: "my-webhook"
+      }
+    }
+  ],
+  connections: {},
+  settings: { executionOrder: "v1" }
+};
+var BLANK_SIM_WORKFLOW = {
+  name: "New Workflow",
+  description: "A new Sim workflow",
+  trigger: { type: "webhook_input" },
+  nodes: [
+    { id: "input", type: "webhook_input" },
+    { id: "output", type: "output" }
+  ],
+  edges: [{ from: "input", to: "output" }]
+};
+function getNodeIcon(type) {
+  if (type.includes("webhook")) return /* @__PURE__ */ jsx(WebhooksLogo, { size: 16, weight: "fill" });
+  if (type.includes("Trigger") || type.includes("schedule")) return /* @__PURE__ */ jsx(Timer, { size: 16, weight: "fill" });
+  if (type.includes("if") || type.includes("switch")) return /* @__PURE__ */ jsx(GitBranch, { size: 16, weight: "fill" });
+  if (type.includes("httpRequest")) return /* @__PURE__ */ jsx(Globe, { size: 16, weight: "fill" });
+  if (type.includes("langchain") || type.includes("openai") || type.includes("anthropic")) return /* @__PURE__ */ jsx(Robot, { size: 16, weight: "fill" });
+  if (type.includes("code")) return /* @__PURE__ */ jsx(Code, { size: 16, weight: "fill" });
+  if (type.includes("respondToWebhook")) return /* @__PURE__ */ jsx(CheckCircle, { size: 16, weight: "fill" });
+  if (type.includes("set")) return /* @__PURE__ */ jsx(Package, { size: 16, weight: "fill" });
+  return /* @__PURE__ */ jsx(Package, { size: 16 });
+}
+function getNodeTypeLabel2(type) {
+  const typeMap = {
+    "n8n-nodes-base.webhook": "Webhook Trigger",
+    "n8n-nodes-base.scheduleTrigger": "Schedule Trigger",
+    "n8n-nodes-base.if": "Condition",
+    "n8n-nodes-base.httpRequest": "HTTP Request",
+    "n8n-nodes-base.set": "Set Data",
+    "n8n-nodes-base.code": "Code",
+    "n8n-nodes-base.respondToWebhook": "Webhook Response",
+    "@n8n/n8n-nodes-langchain.agent": "AI Agent",
+    "@n8n/n8n-nodes-langchain.lmChatOpenAi": "OpenAI Model",
+    "@n8n/n8n-nodes-langchain.lmChatAnthropic": "Anthropic Model"
+  };
+  return typeMap[type] || type.split(".").pop() || type;
+}
+function getSimNodeTypeLabel(type) {
+  const typeMap = {
+    "webhook_input": "Webhook Input",
+    "llm": "AI/LLM",
+    "code": "Code",
+    "http_request": "HTTP Request",
+    "condition": "Condition",
+    "output": "Output"
+  };
+  return typeMap[type] || type;
+}
+function defaultFormatDistance(date, options) {
+  const now = /* @__PURE__ */ new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 6e4);
+  const diffHours = Math.floor(diffMs / 36e5);
+  const diffDays = Math.floor(diffMs / 864e5);
+  let result = "";
+  if (diffMins < 1) result = "less than a minute";
+  else if (diffMins < 60) result = `${diffMins} minute${diffMins > 1 ? "s" : ""}`;
+  else if (diffHours < 24) result = `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
+  else result = `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+  return options?.addSuffix ? `${result} ago` : result;
+}
+function N8nWorkflowSummary({ workflow, showFlow = false }) {
+  const nodes = workflow.nodes || [];
+  const triggerNode = nodes.find(
+    (n) => n.type.includes("webhook") || n.type.includes("Trigger")
+  );
+  const aiNodes = nodes.filter(
+    (n) => n.type.includes("langchain") || n.type.includes("openai") || n.type.includes("anthropic")
+  );
+  const httpNodes = nodes.filter(
+    (n) => n.type === "n8n-nodes-base.httpRequest"
+  );
+  const conditionNodes = nodes.filter(
+    (n) => n.type === "n8n-nodes-base.if"
+  );
+  return /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [
+      /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
+          triggerNode && getNodeIcon(triggerNode.type),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Trigger" })
+        ] }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold truncate", children: triggerNode ? getNodeTypeLabel2(triggerNode.type) : "None" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
+          /* @__PURE__ */ jsx(TreeStructure, { size: 16 }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Steps" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold", children: [
+          nodes.length,
+          " nodes"
+        ] })
+      ] }),
+      aiNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-purple-50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-purple-600 mb-1", children: [
+          /* @__PURE__ */ jsx(Robot, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "AI" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-purple-700", children: [
+          aiNodes.length,
+          " ",
+          aiNodes.length === 1 ? "node" : "nodes"
+        ] })
+      ] }),
+      httpNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-blue-50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-blue-600 mb-1", children: [
+          /* @__PURE__ */ jsx(Globe, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "APIs" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-blue-700", children: [
+          httpNodes.length,
+          " ",
+          httpNodes.length === 1 ? "request" : "requests"
+        ] })
+      ] }),
+      conditionNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-yellow-50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-yellow-600 mb-1", children: [
+          /* @__PURE__ */ jsx(GitBranch, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Logic" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-yellow-700", children: [
+          conditionNodes.length,
+          " ",
+          conditionNodes.length === 1 ? "condition" : "conditions"
+        ] })
+      ] })
+    ] }),
+    showFlow && /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx("div", { className: "h-[320px] bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center", children: /* @__PURE__ */ jsx("div", { className: "text-slate-400 text-sm", children: "Loading..." }) }), children: /* @__PURE__ */ jsx(WorkflowFlow2, { workflow, height: 320 }) }),
+    !showFlow && /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+      /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Workflow Nodes" }),
+      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1.5", children: nodes.map((node) => /* @__PURE__ */ jsx(
+        "span",
+        {
+          className: "px-2 py-1 rounded bg-slate-100 text-slate-600 text-xs",
+          children: node.name
+        },
+        node.id
+      )) })
+    ] })
+  ] });
+}
+function SimWorkflowSummary({ workflow }) {
+  const nodes = workflow.nodes || [];
+  const aiNodes = nodes.filter((n) => n.type === "llm");
+  const httpNodes = nodes.filter((n) => n.type === "http_request");
+  return /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [
+      /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
+          /* @__PURE__ */ jsx(WebhooksLogo, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Trigger" })
+        ] }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold", children: workflow.trigger?.type ? getSimNodeTypeLabel(workflow.trigger.type) : "Manual" })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-muted-foreground mb-1", children: [
+          /* @__PURE__ */ jsx(TreeStructure, { size: 16 }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "Steps" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold", children: [
+          nodes.length,
+          " nodes"
+        ] })
+      ] }),
+      aiNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-purple-50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-purple-600 mb-1", children: [
+          /* @__PURE__ */ jsx(Robot, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "AI" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-purple-700", children: [
+          aiNodes.length,
+          " LLM ",
+          aiNodes.length === 1 ? "node" : "nodes"
+        ] })
+      ] }),
+      httpNodes.length > 0 && /* @__PURE__ */ jsxs("div", { className: "bg-blue-50 rounded-lg p-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-blue-600 mb-1", children: [
+          /* @__PURE__ */ jsx(Globe, { size: 16, weight: "fill" }),
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium", children: "APIs" })
+        ] }),
+        /* @__PURE__ */ jsxs("p", { className: "text-sm font-semibold text-blue-700", children: [
+          httpNodes.length,
+          " ",
+          httpNodes.length === 1 ? "request" : "requests"
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+      /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Workflow Nodes" }),
+      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: nodes.map((node) => /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs bg-gray-100 text-gray-700 border-gray-300",
+          children: [
+            /* @__PURE__ */ jsx(Package, { size: 14 }),
+            /* @__PURE__ */ jsx("span", { className: "font-medium", children: getSimNodeTypeLabel(node.type) })
+          ]
+        },
+        node.id
+      )) })
+    ] })
+  ] });
+}
+function WorkflowViewer({
+  workflow,
+  platform,
+  title = "Workflow",
+  webhookUrl,
+  workflowId,
+  workflowDefinitionId,
+  workerId,
+  workerName,
+  internalWorkerType,
+  lastSynced,
+  isActive,
+  syncError,
+  className = "",
+  editable = false,
+  allowCreate = false,
+  allowPlatformChange = false,
+  allowStatusChange = false,
+  onWorkflowUpdate,
+  onWorkflowCreated,
+  onPlatformChange,
+  onStatusChange,
+  apiHandlers,
+  loadingComponent,
+  formatDistance = defaultFormatDistance,
+  simWorkflowId,
+  simStudioUrl
+}) {
+  const [viewMode, setViewMode] = useState("summary");
+  const [editedJson, setEditedJson] = useState("");
+  const [jsonError, setJsonError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [pulling, setPulling] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState("blank");
+  const [exporting, setExporting] = useState(false);
+  const [backups, setBackups] = useState([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [pushingToSim, setPushingToSim] = useState(false);
+  const [pullingFromSim, setPullingFromSim] = useState(false);
+  const [switchingPlatform, setSwitchingPlatform] = useState(false);
+  const [localPlatform, setLocalPlatform] = useState(platform);
+  const [localIsActive, setLocalIsActive] = useState(isActive ?? true);
+  const hasUnsavedChanges = localPlatform !== platform || localIsActive !== (isActive ?? true);
+  function copyToClipboard(text, label = "Copied") {
+    navigator.clipboard.writeText(text);
+    setMessage({ type: "success", text: label });
+    setTimeout(() => setMessage(null), 2e3);
+  }
+  function handleLocalPlatformChange(newPlatform) {
+    setLocalPlatform(newPlatform);
+  }
+  function handleLocalStatusChange(newStatus) {
+    setLocalIsActive(newStatus);
+  }
+  function cancelChanges() {
+    setLocalPlatform(platform);
+    setLocalIsActive(isActive ?? true);
+    setMessage(null);
+  }
+  async function saveSettings() {
+    if (!workflowDefinitionId || !apiHandlers?.saveSettings) {
+      setMessage({ type: "error", text: "Cannot save - no workflow definition or API handler." });
+      return;
+    }
+    setSaving(true);
+    setMessage(null);
+    try {
+      const updateData = {};
+      if (localPlatform !== platform) {
+        updateData.platform = localPlatform;
+      }
+      if (localIsActive !== (isActive ?? true)) {
+        updateData.is_active = localIsActive;
+      }
+      if (Object.keys(updateData).length === 0) {
+        setMessage({ type: "success", text: "No changes to save" });
+        setSaving(false);
+        return;
+      }
+      const result = await apiHandlers.saveSettings(workflowDefinitionId, updateData);
+      if (result.success) {
+        setMessage({ type: "success", text: "Settings saved successfully" });
+        onPlatformChange?.(localPlatform);
+        onStatusChange?.(localIsActive);
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to save settings" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to save settings" });
+    } finally {
+      setSaving(false);
+    }
+  }
+  function startEditing() {
+    setEditedJson(JSON.stringify(workflow, null, 2));
+    setJsonError(null);
+    setViewMode("edit");
+  }
+  function cancelEditing() {
+    setEditedJson("");
+    setJsonError(null);
+    setViewMode("summary");
+  }
+  function validateJson(json) {
+    try {
+      const parsed = JSON.parse(json);
+      if (platform === "n8n") {
+        if (!parsed.nodes || !Array.isArray(parsed.nodes)) {
+          throw new Error("n8n workflow must have a nodes array");
+        }
+      } else {
+        if (!parsed.nodes || !Array.isArray(parsed.nodes)) {
+          throw new Error("Sim workflow must have a nodes array");
+        }
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+  async function saveWorkflow() {
+    const parsed = validateJson(editedJson);
+    if (!parsed) {
+      setJsonError("Invalid JSON. Please check the syntax.");
+      return;
+    }
+    if (!workflowDefinitionId || !apiHandlers?.saveWorkflow) {
+      setJsonError("Cannot save - no workflow definition or API handler.");
+      return;
+    }
+    setSaving(true);
+    setJsonError(null);
+    try {
+      const result = await apiHandlers.saveWorkflow(workflowDefinitionId, parsed, platform);
+      if (result.success) {
+        setMessage({ type: "success", text: "Workflow saved to database" });
+        setViewMode("summary");
+        onWorkflowUpdate?.(parsed);
+      } else {
+        setJsonError(result.error || "Failed to save workflow");
+      }
+    } catch {
+      setJsonError("Failed to save workflow");
+    } finally {
+      setSaving(false);
+    }
+  }
+  async function pushToN8n() {
+    if (!workerId || !apiHandlers?.pushToN8n) {
+      setMessage({ type: "error", text: "Cannot sync - no worker ID or API handler" });
+      return;
+    }
+    setSyncing(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.pushToN8n(workerId);
+      if (result.success) {
+        setMessage({ type: "success", text: "Pushed to n8n successfully" });
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to push to n8n" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to push to n8n" });
+    } finally {
+      setSyncing(false);
+    }
+  }
+  async function pullFromN8n() {
+    if (!workflowId || !workflowDefinitionId || !apiHandlers?.pullFromN8n) {
+      setMessage({ type: "error", text: "Cannot pull - no n8n workflow ID or API handler" });
+      return;
+    }
+    setPulling(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.pullFromN8n(workflowDefinitionId);
+      if (result.success) {
+        if (result.descriptionSync?.needsUpdate) {
+          setMessage({
+            type: "success",
+            text: `Pulled from n8n. Note: ${result.descriptionSync.reason || "Worker description may need updating."}`
+          });
+        } else {
+          setMessage({ type: "success", text: "Pulled from n8n successfully" });
+        }
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to pull from n8n" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to pull from n8n" });
+    } finally {
+      setPulling(false);
+    }
+  }
+  async function exportFromSim() {
+    if (!workflowDefinitionId || !simWorkflowId || !apiHandlers?.exportFromSim) {
+      setMessage({ type: "error", text: "Cannot export - no Sim workflow ID or API handler" });
+      return;
+    }
+    setExporting(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.exportFromSim(workflowDefinitionId);
+      if (result.success) {
+        const blocksCount = result.workflow?.blocksCount || 0;
+        const edgesCount = result.workflow?.edgesCount || 0;
+        setMessage({
+          type: "success",
+          text: `Exported from Sim Studio (v${result.backup?.version || 1}, ${blocksCount} blocks, ${edgesCount} edges)`
+        });
+        if (viewMode === "backups") {
+          loadBackups();
+        }
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to export from Sim Studio" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to export from Sim Studio" });
+    } finally {
+      setExporting(false);
+    }
+  }
+  async function loadBackups() {
+    if (!workflowDefinitionId || !apiHandlers?.getSimBackups) {
+      return;
+    }
+    setLoadingBackups(true);
+    try {
+      const result = await apiHandlers.getSimBackups(workflowDefinitionId);
+      if (result.success && result.backups) {
+        setBackups(result.backups);
+      }
+    } catch {
+      console.error("Failed to load backups");
+    } finally {
+      setLoadingBackups(false);
+    }
+  }
+  function showBackups() {
+    setViewMode("backups");
+    loadBackups();
+  }
+  function openInSimStudio() {
+    if (simStudioUrl && simWorkflowId) {
+      window.open(`${simStudioUrl}/w/${simWorkflowId}`, "_blank");
+    }
+  }
+  async function pushToSim() {
+    if (!workflowDefinitionId || !apiHandlers?.pushToSim) {
+      setMessage({ type: "error", text: "Cannot push - no workflow definition ID or API handler" });
+      return;
+    }
+    setPushingToSim(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.pushToSim(workflowDefinitionId);
+      if (result.success) {
+        setMessage({
+          type: "success",
+          text: result.workflowId ? `Pushed to Sim Studio (workflow: ${result.workflowId})` : "Pushed to Sim Studio successfully"
+        });
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to push to Sim Studio" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to push to Sim Studio" });
+    } finally {
+      setPushingToSim(false);
+    }
+  }
+  async function pullFromSim() {
+    if (!workflowDefinitionId || !simWorkflowId || !apiHandlers?.pullFromSim) {
+      setMessage({ type: "error", text: "Cannot pull - no Sim workflow ID or API handler" });
+      return;
+    }
+    setPullingFromSim(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.pullFromSim(workflowDefinitionId);
+      if (result.success) {
+        if (result.descriptionSync?.needsUpdate) {
+          setMessage({
+            type: "success",
+            text: `Pulled from Sim Studio. Note: ${result.descriptionSync.reason || "Worker description may need updating."}`
+          });
+        } else {
+          setMessage({ type: "success", text: "Pulled from Sim Studio successfully" });
+        }
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to pull from Sim Studio" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to pull from Sim Studio" });
+    } finally {
+      setPullingFromSim(false);
+    }
+  }
+  function startCreating() {
+    if (internalWorkerType) {
+      setSelectedTemplate(internalWorkerType);
+    } else {
+      setSelectedTemplate("blank");
+    }
+    const blank = platform === "n8n" ? BLANK_N8N_WORKFLOW : BLANK_SIM_WORKFLOW;
+    setEditedJson(JSON.stringify(blank, null, 2));
+    setViewMode("create");
+  }
+  async function createWorkflow() {
+    const parsed = validateJson(editedJson);
+    if (!parsed) {
+      setJsonError("Invalid JSON. Please check the syntax.");
+      return;
+    }
+    if (!workerId || !apiHandlers?.createWorkflow) {
+      setJsonError("Cannot create - no worker ID or API handler.");
+      return;
+    }
+    setCreating(true);
+    setJsonError(null);
+    try {
+      const workflowName = parsed.name || `${workerName || "Worker"} Workflow`;
+      const result = await apiHandlers.createWorkflow({
+        agent_id: workerId,
+        name: workflowName,
+        platform,
+        n8n_workflow: platform === "n8n" ? parsed : null,
+        sim_workflow: platform === "sim" ? parsed : null,
+        is_active: true,
+        is_global: false
+      });
+      if (result.success && result.workflow) {
+        setMessage({ type: "success", text: "Workflow created successfully" });
+        onWorkflowCreated?.(result.workflow.id);
+      } else {
+        setJsonError(result.error || "Failed to create workflow");
+      }
+    } catch {
+      setJsonError("Failed to create workflow");
+    } finally {
+      setCreating(false);
+    }
+  }
+  async function switchPlatform(targetPlatform) {
+    if (!workflowDefinitionId || !apiHandlers?.switchPlatform) {
+      setMessage({ type: "error", text: "Cannot switch platform - no workflow definition ID or API handler" });
+      return;
+    }
+    setSwitchingPlatform(true);
+    setMessage(null);
+    try {
+      const result = await apiHandlers.switchPlatform(workflowDefinitionId, targetPlatform);
+      if (result.success) {
+        setMessage({
+          type: "success",
+          text: targetPlatform === "sim" ? `Switched to Sim Studio${result.simWorkflowId ? ` (workflow: ${result.simWorkflowId})` : ""}` : "Switched to n8n"
+        });
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        setMessage({ type: "error", text: result.error || "Failed to switch platform" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to switch platform" });
+    } finally {
+      setSwitchingPlatform(false);
+    }
+  }
+  async function loadTemplate() {
+    if (!workerId || !workerName || !apiHandlers?.loadTemplate) {
+      setJsonError("Worker information or API handler required to generate template.");
+      return;
+    }
+    if (selectedTemplate === "blank" || selectedTemplate === "custom") {
+      return;
+    }
+    setCreating(true);
+    setJsonError(null);
+    try {
+      const result = await apiHandlers.loadTemplate(selectedTemplate, workerId);
+      if (result.success && result.workflow) {
+        setEditedJson(JSON.stringify(result.workflow, null, 2));
+        setMessage({ type: "success", text: "Template loaded" });
+      } else {
+        setJsonError(result.error || "Failed to load template");
+      }
+    } catch {
+      setJsonError("Failed to load template");
+    } finally {
+      setCreating(false);
+    }
+  }
+  const DefaultLoading = /* @__PURE__ */ jsx("div", { className: "h-[320px] bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center", children: /* @__PURE__ */ jsx("div", { className: "text-slate-400 text-sm", children: "Loading..." }) });
+  if (!workflow) {
+    return /* @__PURE__ */ jsxs(Card, { className, children: [
+      /* @__PURE__ */ jsx(CardHeader, { className: "pb-3", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ jsx(CardTitle, { className: "text-base", children: title }),
+        allowCreate && viewMode !== "create" && /* @__PURE__ */ jsx(Button, { onClick: startCreating, variant: "primary", size: "sm", children: "Create Workflow" })
+      ] }) }),
+      /* @__PURE__ */ jsx(CardContent, { children: viewMode === "create" ? /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+        message && /* @__PURE__ */ jsx(Alert, { variant: message.type === "success" ? "success" : "error", children: message.text }),
+        /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+          /* @__PURE__ */ jsx("label", { className: "text-sm font-medium", children: "Start from template:" }),
+          /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2", children: [
+            /* @__PURE__ */ jsx(
+              Button,
+              {
+                onClick: () => {
+                  setSelectedTemplate("blank");
+                  const blank = platform === "n8n" ? BLANK_N8N_WORKFLOW : BLANK_SIM_WORKFLOW;
+                  setEditedJson(JSON.stringify(blank, null, 2));
+                },
+                variant: selectedTemplate === "blank" ? "primary" : "outline",
+                size: "sm",
+                children: "Blank"
+              }
+            ),
+            internalWorkerType && apiHandlers?.loadTemplate && /* @__PURE__ */ jsxs(
+              Button,
+              {
+                onClick: () => {
+                  setSelectedTemplate(internalWorkerType);
+                  loadTemplate();
+                },
+                variant: selectedTemplate === internalWorkerType ? "primary" : "outline",
+                size: "sm",
+                children: [
+                  internalWorkerType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+                  " Template"
+                ]
+              }
+            )
+          ] })
+        ] }),
+        jsonError && /* @__PURE__ */ jsx(Alert, { variant: "error", children: jsonError }),
+        /* @__PURE__ */ jsx(
+          Textarea,
+          {
+            value: editedJson,
+            onChange: (e) => {
+              setEditedJson(e.target.value);
+              setJsonError(null);
+            },
+            className: "h-72 font-mono text-xs",
+            placeholder: "Paste or edit workflow JSON here..."
+          }
+        ),
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+          /* @__PURE__ */ jsx(Button, { onClick: () => setViewMode("summary"), variant: "outline", size: "sm", children: "Cancel" }),
+          /* @__PURE__ */ jsx(
+            Button,
+            {
+              onClick: createWorkflow,
+              disabled: creating || !editedJson.trim(),
+              variant: "primary",
+              size: "sm",
+              children: creating ? "Creating..." : "Create Workflow"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: 'Create a workflow definition. After creating, use "Push to n8n" to deploy it.' })
+      ] }) : /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground", children: [
+        "No workflow defined yet.",
+        allowCreate && ' Click "Create Workflow" to add one.'
+      ] }) })
+    ] });
+  }
+  return /* @__PURE__ */ jsxs(Card, { className, children: [
+    /* @__PURE__ */ jsx(CardHeader, { className: "pb-3", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(CardTitle, { className: "text-base", children: title }),
+        allowStatusChange && workflowDefinitionId ? /* @__PURE__ */ jsx(
+          Badge,
+          {
+            variant: localIsActive ? "success" : "default",
+            size: "sm",
+            children: localIsActive ? "Active" : "Inactive"
+          }
+        ) : isActive !== void 0 && /* @__PURE__ */ jsx(Badge, { variant: isActive ? "success" : "default", size: "sm", children: isActive ? "Active" : "Inactive" }),
+        hasUnsavedChanges && /* @__PURE__ */ jsx(Badge, { variant: "warning", size: "sm", children: "Unsaved" }),
+        syncError && /* @__PURE__ */ jsx(Badge, { variant: "error", size: "sm", children: "Sync Error" })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "flex gap-1", children: viewMode === "edit" ? /* @__PURE__ */ jsxs(Fragment, { children: [
+        /* @__PURE__ */ jsx(Button, { onClick: cancelEditing, variant: "outline", size: "sm", children: "Cancel" }),
+        /* @__PURE__ */ jsx(Button, { onClick: saveWorkflow, disabled: saving, variant: "primary", size: "sm", children: saving ? "Saving..." : "Save JSON" })
+      ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex border border-border rounded-md overflow-hidden mr-2", children: [
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setViewMode("summary"),
+              className: `px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors ${viewMode === "summary" ? "bg-primary text-white" : "bg-background hover:bg-muted text-muted-foreground"}`,
+              children: [
+                /* @__PURE__ */ jsx(Eye, { size: 14 }),
+                "Summary"
+              ]
+            }
+          ),
+          platform === "n8n" && /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setViewMode("flow"),
+              className: `px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-l border-border ${viewMode === "flow" ? "bg-primary text-white" : "bg-background hover:bg-muted text-muted-foreground"}`,
+              children: [
+                /* @__PURE__ */ jsx(TreeStructure, { size: 14 }),
+                "Diagram"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs(
+            "button",
+            {
+              onClick: () => setViewMode("json"),
+              className: `px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-l border-border ${viewMode === "json" ? "bg-primary text-white" : "bg-background hover:bg-muted text-muted-foreground"}`,
+              children: [
+                /* @__PURE__ */ jsx(Code, { size: 14 }),
+                "JSON"
+              ]
+            }
+          )
+        ] }),
+        editable && apiHandlers?.saveWorkflow && /* @__PURE__ */ jsx(Button, { onClick: startEditing, variant: "outline", size: "sm", icon: /* @__PURE__ */ jsx(PencilSimple, { size: 14 }), children: "Edit" })
+      ] }) })
+    ] }) }),
+    /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+      message && /* @__PURE__ */ jsx(Alert, { variant: message.type === "success" ? "success" : "error", children: message.text }),
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap items-center gap-4 text-xs text-muted-foreground", children: [
+        workflowId && /* @__PURE__ */ jsx("span", { className: "font-mono bg-muted px-2 py-1 rounded", children: workflowId }),
+        lastSynced && /* @__PURE__ */ jsxs("span", { children: [
+          "Synced ",
+          formatDistance(new Date(lastSynced), { addSuffix: true })
+        ] })
+      ] }),
+      webhookUrl && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 p-2 bg-muted/50 rounded border border-border", children: [
+        /* @__PURE__ */ jsx(WebhooksLogo, { size: 14, className: "text-muted-foreground flex-shrink-0" }),
+        /* @__PURE__ */ jsx("code", { className: "text-xs font-mono text-foreground truncate flex-1", children: webhookUrl }),
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            onClick: () => copyToClipboard(webhookUrl, "Webhook URL copied"),
+            className: "flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground flex-shrink-0",
+            children: [
+              /* @__PURE__ */ jsx(Copy, { size: 12 }),
+              "Copy"
+            ]
+          }
+        )
+      ] }),
+      (allowPlatformChange || allowStatusChange) && workflowDefinitionId && hasUnsavedChanges && apiHandlers?.saveSettings && /* @__PURE__ */ jsxs("div", { className: "p-3 bg-amber-50 border border-amber-200 rounded-lg space-y-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ jsx("span", { className: "text-sm font-medium text-amber-800", children: "Unsaved changes" }),
+          /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+            /* @__PURE__ */ jsx(Button, { onClick: cancelChanges, variant: "outline", size: "sm", children: "Cancel" }),
+            /* @__PURE__ */ jsx(Button, { onClick: saveSettings, disabled: saving, variant: "primary", size: "sm", children: saving ? "Saving..." : "Save" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "flex gap-4 text-sm", children: [
+          allowPlatformChange && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "Platform:" }),
+            /* @__PURE__ */ jsxs(
+              Select,
+              {
+                value: localPlatform,
+                onChange: (e) => handleLocalPlatformChange(e.target.value),
+                className: "h-8 text-sm w-28",
+                children: [
+                  /* @__PURE__ */ jsx("option", { value: "n8n", children: "n8n" }),
+                  /* @__PURE__ */ jsx("option", { value: "sim", children: "Sim Studio" })
+                ]
+              }
+            )
+          ] }),
+          allowStatusChange && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-muted-foreground", children: "Status:" }),
+            /* @__PURE__ */ jsxs(
+              Select,
+              {
+                value: localIsActive ? "active" : "inactive",
+                onChange: (e) => handleLocalStatusChange(e.target.value === "active"),
+                className: "h-8 text-sm w-28",
+                children: [
+                  /* @__PURE__ */ jsx("option", { value: "active", children: "Active" }),
+                  /* @__PURE__ */ jsx("option", { value: "inactive", children: "Inactive" })
+                ]
+              }
+            )
+          ] })
+        ] })
+      ] }),
+      syncError && /* @__PURE__ */ jsxs(Alert, { variant: "error", children: [
+        /* @__PURE__ */ jsx("strong", { children: "Sync Error:" }),
+        " ",
+        syncError
+      ] }),
+      editable && workerId && platform === "n8n" && viewMode !== "edit" && apiHandlers?.pushToN8n && /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2", children: [
+        /* @__PURE__ */ jsx(Button, { onClick: pushToN8n, disabled: syncing, variant: "primary", size: "sm", icon: /* @__PURE__ */ jsx(CloudArrowUp, { size: 16 }), children: syncing ? "Pushing..." : "Push to n8n" }),
+        workflowId && apiHandlers?.pullFromN8n && /* @__PURE__ */ jsx(Button, { onClick: pullFromN8n, disabled: pulling, variant: "outline", size: "sm", icon: /* @__PURE__ */ jsx(CloudArrowDown, { size: 16 }), children: pulling ? "Pulling..." : "Pull from n8n" }),
+        workflowDefinitionId && apiHandlers?.switchPlatform && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: () => switchPlatform("sim"),
+            disabled: switchingPlatform,
+            variant: "outline",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(ArrowsClockwise, { size: 16 }),
+            className: "border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400",
+            children: switchingPlatform ? "Switching..." : "Switch to Sim Studio"
+          }
+        )
+      ] }),
+      platform === "sim" && viewMode !== "edit" && /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2", children: [
+        editable && workflowDefinitionId && apiHandlers?.pushToSim && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: pushToSim,
+            disabled: pushingToSim,
+            variant: "primary",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(CloudArrowUp, { size: 16 }),
+            children: pushingToSim ? "Pushing..." : "Push to Sim"
+          }
+        ),
+        simWorkflowId && apiHandlers?.pullFromSim && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: pullFromSim,
+            disabled: pullingFromSim,
+            variant: "outline",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(CloudArrowDown, { size: 16 }),
+            children: pullingFromSim ? "Pulling..." : "Pull from Sim"
+          }
+        ),
+        simWorkflowId && apiHandlers?.exportFromSim && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: exportFromSim,
+            disabled: exporting,
+            variant: "outline",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(DownloadSimple, { size: 16 }),
+            children: exporting ? "Exporting..." : "Export Backup"
+          }
+        ),
+        simWorkflowId && apiHandlers?.getSimBackups && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: showBackups,
+            variant: "outline",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(ClockCounterClockwise, { size: 16 }),
+            children: "History"
+          }
+        ),
+        simStudioUrl && simWorkflowId && /* @__PURE__ */ jsx(
+          Button,
+          {
+            onClick: openInSimStudio,
+            variant: "outline",
+            size: "sm",
+            icon: /* @__PURE__ */ jsx(ArrowSquareOut, { size: 16 }),
+            children: "Open in Sim"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "pt-2", children: viewMode === "edit" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+        jsonError && /* @__PURE__ */ jsx(Alert, { variant: "error", children: jsonError }),
+        /* @__PURE__ */ jsx(
+          Textarea,
+          {
+            value: editedJson,
+            onChange: (e) => {
+              setEditedJson(e.target.value);
+              setJsonError(null);
+            },
+            className: "h-[400px] font-mono text-xs"
+          }
+        ),
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: 'Edit the workflow JSON above. Changes will be saved to the database. Use "Push to n8n" to sync.' })
+      ] }) : viewMode === "json" ? /* @__PURE__ */ jsxs("div", { className: "relative rounded-sm overflow-hidden border border-border", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between px-4 py-2 bg-[var(--black)] border-b border-gray-800", children: [
+          /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-400", children: "JSON" }),
+          /* @__PURE__ */ jsx(
+            Button,
+            {
+              onClick: () => copyToClipboard(JSON.stringify(workflow, null, 2), "JSON copied"),
+              variant: "outline",
+              size: "sm",
+              className: "h-7 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-500",
+              icon: /* @__PURE__ */ jsx(Copy, { size: 12 }),
+              children: "Copy"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx("pre", { className: "p-4 bg-[var(--black)] text-gray-100 text-xs overflow-auto max-h-[500px] font-mono", children: JSON.stringify(workflow, null, 2) })
+      ] }) : viewMode === "flow" ? platform === "n8n" && /* @__PURE__ */ jsx(Suspense, { fallback: loadingComponent || DefaultLoading, children: /* @__PURE__ */ jsx(WorkflowFlow2, { workflow, height: 380 }) }) : viewMode === "backups" ? /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium", children: "Backup History" }),
+          /* @__PURE__ */ jsx(
+            Button,
+            {
+              onClick: () => setViewMode("summary"),
+              variant: "outline",
+              size: "sm",
+              children: "Back to Summary"
+            }
+          )
+        ] }),
+        loadingBackups ? /* @__PURE__ */ jsx("div", { className: "py-8 text-center text-muted-foreground", children: "Loading backups..." }) : backups.length === 0 ? /* @__PURE__ */ jsxs("div", { className: "py-8 text-center text-muted-foreground", children: [
+          /* @__PURE__ */ jsx(ClockCounterClockwise, { size: 32, className: "mx-auto mb-2 opacity-50" }),
+          /* @__PURE__ */ jsx("p", { children: "No backups yet" }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs mt-1", children: 'Click "Export from Sim" to create a backup' })
+        ] }) : /* @__PURE__ */ jsx("div", { className: "space-y-2", children: backups.map((backup) => /* @__PURE__ */ jsx(
+          "div",
+          {
+            className: "flex items-center justify-between p-3 bg-muted/50 rounded border border-border",
+            children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center w-8 h-8 rounded bg-primary/10 text-primary text-sm font-semibold", children: [
+                "v",
+                backup.version
+              ] }),
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx("p", { className: "text-sm font-medium", children: backup.versionLabel || backup.workflowName }),
+                /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                  formatDistance(new Date(backup.exportedAt), { addSuffix: true }),
+                  backup.isDeployed && /* @__PURE__ */ jsx(Badge, { variant: "success", size: "sm", className: "ml-2", children: "Deployed" })
+                ] })
+              ] })
+            ] })
+          },
+          backup.id
+        )) })
+      ] }) : platform === "n8n" ? /* @__PURE__ */ jsx(N8nWorkflowSummary, { workflow, showFlow: false }) : /* @__PURE__ */ jsx(SimWorkflowSummary, { workflow }) })
+    ] })
   ] });
 }
 
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
