@@ -358,8 +358,8 @@ export function ScenariosManager({
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-[var(--black)]">Scenarios</h3>
               {isComplete && (
-                <Badge variant="secondary" className="bg-[var(--cyan)]/10 text-[var(--cyan)] border-[var(--cyan)]/20 font-medium">
-                  <CheckCircle size={12} weight="fill" className="mr-1" />
+                <Badge variant="primary" size="sm">
+                  <CheckCircle size={12} weight="fill" />
                   Complete
                 </Badge>
               )}

@@ -4475,22 +4475,22 @@ function ScenariosManager({
       {
         type: "button",
         onClick: () => setIsExpanded(!isExpanded),
-        className: "w-full flex items-center justify-between hover:bg-muted/30 -mx-2 px-2 py-1 rounded-sm transition-colors",
+        className: "w-full flex items-center justify-between bg-muted/30 border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors",
         children: [
-          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-3", children: [
-            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(react_star.Lightning, { size: 20, weight: "fill", className: "text-[var(--cyan)]" }) }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-4", children: [
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-12 h-12 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(react_star.Lightning, { size: 24, weight: "fill", className: "text-[var(--cyan)]" }) }),
             /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-left", children: [
-              /* @__PURE__ */ jsxRuntime.jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
+              /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntime.jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
+                isComplete && /* @__PURE__ */ jsxRuntime.jsxs(Badge, { variant: "secondary", className: "bg-[var(--cyan)]/10 text-[var(--cyan)] border-[var(--cyan)]/20 font-medium", children: [
+                  /* @__PURE__ */ jsxRuntime.jsx(react_star.CheckCircle, { size: 12, weight: "fill", className: "mr-1" }),
+                  "Complete"
+                ] })
+              ] }),
               /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases and escalations" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
-            isComplete && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-1.5 text-[var(--cyan)]", children: [
-              /* @__PURE__ */ jsxRuntime.jsx(react_star.CheckCircle, { size: 16, weight: "fill" }),
-              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-sm font-medium", children: "Complete" })
-            ] }),
-            isExpanded ? /* @__PURE__ */ jsxRuntime.jsx(react_star.CaretUp, { size: 20, className: "text-muted-foreground" }) : /* @__PURE__ */ jsxRuntime.jsx(react_star.CaretDown, { size: 20, className: "text-muted-foreground" })
-          ] })
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center gap-3", children: isExpanded ? /* @__PURE__ */ jsxRuntime.jsx(react_star.CaretUp, { size: 20, className: "text-muted-foreground" }) : /* @__PURE__ */ jsxRuntime.jsx(react_star.CaretDown, { size: 20, className: "text-muted-foreground" }) })
         ]
       }
     ),
