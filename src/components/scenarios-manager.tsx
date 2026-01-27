@@ -99,42 +99,37 @@ function ScenarioCard({
   const Icon = config.icon
 
   return (
-    <div className="group relative border border-border rounded-sm p-4 hover:border-[var(--cyan)]/30 hover:bg-[var(--cyan)]/[0.02] transition-all">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className={cn('w-9 h-9 rounded-sm flex items-center justify-center shrink-0', config.bgColor)}>
-            <Icon size={18} weight="fill" className={config.color} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Badge variant="outline" size="sm" className="font-medium">{config.label}</Badge>
-            </div>
-            <p className="text-sm text-[var(--black)]">
-              <span className="font-medium">When:</span> {scenario.situation}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              <span className="text-[var(--black)] font-medium">Action:</span> {scenario.action}
-            </p>
-          </div>
+    <div className="group relative flex items-start justify-between gap-3 py-3 border-b border-border/50 last:border-b-0">
+      <div className="flex items-start gap-3 flex-1 min-w-0">
+        <div className={cn('w-8 h-8 rounded-full flex items-center justify-center shrink-0', config.bgColor)}>
+          <Icon size={16} weight="fill" className={config.color} />
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-[var(--black)]"
-            onClick={onEdit}
-          >
-            <PencilSimple size={16} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50"
-            onClick={onDelete}
-          >
-            <Trash size={16} />
-          </Button>
+        <div className="flex-1 min-w-0 pt-0.5">
+          <p className="text-sm text-[var(--black)]">
+            <span className="font-medium">When:</span> {scenario.situation}
+          </p>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            <span className="text-[var(--black)] font-medium">Action:</span> {scenario.action}
+          </p>
         </div>
+      </div>
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 text-muted-foreground hover:text-[var(--black)]"
+          onClick={onEdit}
+        >
+          <PencilSimple size={14} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 text-muted-foreground hover:text-red-600 hover:bg-red-50"
+          onClick={onDelete}
+        >
+          <Trash size={14} />
+        </Button>
       </div>
     </div>
   )
@@ -348,11 +343,11 @@ export function ScenariosManager({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between bg-muted/30 border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
+        className="w-full flex items-center justify-between border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/30 transition-colors"
       >
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center">
-            <Lightning size={24} weight="fill" className="text-[var(--cyan)]" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center">
+            <Lightning size={20} weight="fill" className="text-[var(--cyan)]" />
           </div>
           <div className="text-left">
             <div className="flex items-center gap-2">
@@ -366,34 +361,24 @@ export function ScenariosManager({
             </div>
             <p className="text-sm text-muted-foreground">
               {scenarios.length === 0
-                ? 'Define rules for edge cases and escalations'
+                ? 'Define rules for edge cases'
                 : `${scenarios.length} scenario${scenarios.length === 1 ? '' : 's'} defined`}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          {isExpanded ? (
-            <CaretUp size={20} className="text-muted-foreground" />
-          ) : (
-            <CaretDown size={20} className="text-muted-foreground" />
-          )}
-        </div>
+        {isExpanded ? (
+          <CaretUp size={20} className="text-muted-foreground" />
+        ) : (
+          <CaretDown size={20} className="text-muted-foreground" />
+        )}
       </button>
 
       {/* Expandable content */}
       {isExpanded && (
         <>
-          {/* Add button */}
-          <div className="flex justify-end">
-            <Button variant="outline" size="sm" onClick={handleAddClick}>
-              <Plus size={16} className="mr-1" />
-              Add scenario
-            </Button>
-          </div>
-
           {/* Scenarios list */}
           {scenarios.length > 0 && (
-            <div className="grid gap-3">
+            <div className="px-4">
               {scenarios.map((scenario) => (
                 <ScenarioCard
                   key={scenario.id}
@@ -407,10 +392,7 @@ export function ScenariosManager({
 
           {/* Empty state */}
           {scenarios.length === 0 && (
-            <div className="border border-dashed border-border rounded-sm p-8 text-center">
-              <div className="w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3">
-                <Lightning size={24} className="text-muted-foreground" />
-              </div>
+            <div className="px-4 py-6 text-center">
               <p className="text-sm text-muted-foreground mb-4">
                 No scenarios yet. Add rules for how the worker should handle edge cases.
               </p>
@@ -421,9 +403,19 @@ export function ScenariosManager({
             </div>
           )}
 
+          {/* Add button - at the end of the list */}
+          {scenarios.length > 0 && (
+            <div className="px-4 pt-2">
+              <Button variant="ghost" size="sm" onClick={handleAddClick} className="text-muted-foreground hover:text-[var(--black)]">
+                <Plus size={16} className="mr-1.5" />
+                Add scenario
+              </Button>
+            </div>
+          )}
+
           {/* Suggestions */}
           {filteredSuggestions.length > 0 && !isComplete && (
-            <div className="pt-2">
+            <div className="px-4 pt-2">
               <p className="text-xs text-muted-foreground mb-2">Suggested scenarios:</p>
               <div className="flex flex-wrap gap-2">
                 {filteredSuggestions.map((suggestion, index) => (
@@ -440,16 +432,11 @@ export function ScenariosManager({
 
           {/* Complete button */}
           {canComplete && (
-            <div className="pt-4 border-t border-border">
-              <div className="flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1">
-                <div>
-                  <p className="text-sm font-medium text-[var(--black)]">
-                    Ready to proceed?
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Mark your scenarios as complete to continue with the onboarding.
-                  </p>
-                </div>
+            <div className="px-4 pt-4 mt-2 border-t border-border/50">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm text-muted-foreground">
+                  Mark your scenarios as complete to continue.
+                </p>
                 <Button
                   onClick={handleComplete}
                   disabled={isCompleting}
@@ -466,7 +453,7 @@ export function ScenariosManager({
 
           {/* Complete state - only show when expanded */}
           {isComplete && (
-            <div className="pt-4 border-t border-border">
+            <div className="px-4 pt-3 mt-2 border-t border-border/50">
               <p className="text-xs text-muted-foreground">
                 You can still add or edit scenarios while we build your worker.
               </p>

@@ -4223,17 +4223,16 @@ function ScenarioCard({
 }) {
   const config = typeConfig[scenario.type];
   const Icon = config.icon;
-  return /* @__PURE__ */ jsx("div", { className: "group relative border border-border rounded-sm p-4 hover:border-[var(--cyan)]/30 hover:bg-[var(--cyan)]/[0.02] transition-all", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "group relative flex items-start justify-between gap-3 py-3 border-b border-border/50 last:border-b-0", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3 flex-1 min-w-0", children: [
-      /* @__PURE__ */ jsx("div", { className: cn("w-9 h-9 rounded-sm flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsx(Icon, { size: 18, weight: "fill", className: config.color }) }),
-      /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-        /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2 mb-1.5", children: /* @__PURE__ */ jsx(Badge, { variant: "outline", size: "sm", className: "font-medium", children: config.label }) }),
+      /* @__PURE__ */ jsx("div", { className: cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsx(Icon, { size: 16, weight: "fill", className: config.color }) }),
+      /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0 pt-0.5", children: [
         /* @__PURE__ */ jsxs("p", { className: "text-sm text-[var(--black)]", children: [
           /* @__PURE__ */ jsx("span", { className: "font-medium", children: "When:" }),
           " ",
           scenario.situation
         ] }),
-        /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground mt-1", children: [
+        /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground mt-0.5", children: [
           /* @__PURE__ */ jsx("span", { className: "text-[var(--black)] font-medium", children: "Action:" }),
           " ",
           scenario.action
@@ -4246,9 +4245,9 @@ function ScenarioCard({
         {
           variant: "ghost",
           size: "icon",
-          className: "h-8 w-8 text-muted-foreground hover:text-[var(--black)]",
+          className: "h-7 w-7 text-muted-foreground hover:text-[var(--black)]",
           onClick: onEdit,
-          children: /* @__PURE__ */ jsx(PencilSimple, { size: 16 })
+          children: /* @__PURE__ */ jsx(PencilSimple, { size: 14 })
         }
       ),
       /* @__PURE__ */ jsx(
@@ -4256,13 +4255,13 @@ function ScenarioCard({
         {
           variant: "ghost",
           size: "icon",
-          className: "h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50",
+          className: "h-7 w-7 text-muted-foreground hover:text-red-600 hover:bg-red-50",
           onClick: onDelete,
-          children: /* @__PURE__ */ jsx(Trash, { size: 16 })
+          children: /* @__PURE__ */ jsx(Trash, { size: 14 })
         }
       )
     ] })
-  ] }) });
+  ] });
 }
 function SuggestionChip({
   suggestion,
@@ -4441,10 +4440,10 @@ function ScenariosManager({
       {
         type: "button",
         onClick: () => setIsExpanded(!isExpanded),
-        className: "w-full flex items-center justify-between bg-muted/30 border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors",
+        className: "w-full flex items-center justify-between border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/30 transition-colors",
         children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-            /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx(Lightning, { size: 24, weight: "fill", className: "text-[var(--cyan)]" }) }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx(Lightning, { size: 20, weight: "fill", className: "text-[var(--cyan)]" }) }),
             /* @__PURE__ */ jsxs("div", { className: "text-left", children: [
               /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
                 /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
@@ -4453,19 +4452,15 @@ function ScenariosManager({
                   "Complete"
                 ] })
               ] }),
-              /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases and escalations" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
             ] })
           ] }),
-          /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: isExpanded ? /* @__PURE__ */ jsx(CaretUp, { size: 20, className: "text-muted-foreground" }) : /* @__PURE__ */ jsx(CaretDown, { size: 20, className: "text-muted-foreground" }) })
+          isExpanded ? /* @__PURE__ */ jsx(CaretUp, { size: 20, className: "text-muted-foreground" }) : /* @__PURE__ */ jsx(CaretDown, { size: 20, className: "text-muted-foreground" })
         ]
       }
     ),
     isExpanded && /* @__PURE__ */ jsxs(Fragment, { children: [
-      /* @__PURE__ */ jsx("div", { className: "flex justify-end", children: /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
-        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1" }),
-        "Add scenario"
-      ] }) }),
-      scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "grid gap-3", children: scenarios.map((scenario) => /* @__PURE__ */ jsx(
+      scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "px-4", children: scenarios.map((scenario) => /* @__PURE__ */ jsx(
         ScenarioCard,
         {
           scenario,
@@ -4474,15 +4469,18 @@ function ScenariosManager({
         },
         scenario.id
       )) }),
-      scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-border rounded-sm p-8 text-center", children: [
-        /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3", children: /* @__PURE__ */ jsx(Lightning, { size: 24, className: "text-muted-foreground" }) }),
+      scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "px-4 py-6 text-center", children: [
         /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
         /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
           /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
           "Add your first scenario"
         ] })
       ] }),
-      filteredSuggestions.length > 0 && !isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-2", children: [
+      scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "px-4 pt-2", children: /* @__PURE__ */ jsxs(Button, { variant: "ghost", size: "sm", onClick: handleAddClick, className: "text-muted-foreground hover:text-[var(--black)]", children: [
+        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
+        "Add scenario"
+      ] }) }),
+      filteredSuggestions.length > 0 && !isComplete && /* @__PURE__ */ jsxs("div", { className: "px-4 pt-2", children: [
         /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mb-2", children: "Suggested scenarios:" }),
         /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: filteredSuggestions.map((suggestion, index) => /* @__PURE__ */ jsx(
           SuggestionChip,
@@ -4494,11 +4492,8 @@ function ScenariosManager({
           index
         )) })
       ] }),
-      canComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1", children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)]", children: "Ready to proceed?" }),
-          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Mark your scenarios as complete to continue with the onboarding." })
-        ] }),
+      canComplete && /* @__PURE__ */ jsx("div", { className: "px-4 pt-4 mt-2 border-t border-border/50", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Mark your scenarios as complete to continue." }),
         /* @__PURE__ */ jsxs(
           Button,
           {
@@ -4514,7 +4509,7 @@ function ScenariosManager({
           }
         )
       ] }) }),
-      isComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "You can still add or edit scenarios while we build your worker." }) })
+      isComplete && /* @__PURE__ */ jsx("div", { className: "px-4 pt-3 mt-2 border-t border-border/50", children: /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "You can still add or edit scenarios while we build your worker." }) })
     ] }),
     /* @__PURE__ */ jsx(
       ScenarioDialog,
