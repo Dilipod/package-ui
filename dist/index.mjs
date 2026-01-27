@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, Plus, CheckCircle, PaperPlaneTilt, CaretUp, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
+import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, CheckCircle, CaretUp, Plus, PaperPlaneTilt, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as SliderPrimitive from '@radix-ui/react-slider';
@@ -4386,12 +4386,14 @@ function ScenariosManager({
   isLoading,
   isComplete = false,
   minScenariosToComplete = 1,
+  defaultExpanded = true,
   className
 }) {
   const [dialogOpen, setDialogOpen] = React51.useState(false);
   const [editingScenario, setEditingScenario] = React51.useState(null);
   const [deletingId, setDeletingId] = React51.useState(null);
   const [isCompleting, setIsCompleting] = React51.useState(false);
+  const [isExpanded, setIsExpanded] = React51.useState(defaultExpanded);
   const canComplete = scenarios.length >= minScenariosToComplete && !isComplete && onComplete;
   const handleAddClick = () => {
     setEditingScenario(null);
@@ -4434,74 +4436,85 @@ function ScenariosManager({
     )
   );
   return /* @__PURE__ */ jsxs("div", { className: cn("space-y-4", className), children: [
-    /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-        /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx(Lightning, { size: 20, weight: "fill", className: "text-[var(--cyan)]" }) }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
-          /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases and escalations" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
+    /* @__PURE__ */ jsxs(
+      "button",
+      {
+        type: "button",
+        onClick: () => setIsExpanded(!isExpanded),
+        className: "w-full flex items-center justify-between hover:bg-muted/30 -mx-2 px-2 py-1 rounded-sm transition-colors",
+        children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx(Lightning, { size: 20, weight: "fill", className: "text-[var(--cyan)]" }) }),
+            /* @__PURE__ */ jsxs("div", { className: "text-left", children: [
+              /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: scenarios.length === 0 ? "Define rules for edge cases and escalations" : `${scenarios.length} scenario${scenarios.length === 1 ? "" : "s"} defined` })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+            isComplete && /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-1.5 text-[var(--cyan)]", children: [
+              /* @__PURE__ */ jsx(CheckCircle, { size: 16, weight: "fill" }),
+              /* @__PURE__ */ jsx("span", { className: "text-sm font-medium", children: "Complete" })
+            ] }),
+            isExpanded ? /* @__PURE__ */ jsx(CaretUp, { size: 20, className: "text-muted-foreground" }) : /* @__PURE__ */ jsx(CaretDown, { size: 20, className: "text-muted-foreground" })
+          ] })
+        ]
+      }
+    ),
+    isExpanded && /* @__PURE__ */ jsxs(Fragment, { children: [
+      /* @__PURE__ */ jsx("div", { className: "flex justify-end", children: /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
         /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1" }),
         "Add scenario"
-      ] })
-    ] }),
-    scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "grid gap-3", children: scenarios.map((scenario) => /* @__PURE__ */ jsx(
-      ScenarioCard,
-      {
-        scenario,
-        onEdit: () => handleEditClick(scenario),
-        onDelete: () => handleDelete(scenario.id)
-      },
-      scenario.id
-    )) }),
-    scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-border rounded-sm p-8 text-center", children: [
-      /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3", children: /* @__PURE__ */ jsx(Lightning, { size: 24, className: "text-muted-foreground" }) }),
-      /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
-      /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
-        /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
-        "Add your first scenario"
-      ] })
-    ] }),
-    filteredSuggestions.length > 0 && !isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-2", children: [
-      /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mb-2", children: "Suggested scenarios:" }),
-      /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: filteredSuggestions.map((suggestion, index) => /* @__PURE__ */ jsx(
-        SuggestionChip,
+      ] }) }),
+      scenarios.length > 0 && /* @__PURE__ */ jsx("div", { className: "grid gap-3", children: scenarios.map((scenario) => /* @__PURE__ */ jsx(
+        ScenarioCard,
         {
-          suggestion,
-          onAdd: () => handleSuggestionAdd(suggestion),
-          disabled: isLoading
+          scenario,
+          onEdit: () => handleEditClick(scenario),
+          onDelete: () => handleDelete(scenario.id)
         },
-        index
-      )) })
-    ] }),
-    canComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1", children: [
-      /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)]", children: "Ready to proceed?" }),
-        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Mark your scenarios as complete to continue with the onboarding." })
+        scenario.id
+      )) }),
+      scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "border border-dashed border-border rounded-sm p-8 text-center", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3", children: /* @__PURE__ */ jsx(Lightning, { size: 24, className: "text-muted-foreground" }) }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
+        /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
+          /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
+          "Add your first scenario"
+        ] })
       ] }),
-      /* @__PURE__ */ jsxs(
-        Button,
-        {
-          onClick: handleComplete,
-          disabled: isCompleting,
-          loading: isCompleting,
-          size: "sm",
-          className: "shrink-0",
-          children: [
-            /* @__PURE__ */ jsx(Check, { size: 16, className: "mr-1.5" }),
-            "Mark complete"
-          ]
-        }
-      )
-    ] }) }),
-    isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-4 border-t border-border", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-[var(--cyan)]", children: [
-        /* @__PURE__ */ jsx(CheckCircle, { size: 16, weight: "fill" }),
-        /* @__PURE__ */ jsx("p", { className: "text-sm font-medium", children: "Scenarios completed" })
+      filteredSuggestions.length > 0 && !isComplete && /* @__PURE__ */ jsxs("div", { className: "pt-2", children: [
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mb-2", children: "Suggested scenarios:" }),
+        /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: filteredSuggestions.map((suggestion, index) => /* @__PURE__ */ jsx(
+          SuggestionChip,
+          {
+            suggestion,
+            onAdd: () => handleSuggestionAdd(suggestion),
+            disabled: isLoading
+          },
+          index
+        )) })
       ] }),
-      /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-1", children: "You can still add or edit scenarios while we build your worker." })
+      canComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)]", children: "Ready to proceed?" }),
+          /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Mark your scenarios as complete to continue with the onboarding." })
+        ] }),
+        /* @__PURE__ */ jsxs(
+          Button,
+          {
+            onClick: handleComplete,
+            disabled: isCompleting,
+            loading: isCompleting,
+            size: "sm",
+            className: "shrink-0",
+            children: [
+              /* @__PURE__ */ jsx(Check, { size: 16, className: "mr-1.5" }),
+              "Mark complete"
+            ]
+          }
+        )
+      ] }) }),
+      isComplete && /* @__PURE__ */ jsx("div", { className: "pt-4 border-t border-border", children: /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "You can still add or edit scenarios while we build your worker." }) })
     ] }),
     /* @__PURE__ */ jsx(
       ScenarioDialog,

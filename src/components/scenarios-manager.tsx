@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Plus, PencilSimple, Trash, Warning, CheckCircle, Question, Lightning, Check } from '@phosphor-icons/react'
+import { Plus, PencilSimple, Trash, Warning, CheckCircle, Question, Lightning, Check, CaretDown, CaretUp } from '@phosphor-icons/react'
 import { cn } from '../lib/utils'
 import { Button } from './button'
 import { Badge } from './badge'
@@ -42,6 +42,8 @@ export interface ScenariosManagerProps {
   isLoading?: boolean
   isComplete?: boolean
   minScenariosToComplete?: number
+  /** Whether to show expanded by default */
+  defaultExpanded?: boolean
   className?: string
 }
 
@@ -281,12 +283,14 @@ export function ScenariosManager({
   isLoading,
   isComplete = false,
   minScenariosToComplete = 1,
+  defaultExpanded = true,
   className,
 }: ScenariosManagerProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false)
   const [editingScenario, setEditingScenario] = React.useState<Scenario | null>(null)
   const [deletingId, setDeletingId] = React.useState<string | null>(null)
   const [isCompleting, setIsCompleting] = React.useState(false)
+  const [isExpanded, setIsExpanded] = React.useState(defaultExpanded)
 
   const canComplete = scenarios.length >= minScenariosToComplete && !isComplete && onComplete
 
@@ -340,13 +344,17 @@ export function ScenariosManager({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header - clickable to expand/collapse */}
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between hover:bg-muted/30 -mx-2 px-2 py-1 rounded-sm transition-colors"
+      >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center">
             <Lightning size={20} weight="fill" className="text-[var(--cyan)]" />
           </div>
-          <div>
+          <div className="text-left">
             <h3 className="font-semibold text-[var(--black)]">Scenarios</h3>
             <p className="text-sm text-muted-foreground">
               {scenarios.length === 0
@@ -355,96 +363,114 @@ export function ScenariosManager({
             </p>
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={handleAddClick}>
-          <Plus size={16} className="mr-1" />
-          Add scenario
-        </Button>
-      </div>
-
-      {/* Scenarios list */}
-      {scenarios.length > 0 && (
-        <div className="grid gap-3">
-          {scenarios.map((scenario) => (
-            <ScenarioCard
-              key={scenario.id}
-              scenario={scenario}
-              onEdit={() => handleEditClick(scenario)}
-              onDelete={() => handleDelete(scenario.id)}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Empty state */}
-      {scenarios.length === 0 && (
-        <div className="border border-dashed border-border rounded-sm p-8 text-center">
-          <div className="w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3">
-            <Lightning size={24} className="text-muted-foreground" />
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            No scenarios yet. Add rules for how the worker should handle edge cases.
-          </p>
-          <Button variant="outline" size="sm" onClick={handleAddClick}>
-            <Plus size={16} className="mr-1.5" />
-            Add your first scenario
-          </Button>
-        </div>
-      )}
-
-      {/* Suggestions */}
-      {filteredSuggestions.length > 0 && !isComplete && (
-        <div className="pt-2">
-          <p className="text-xs text-muted-foreground mb-2">Suggested scenarios:</p>
-          <div className="flex flex-wrap gap-2">
-            {filteredSuggestions.map((suggestion, index) => (
-              <SuggestionChip
-                key={index}
-                suggestion={suggestion}
-                onAdd={() => handleSuggestionAdd(suggestion)}
-                disabled={isLoading}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Complete button */}
-      {canComplete && (
-        <div className="pt-4 border-t border-border">
-          <div className="flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1">
-            <div>
-              <p className="text-sm font-medium text-[var(--black)]">
-                Ready to proceed?
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Mark your scenarios as complete to continue with the onboarding.
-              </p>
+        <div className="flex items-center gap-2">
+          {isComplete && (
+            <div className="flex items-center gap-1.5 text-[var(--cyan)]">
+              <CheckCircle size={16} weight="fill" />
+              <span className="text-sm font-medium">Complete</span>
             </div>
-            <Button 
-              onClick={handleComplete}
-              disabled={isCompleting}
-              loading={isCompleting}
-              size="sm"
-              className="shrink-0"
-            >
-              <Check size={16} className="mr-1.5" />
-              Mark complete
+          )}
+          {isExpanded ? (
+            <CaretUp size={20} className="text-muted-foreground" />
+          ) : (
+            <CaretDown size={20} className="text-muted-foreground" />
+          )}
+        </div>
+      </button>
+
+      {/* Expandable content */}
+      {isExpanded && (
+        <>
+          {/* Add button */}
+          <div className="flex justify-end">
+            <Button variant="outline" size="sm" onClick={handleAddClick}>
+              <Plus size={16} className="mr-1" />
+              Add scenario
             </Button>
           </div>
-        </div>
-      )}
 
-      {/* Complete state */}
-      {isComplete && (
-        <div className="pt-4 border-t border-border">
-          <div className="flex items-center gap-2 text-[var(--cyan)]">
-            <CheckCircle size={16} weight="fill" />
-            <p className="text-sm font-medium">Scenarios completed</p>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            You can still add or edit scenarios while we build your worker.
-          </p>
-        </div>
+          {/* Scenarios list */}
+          {scenarios.length > 0 && (
+            <div className="grid gap-3">
+              {scenarios.map((scenario) => (
+                <ScenarioCard
+                  key={scenario.id}
+                  scenario={scenario}
+                  onEdit={() => handleEditClick(scenario)}
+                  onDelete={() => handleDelete(scenario.id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Empty state */}
+          {scenarios.length === 0 && (
+            <div className="border border-dashed border-border rounded-sm p-8 text-center">
+              <div className="w-12 h-12 rounded-sm bg-muted flex items-center justify-center mx-auto mb-3">
+                <Lightning size={24} className="text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                No scenarios yet. Add rules for how the worker should handle edge cases.
+              </p>
+              <Button variant="outline" size="sm" onClick={handleAddClick}>
+                <Plus size={16} className="mr-1.5" />
+                Add your first scenario
+              </Button>
+            </div>
+          )}
+
+          {/* Suggestions */}
+          {filteredSuggestions.length > 0 && !isComplete && (
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground mb-2">Suggested scenarios:</p>
+              <div className="flex flex-wrap gap-2">
+                {filteredSuggestions.map((suggestion, index) => (
+                  <SuggestionChip
+                    key={index}
+                    suggestion={suggestion}
+                    onAdd={() => handleSuggestionAdd(suggestion)}
+                    disabled={isLoading}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Complete button */}
+          {canComplete && (
+            <div className="pt-4 border-t border-border">
+              <div className="flex items-center justify-between gap-4 bg-[var(--cyan)]/5 rounded-sm p-4 -mx-1">
+                <div>
+                  <p className="text-sm font-medium text-[var(--black)]">
+                    Ready to proceed?
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Mark your scenarios as complete to continue with the onboarding.
+                  </p>
+                </div>
+                <Button
+                  onClick={handleComplete}
+                  disabled={isCompleting}
+                  loading={isCompleting}
+                  size="sm"
+                  className="shrink-0"
+                >
+                  <Check size={16} className="mr-1.5" />
+                  Mark complete
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Complete state - only show when expanded */}
+          {isComplete && (
+            <div className="pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground">
+                You can still add or edit scenarios while we build your worker.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {/* Dialog */}
