@@ -74,6 +74,9 @@ export type { CheckboxProps } from './components/checkbox'
 export { Switch, LabeledSwitch } from './components/switch'
 export type { SwitchProps, LabeledSwitchProps } from './components/switch'
 
+export { Slider, LabeledSlider } from './components/slider'
+export type { SliderProps, LabeledSliderProps } from './components/slider'
+
 export { RadioGroup, RadioGroupItem, RadioGroupOption, RadioGroupCard } from './components/radio-group'
 export type { RadioGroupOptionProps, RadioGroupCardProps } from './components/radio-group'
 

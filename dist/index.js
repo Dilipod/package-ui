@@ -1,7 +1,7 @@
 "use client";
 'use strict';
 
-var React50 = require('react');
+var React51 = require('react');
 var react = require('@xyflow/react');
 require('@xyflow/react/dist/style.css');
 var jsxRuntime = require('react/jsx-runtime');
@@ -13,6 +13,7 @@ var SheetPrimitive = require('@radix-ui/react-dialog');
 var react_star = require('@phosphor-icons/react');
 require('react-dom');
 var SwitchPrimitive = require('@radix-ui/react-switch');
+var SliderPrimitive = require('@radix-ui/react-slider');
 var RadioGroupPrimitive = require('@radix-ui/react-radio-group');
 var AccordionPrimitive = require('@radix-ui/react-accordion');
 var NavigationMenuPrimitive = require('@radix-ui/react-navigation-menu');
@@ -42,10 +43,11 @@ function _interopNamespace(e) {
   return Object.freeze(n);
 }
 
-var React50__namespace = /*#__PURE__*/_interopNamespace(React50);
+var React51__namespace = /*#__PURE__*/_interopNamespace(React51);
 var SheetPrimitive__namespace = /*#__PURE__*/_interopNamespace(SheetPrimitive);
 var react_star__namespace = /*#__PURE__*/_interopNamespace(react_star);
 var SwitchPrimitive__namespace = /*#__PURE__*/_interopNamespace(SwitchPrimitive);
+var SliderPrimitive__namespace = /*#__PURE__*/_interopNamespace(SliderPrimitive);
 var RadioGroupPrimitive__namespace = /*#__PURE__*/_interopNamespace(RadioGroupPrimitive);
 var AccordionPrimitive__namespace = /*#__PURE__*/_interopNamespace(AccordionPrimitive);
 var NavigationMenuPrimitive__namespace = /*#__PURE__*/_interopNamespace(NavigationMenuPrimitive);
@@ -124,7 +126,7 @@ function CustomNode({ data }) {
   ] });
 }
 function WorkflowFlow({ workflow, height = 350, className = "", platform = "n8n" }) {
-  const { initialNodes, initialEdges } = React50.useMemo(() => {
+  const { initialNodes, initialEdges } = React51.useMemo(() => {
     if (platform === "sim") {
       const simWorkflow = workflow;
       const blocks = simWorkflow.blocks || {};
@@ -429,6 +431,7 @@ __export(index_exports, {
   ImpactMetricsForm: () => ImpactMetricsForm,
   Input: () => Input,
   Label: () => Label2,
+  LabeledSlider: () => LabeledSlider,
   LabeledSwitch: () => LabeledSwitch,
   Logo: () => Logo,
   Metric: () => Metric,
@@ -477,6 +480,7 @@ __export(index_exports, {
   Skeleton: () => Skeleton,
   SkeletonCard: () => SkeletonCard,
   SkeletonText: () => SkeletonText,
+  Slider: () => Slider,
   Stat: () => Stat,
   StepDots: () => StepDots,
   StepProgress: () => StepProgress,
@@ -560,7 +564,7 @@ var buttonVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Button = React50__namespace.forwardRef(
+var Button = React51__namespace.forwardRef(
   ({ className, variant, size, asChild = false, loading, loadingText, icon, iconAfter, children, disabled, ...props }, ref) => {
     const Comp = asChild ? reactSlot.Slot : "button";
     const isDisabled = disabled || loading;
@@ -632,7 +636,7 @@ var Sheet = SheetPrimitive__namespace.Root;
 var SheetTrigger = SheetPrimitive__namespace.Trigger;
 var SheetClose = SheetPrimitive__namespace.Close;
 var SheetPortal = SheetPrimitive__namespace.Portal;
-var SheetOverlay = React50__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetOverlay = React51__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Overlay accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Overlay,
@@ -663,7 +667,7 @@ var sheetVariants = classVarianceAuthority.cva(
     }
   }
 );
-var SheetContent = React50__namespace.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
+var SheetContent = React51__namespace.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(SheetOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsxs(
     SheetPrimitive__namespace.Content,
@@ -710,7 +714,7 @@ var SheetFooter = ({
   }
 );
 SheetFooter.displayName = "SheetFooter";
-var SheetTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetTitle = React51__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Title accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Title,
@@ -722,7 +726,7 @@ var SheetTitle = React50__namespace.forwardRef(({ className, ...props }, ref) =>
   )
 ));
 SheetTitle.displayName = SheetPrimitive__namespace.Title.displayName;
-var SheetDescription = React50__namespace.forwardRef(({ className, ...props }, ref) => (
+var SheetDescription = React51__namespace.forwardRef(({ className, ...props }, ref) => (
   // @ts-ignore - Radix Dialog Description accepts className at runtime
   /* @__PURE__ */ jsxRuntime.jsx(
     SheetPrimitive__namespace.Description,
@@ -822,7 +826,7 @@ var badgeVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Badge = React50__namespace.forwardRef(
+var Badge = React51__namespace.forwardRef(
   ({ className, variant, size, pulse, pulseColor: pulseColorProp, children, ...props }, ref) => {
     const getPulseColorClass = () => {
       const color = pulseColorProp || variant || "default";
@@ -876,7 +880,7 @@ var Badge = React50__namespace.forwardRef(
   }
 );
 Badge.displayName = "Badge";
-var Card = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Card = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -888,7 +892,7 @@ var Card = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @_
   }
 ));
 Card.displayName = "Card";
-var CardHeader = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardHeader = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -897,7 +901,7 @@ var CardHeader = React50__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 CardHeader.displayName = "CardHeader";
-var CardTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardTitle = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "h3",
   {
     ref,
@@ -909,7 +913,7 @@ var CardTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 CardTitle.displayName = "CardTitle";
-var CardDescription = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardDescription = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "p",
   {
     ref,
@@ -918,9 +922,9 @@ var CardDescription = React50__namespace.forwardRef(({ className, ...props }, re
   }
 ));
 CardDescription.displayName = "CardDescription";
-var CardContent = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
+var CardContent = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("p-6 pt-0", className), ...props }));
 CardContent.displayName = "CardContent";
-var CardFooter = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var CardFooter = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "div",
   {
     ref,
@@ -943,7 +947,7 @@ var progressVariants = classVarianceAuthority.cva("h-full rounded-full transitio
     variant: "default"
   }
 });
-var Progress = React50__namespace.forwardRef(
+var Progress = React51__namespace.forwardRef(
   ({ className, value, variant, showLabel, label = "Progress", size = "default", ...props }, ref) => {
     const clampedValue = Math.min(100, Math.max(0, value));
     const heightClass = {
@@ -1010,7 +1014,7 @@ var iconBoxVariants = classVarianceAuthority.cva(
     }
   }
 );
-var IconBox = React50__namespace.forwardRef(
+var IconBox = React51__namespace.forwardRef(
   ({ className, variant, size, rounded, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "div",
@@ -1046,7 +1050,7 @@ var tagVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Tag = React50__namespace.forwardRef(
+var Tag = React51__namespace.forwardRef(
   ({ className, variant, size, icon, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs(
       "span",
@@ -1100,7 +1104,7 @@ var valueVariants = classVarianceAuthority.cva("font-bold", {
     color: "default"
   }
 });
-var Stat = React50__namespace.forwardRef(
+var Stat = React51__namespace.forwardRef(
   ({
     className,
     variant,
@@ -1182,7 +1186,7 @@ var iconVariants = classVarianceAuthority.cva("h-5 w-5", {
     color: "cyan"
   }
 });
-var MetricCard = React50__namespace.forwardRef(
+var MetricCard = React51__namespace.forwardRef(
   ({
     className,
     variant,
@@ -1215,7 +1219,7 @@ var MetricCard = React50__namespace.forwardRef(
   }
 );
 MetricCard.displayName = "MetricCard";
-var MetricLabel = React50__namespace.forwardRef(
+var MetricLabel = React51__namespace.forwardRef(
   ({ className, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "p",
@@ -1232,7 +1236,7 @@ var MetricLabel = React50__namespace.forwardRef(
   }
 );
 MetricLabel.displayName = "MetricLabel";
-var MetricValue = React50__namespace.forwardRef(
+var MetricValue = React51__namespace.forwardRef(
   ({ className, children, size = "default", highlight = false, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "p",
@@ -1253,7 +1257,7 @@ var MetricValue = React50__namespace.forwardRef(
   }
 );
 MetricValue.displayName = "MetricValue";
-var MetricSubtext = React50__namespace.forwardRef(
+var MetricSubtext = React51__namespace.forwardRef(
   ({ className, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "p",
@@ -1270,7 +1274,7 @@ var MetricSubtext = React50__namespace.forwardRef(
   }
 );
 MetricSubtext.displayName = "MetricSubtext";
-var Metric = React50__namespace.forwardRef(
+var Metric = React51__namespace.forwardRef(
   ({ className, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "div",
@@ -1310,7 +1314,7 @@ var progressColorVariants = classVarianceAuthority.cva("", {
     color: "cyan"
   }
 });
-var UsageBar = React50__namespace.forwardRef(
+var UsageBar = React51__namespace.forwardRef(
   ({
     className,
     size,
@@ -1382,7 +1386,7 @@ var UsageBar = React50__namespace.forwardRef(
   }
 );
 UsageBar.displayName = "UsageBar";
-var UsageChart = React50__namespace.forwardRef(
+var UsageChart = React51__namespace.forwardRef(
   ({
     className,
     data,
@@ -1393,8 +1397,8 @@ var UsageChart = React50__namespace.forwardRef(
     formatValue = (v) => v.toLocaleString(),
     ...props
   }, ref) => {
-    const [hoveredIndex, setHoveredIndex] = React50__namespace.useState(null);
-    const maxValue = React50__namespace.useMemo(() => {
+    const [hoveredIndex, setHoveredIndex] = React51__namespace.useState(null);
+    const maxValue = React51__namespace.useMemo(() => {
       return Math.max(
         ...data.map((d) => d.value + (d.secondaryValue || 0)),
         1
@@ -1521,7 +1525,7 @@ var UsageChart = React50__namespace.forwardRef(
   }
 );
 UsageChart.displayName = "UsageChart";
-var Input = React50__namespace.forwardRef(
+var Input = React51__namespace.forwardRef(
   ({ className, type, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "input",
@@ -1561,7 +1565,7 @@ var NODES = [
 ];
 var Primitive = NODES.reduce((primitive, node) => {
   const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
-  const Node2 = React50__namespace.forwardRef((props, forwardedRef) => {
+  const Node2 = React51__namespace.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1573,7 +1577,7 @@ var Primitive = NODES.reduce((primitive, node) => {
   return { ...primitive, [node]: Node2 };
 }, {});
 var NAME = "Label";
-var Label = React50__namespace.forwardRef((props, forwardedRef) => {
+var Label = React51__namespace.forwardRef((props, forwardedRef) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     Primitive.label,
     {
@@ -1593,7 +1597,7 @@ var Root2 = Label;
 var labelVariants = classVarianceAuthority.cva(
   "text-sm font-medium leading-none text-[var(--black)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
-var Label2 = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Label2 = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   Root2,
   {
     ref,
@@ -1602,7 +1606,7 @@ var Label2 = React50__namespace.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 Label2.displayName = Root2.displayName;
-var Textarea = React50__namespace.forwardRef(
+var Textarea = React51__namespace.forwardRef(
   ({ className, error, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "textarea",
@@ -1620,7 +1624,7 @@ var Textarea = React50__namespace.forwardRef(
   }
 );
 Textarea.displayName = "Textarea";
-var Select = React50__namespace.forwardRef(
+var Select = React51__namespace.forwardRef(
   ({ className, error, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "relative", children: [
       /* @__PURE__ */ jsxRuntime.jsx(
@@ -1656,7 +1660,7 @@ Select.displayName = "Select";
 // src/icons.ts
 var icons_exports = {};
 __reExport(icons_exports, react_star__namespace);
-var Checkbox = React50__namespace.forwardRef(
+var Checkbox = React51__namespace.forwardRef(
   ({ className, checked, onCheckedChange, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs("label", { className: "relative inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsxRuntime.jsx(
@@ -1687,7 +1691,7 @@ var Checkbox = React50__namespace.forwardRef(
   }
 );
 Checkbox.displayName = "Checkbox";
-var Switch = React50__namespace.forwardRef(({ className, size = "default", ...props }, ref) => {
+var Switch = React51__namespace.forwardRef(({ className, size = "default", ...props }, ref) => {
   const sizeStyles = {
     sm: {
       root: "h-4 w-7",
@@ -1725,8 +1729,8 @@ var Switch = React50__namespace.forwardRef(({ className, size = "default", ...pr
   );
 });
 Switch.displayName = SwitchPrimitive__namespace.Root.displayName;
-var LabeledSwitch = React50__namespace.forwardRef(({ label, description, labelPosition = "right", className, id, ...props }, ref) => {
-  const switchId = id || React50__namespace.useId();
+var LabeledSwitch = React51__namespace.forwardRef(({ label, description, labelPosition = "right", className, id, ...props }, ref) => {
+  const switchId = id || React51__namespace.useId();
   const labelContent = /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-0.5", children: [
     /* @__PURE__ */ jsxRuntime.jsx(
       "label",
@@ -1754,7 +1758,72 @@ var LabeledSwitch = React50__namespace.forwardRef(({ label, description, labelPo
   );
 });
 LabeledSwitch.displayName = "LabeledSwitch";
-var RadioGroup = React50__namespace.forwardRef(({ className, ...props }, ref) => {
+var Slider = React51__namespace.forwardRef(({ className, showValue, formatValue, size = "default", ...props }, ref) => {
+  const value = props.value ?? props.defaultValue ?? [0];
+  const currentValue = Array.isArray(value) ? value[0] : value;
+  const sizeStyles = {
+    sm: {
+      track: "h-1",
+      thumb: "h-3.5 w-3.5"
+    },
+    default: {
+      track: "h-1.5",
+      thumb: "h-4 w-4"
+    },
+    lg: {
+      track: "h-2",
+      thumb: "h-5 w-5"
+    }
+  };
+  return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: cn("flex items-center gap-3", showValue && "pr-12 relative"), children: [
+    /* @__PURE__ */ jsxRuntime.jsxs(
+      SliderPrimitive__namespace.Root,
+      {
+        ref,
+        className: cn(
+          "relative flex w-full touch-none select-none items-center",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsx(
+            SliderPrimitive__namespace.Track,
+            {
+              className: cn(
+                "relative w-full grow overflow-hidden rounded-full bg-gray-200",
+                sizeStyles[size].track
+              ),
+              children: /* @__PURE__ */ jsxRuntime.jsx(SliderPrimitive__namespace.Range, { className: "absolute h-full bg-[var(--cyan)]" })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntime.jsx(
+            SliderPrimitive__namespace.Thumb,
+            {
+              className: cn(
+                "block rounded-full border-2 border-[var(--cyan)] bg-white shadow-md ring-offset-background transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2",
+                "disabled:pointer-events-none disabled:opacity-50",
+                "hover:border-[var(--cyan-dark,#00bfaa)] cursor-pointer",
+                sizeStyles[size].thumb
+              )
+            }
+          )
+        ]
+      }
+    ),
+    showValue && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "absolute right-0 text-sm font-mono text-[var(--black)] min-w-[3rem] text-right", children: formatValue ? formatValue(currentValue) : currentValue })
+  ] });
+});
+Slider.displayName = SliderPrimitive__namespace.Root.displayName;
+var LabeledSlider = React51__namespace.forwardRef(({ label, helperText, className, ...props }, ref) => {
+  return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: cn("space-y-2", className), children: [
+    /* @__PURE__ */ jsxRuntime.jsx("label", { className: "text-sm font-medium leading-none text-[var(--black)]", children: label }),
+    /* @__PURE__ */ jsxRuntime.jsx(Slider, { ref, ...props }),
+    helperText && /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-xs text-muted-foreground", children: helperText })
+  ] });
+});
+LabeledSlider.displayName = "LabeledSlider";
+var RadioGroup = React51__namespace.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     RadioGroupPrimitive__namespace.Root,
     {
@@ -1765,7 +1834,7 @@ var RadioGroup = React50__namespace.forwardRef(({ className, ...props }, ref) =>
   );
 });
 RadioGroup.displayName = RadioGroupPrimitive__namespace.Root.displayName;
-var RadioGroupItem = React50__namespace.forwardRef(({ className, ...props }, ref) => {
+var RadioGroupItem = React51__namespace.forwardRef(({ className, ...props }, ref) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     RadioGroupPrimitive__namespace.Item,
     {
@@ -1780,8 +1849,8 @@ var RadioGroupItem = React50__namespace.forwardRef(({ className, ...props }, ref
   );
 });
 RadioGroupItem.displayName = RadioGroupPrimitive__namespace.Item.displayName;
-var RadioGroupOption = React50__namespace.forwardRef(({ label, description, className, id, ...props }, ref) => {
-  const optionId = id || React50__namespace.useId();
+var RadioGroupOption = React51__namespace.forwardRef(({ label, description, className, id, ...props }, ref) => {
+  const optionId = id || React51__namespace.useId();
   return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: cn("flex items-start gap-3", className), children: [
     /* @__PURE__ */ jsxRuntime.jsx(RadioGroupItem, { ref, id: optionId, ...props }),
     /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-0.5", children: [
@@ -1798,8 +1867,8 @@ var RadioGroupOption = React50__namespace.forwardRef(({ label, description, clas
   ] });
 });
 RadioGroupOption.displayName = "RadioGroupOption";
-var RadioGroupCard = React50__namespace.forwardRef(({ label, description, children, className, id, ...props }, ref) => {
-  const cardId = id || React50__namespace.useId();
+var RadioGroupCard = React51__namespace.forwardRef(({ label, description, children, className, id, ...props }, ref) => {
+  const cardId = id || React51__namespace.useId();
   return /* @__PURE__ */ jsxRuntime.jsx(
     RadioGroupPrimitive__namespace.Item,
     {
@@ -1830,7 +1899,7 @@ var RadioGroupCard = React50__namespace.forwardRef(({ label, description, childr
 });
 RadioGroupCard.displayName = "RadioGroupCard";
 var Accordion = AccordionPrimitive__namespace.Root;
-var AccordionItem = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AccordionItem = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AccordionPrimitive__namespace.Item,
   {
     ref,
@@ -1839,7 +1908,7 @@ var AccordionItem = React50__namespace.forwardRef(({ className, ...props }, ref)
   }
 ));
 AccordionItem.displayName = "AccordionItem";
-var AccordionTrigger = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(AccordionPrimitive__namespace.Header, { className: "flex", children: /* @__PURE__ */ jsxRuntime.jsxs(
+var AccordionTrigger = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(AccordionPrimitive__namespace.Header, { className: "flex", children: /* @__PURE__ */ jsxRuntime.jsxs(
   AccordionPrimitive__namespace.Trigger,
   {
     ref,
@@ -1855,7 +1924,7 @@ var AccordionTrigger = React50__namespace.forwardRef(({ className, children, ...
   }
 ) }));
 AccordionTrigger.displayName = AccordionPrimitive__namespace.Trigger.displayName;
-var AccordionContent = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AccordionContent = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AccordionPrimitive__namespace.Content,
   {
     ref,
@@ -1886,7 +1955,7 @@ var NODES2 = [
 ];
 var Primitive2 = NODES2.reduce((primitive, node) => {
   const Slot2 = reactSlot.createSlot(`Primitive.${node}`);
-  const Node2 = React50__namespace.forwardRef((props, forwardedRef) => {
+  const Node2 = React51__namespace.forwardRef((props, forwardedRef) => {
     const { asChild, ...primitiveProps } = props;
     const Comp = asChild ? Slot2 : node;
     if (typeof window !== "undefined") {
@@ -1900,7 +1969,7 @@ var Primitive2 = NODES2.reduce((primitive, node) => {
 var NAME2 = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];
-var Separator = React50__namespace.forwardRef((props, forwardedRef) => {
+var Separator = React51__namespace.forwardRef((props, forwardedRef) => {
   const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
   const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
   const ariaOrientation = orientation === "vertical" ? orientation : void 0;
@@ -1919,10 +1988,10 @@ Separator.displayName = NAME2;
 function isValidOrientation(orientation) {
   return ORIENTATIONS.includes(orientation);
 }
-var Root6 = Separator;
-var Separator2 = React50__namespace.forwardRef(
+var Root7 = Separator;
+var Separator2 = React51__namespace.forwardRef(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
-    Root6,
+    Root7,
     {
       ref,
       decorative,
@@ -1936,8 +2005,8 @@ var Separator2 = React50__namespace.forwardRef(
     }
   )
 );
-Separator2.displayName = Root6.displayName;
-var NavigationMenu = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+Separator2.displayName = Root7.displayName;
+var NavigationMenu = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   NavigationMenuPrimitive__namespace.Root,
   {
     ref,
@@ -1953,7 +2022,7 @@ var NavigationMenu = React50__namespace.forwardRef(({ className, children, ...pr
   }
 ));
 NavigationMenu.displayName = NavigationMenuPrimitive__namespace.Root.displayName;
-var NavigationMenuList = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuList = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.List,
   {
     ref,
@@ -1969,7 +2038,7 @@ var NavigationMenuItem = NavigationMenuPrimitive__namespace.Item;
 var navigationMenuTriggerStyle = classVarianceAuthority.cva(
   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[var(--black)] transition-colors hover:bg-gray-100 hover:text-[var(--black)] focus:bg-gray-100 focus:text-[var(--black)] focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-[var(--black)] data-[state=open]:bg-gray-100/50 data-[state=open]:hover:bg-gray-100 data-[state=open]:focus:bg-gray-100"
 );
-var NavigationMenuTrigger = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var NavigationMenuTrigger = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   NavigationMenuPrimitive__namespace.Trigger,
   {
     ref,
@@ -1989,7 +2058,7 @@ var NavigationMenuTrigger = React50__namespace.forwardRef(({ className, children
   }
 ));
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive__namespace.Trigger.displayName;
-var NavigationMenuContent = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuContent = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Content,
   {
     ref,
@@ -2002,7 +2071,7 @@ var NavigationMenuContent = React50__namespace.forwardRef(({ className, ...props
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive__namespace.Content.displayName;
 var NavigationMenuLink = NavigationMenuPrimitive__namespace.Link;
-var NavigationMenuViewport = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuViewport = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("absolute left-0 top-full flex justify-center"), children: /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Viewport,
   {
     className: cn(
@@ -2014,7 +2083,7 @@ var NavigationMenuViewport = React50__namespace.forwardRef(({ className, ...prop
   }
 ) }));
 NavigationMenuViewport.displayName = NavigationMenuPrimitive__namespace.Viewport.displayName;
-var NavigationMenuIndicator = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var NavigationMenuIndicator = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   NavigationMenuPrimitive__namespace.Indicator,
   {
     ref,
@@ -2027,7 +2096,7 @@ var NavigationMenuIndicator = React50__namespace.forwardRef(({ className, ...pro
   }
 ));
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive__namespace.Indicator.displayName;
-var Avatar = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var Avatar = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Root,
   {
     ref,
@@ -2039,7 +2108,7 @@ var Avatar = React50__namespace.forwardRef(({ className, ...props }, ref) => /* 
   }
 ));
 Avatar.displayName = AvatarPrimitive__namespace.Root.displayName;
-var AvatarImage = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AvatarImage = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Image,
   {
     ref,
@@ -2048,7 +2117,7 @@ var AvatarImage = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 AvatarImage.displayName = AvatarPrimitive__namespace.Image.displayName;
-var AvatarFallback = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AvatarFallback = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AvatarPrimitive__namespace.Fallback,
   {
     ref,
@@ -2066,7 +2135,7 @@ var DropdownMenuGroup = DropdownMenuPrimitive__namespace.Group;
 var DropdownMenuPortal = DropdownMenuPrimitive__namespace.Portal;
 var DropdownMenuSub = DropdownMenuPrimitive__namespace.Sub;
 var DropdownMenuRadioGroup = DropdownMenuPrimitive__namespace.RadioGroup;
-var DropdownMenuSubTrigger = React50__namespace.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuSubTrigger = React51__namespace.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.SubTrigger,
   {
     ref,
@@ -2083,7 +2152,7 @@ var DropdownMenuSubTrigger = React50__namespace.forwardRef(({ className, inset, 
   }
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive__namespace.SubTrigger.displayName;
-var DropdownMenuSubContent = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuSubContent = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.SubContent,
   {
     ref,
@@ -2095,7 +2164,7 @@ var DropdownMenuSubContent = React50__namespace.forwardRef(({ className, ...prop
   }
 ));
 DropdownMenuSubContent.displayName = DropdownMenuPrimitive__namespace.SubContent.displayName;
-var DropdownMenuContent = React50__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuContent = React51__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Content,
   {
     ref,
@@ -2108,7 +2177,7 @@ var DropdownMenuContent = React50__namespace.forwardRef(({ className, sideOffset
   }
 ) }));
 DropdownMenuContent.displayName = DropdownMenuPrimitive__namespace.Content.displayName;
-var DropdownMenuItem = React50__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuItem = React51__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Item,
   {
     ref,
@@ -2121,7 +2190,7 @@ var DropdownMenuItem = React50__namespace.forwardRef(({ className, inset, ...pro
   }
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive__namespace.Item.displayName;
-var DropdownMenuCheckboxItem = React50__namespace.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuCheckboxItem = React51__namespace.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.CheckboxItem,
   {
     ref,
@@ -2138,7 +2207,7 @@ var DropdownMenuCheckboxItem = React50__namespace.forwardRef(({ className, child
   }
 ));
 DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive__namespace.CheckboxItem.displayName;
-var DropdownMenuRadioItem = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
+var DropdownMenuRadioItem = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(
   DropdownMenuPrimitive__namespace.RadioItem,
   {
     ref,
@@ -2154,7 +2223,7 @@ var DropdownMenuRadioItem = React50__namespace.forwardRef(({ className, children
   }
 ));
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive__namespace.RadioItem.displayName;
-var DropdownMenuLabel = React50__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuLabel = React51__namespace.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Label,
   {
     ref,
@@ -2167,7 +2236,7 @@ var DropdownMenuLabel = React50__namespace.forwardRef(({ className, inset, ...pr
   }
 ));
 DropdownMenuLabel.displayName = DropdownMenuPrimitive__namespace.Label.displayName;
-var DropdownMenuSeparator = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DropdownMenuSeparator = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   DropdownMenuPrimitive__namespace.Separator,
   {
     ref,
@@ -2189,7 +2258,7 @@ var DropdownMenuShortcut = ({
   );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
-var SidebarNavItem = React50__namespace.forwardRef(
+var SidebarNavItem = React51__namespace.forwardRef(
   ({ item, isActive, className, LinkComponent, ...props }, ref) => {
     const Icon = item.icon;
     const baseClassName = cn(
@@ -2229,7 +2298,7 @@ var SidebarNavItem = React50__namespace.forwardRef(
   }
 );
 SidebarNavItem.displayName = "SidebarNavItem";
-var Sidebar = React50__namespace.forwardRef(
+var Sidebar = React51__namespace.forwardRef(
   ({
     mainNav = [],
     bottomNav = [],
@@ -2339,7 +2408,7 @@ var alertVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Alert = React50__namespace.forwardRef(
+var Alert = React51__namespace.forwardRef(
   ({ className, variant, icon, title, action, children, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "div",
@@ -2362,7 +2431,7 @@ var Alert = React50__namespace.forwardRef(
   }
 );
 Alert.displayName = "Alert";
-var EmptyState = React50__namespace.forwardRef(
+var EmptyState = React51__namespace.forwardRef(
   ({ className, icon, title, description, action, size = "default", ...props }, ref) => {
     const paddingClass = {
       sm: "p-8",
@@ -2390,7 +2459,7 @@ var EmptyState = React50__namespace.forwardRef(
   }
 );
 EmptyState.displayName = "EmptyState";
-var ErrorState = React50__namespace.forwardRef(
+var ErrorState = React51__namespace.forwardRef(
   ({
     title = "Something went wrong",
     description = "We encountered an error loading this page. Please try again.",
@@ -2453,7 +2522,7 @@ var ErrorState = React50__namespace.forwardRef(
   }
 );
 ErrorState.displayName = "ErrorState";
-var CodeBlock = React50__namespace.forwardRef(
+var CodeBlock = React51__namespace.forwardRef(
   ({ className, children, language, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "pre",
@@ -2471,15 +2540,15 @@ var CodeBlock = React50__namespace.forwardRef(
   }
 );
 CodeBlock.displayName = "CodeBlock";
-var FormField = React50__namespace.forwardRef(
+var FormField = React51__namespace.forwardRef(
   ({ label, error, helperText, hint, required, id, className, children, ...props }, ref) => {
-    const fieldId = id || React50__namespace.useId();
+    const fieldId = id || React51__namespace.useId();
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
-    const enhancedChildren = React50__namespace.Children.map(children, (child) => {
-      if (React50__namespace.isValidElement(child)) {
+    const enhancedChildren = React51__namespace.Children.map(children, (child) => {
+      if (React51__namespace.isValidElement(child)) {
         const childProps = child.props;
-        return React50__namespace.cloneElement(child, {
+        return React51__namespace.cloneElement(child, {
           id: fieldId,
           "aria-invalid": error ? "true" : void 0,
           "aria-describedby": error ? errorId : helperText ? helperId : void 0,
@@ -2503,7 +2572,7 @@ var FormField = React50__namespace.forwardRef(
   }
 );
 FormField.displayName = "FormField";
-var Table = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsx(
+var Table = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsx(
   "table",
   {
     ref,
@@ -2512,11 +2581,11 @@ var Table = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @
   }
 ) }));
 Table.displayName = "Table";
-var TableHeader = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("", className), ...props }));
+var TableHeader = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("", className), ...props }));
 TableHeader.displayName = "TableHeader";
-var TableBody = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("tbody", { ref, className: cn("", className), ...props }));
+var TableBody = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("tbody", { ref, className: cn("", className), ...props }));
 TableBody.displayName = "TableBody";
-var TableFooter = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableFooter = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "tfoot",
   {
     ref,
@@ -2525,7 +2594,7 @@ var TableFooter = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 TableFooter.displayName = "TableFooter";
-var TableRow = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableRow = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "tr",
   {
     ref,
@@ -2534,7 +2603,7 @@ var TableRow = React50__namespace.forwardRef(({ className, ...props }, ref) => /
   }
 ));
 TableRow.displayName = "TableRow";
-var TableHead = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableHead = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "th",
   {
     ref,
@@ -2546,7 +2615,7 @@ var TableHead = React50__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 TableHead.displayName = "TableHead";
-var TableCell = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableCell = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "td",
   {
     ref,
@@ -2555,7 +2624,7 @@ var TableCell = React50__namespace.forwardRef(({ className, ...props }, ref) => 
   }
 ));
 TableCell.displayName = "TableCell";
-var TableCaption = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TableCaption = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "caption",
   {
     ref,
@@ -2564,7 +2633,7 @@ var TableCaption = React50__namespace.forwardRef(({ className, ...props }, ref) 
   }
 ));
 TableCaption.displayName = "TableCaption";
-var Divider = React50__namespace.forwardRef(
+var Divider = React51__namespace.forwardRef(
   ({ className, text, orientation = "horizontal", ...props }, ref) => {
     if (orientation === "vertical") {
       return /* @__PURE__ */ jsxRuntime.jsx(
@@ -2603,7 +2672,7 @@ var Divider = React50__namespace.forwardRef(
 );
 Divider.displayName = "Divider";
 var Tabs = TabsPrimitive__namespace.Root;
-var TabsList = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TabsList = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.List,
   {
     ref,
@@ -2615,7 +2684,7 @@ var TabsList = React50__namespace.forwardRef(({ className, ...props }, ref) => /
   }
 ));
 TabsList.displayName = TabsPrimitive__namespace.List.displayName;
-var TabsTrigger = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TabsTrigger = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.Trigger,
   {
     ref,
@@ -2627,7 +2696,7 @@ var TabsTrigger = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 TabsTrigger.displayName = TabsPrimitive__namespace.Trigger.displayName;
-var TabsContent = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TabsContent = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.Content,
   {
     ref,
@@ -2639,7 +2708,7 @@ var TabsContent = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 TabsContent.displayName = TabsPrimitive__namespace.Content.displayName;
-var TabsListUnderline = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TabsListUnderline = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.List,
   {
     ref,
@@ -2651,7 +2720,7 @@ var TabsListUnderline = React50__namespace.forwardRef(({ className, ...props }, 
   }
 ));
 TabsListUnderline.displayName = "TabsListUnderline";
-var TabsTriggerUnderline = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TabsTriggerUnderline = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.Trigger,
   {
     ref,
@@ -2669,7 +2738,7 @@ var Dialog = SheetPrimitive__namespace.Root;
 var DialogTrigger = SheetPrimitive__namespace.Trigger;
 var DialogPortal = SheetPrimitive__namespace.Portal;
 var DialogClose = SheetPrimitive__namespace.Close;
-var DialogOverlay = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogOverlay = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Overlay,
   {
     ref,
@@ -2681,7 +2750,7 @@ var DialogOverlay = React50__namespace.forwardRef(({ className, ...props }, ref)
   }
 ));
 DialogOverlay.displayName = SheetPrimitive__namespace.Overlay.displayName;
-var DialogContent = React50__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(DialogPortal, { children: [
+var DialogContent = React51__namespace.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(DialogPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(DialogOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsxs(
     SheetPrimitive__namespace.Content,
@@ -2731,7 +2800,7 @@ var DialogFooter = ({
   }
 );
 DialogFooter.displayName = "DialogFooter";
-var DialogTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogTitle = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Title,
   {
     ref,
@@ -2743,7 +2812,7 @@ var DialogTitle = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 DialogTitle.displayName = SheetPrimitive__namespace.Title.displayName;
-var DialogDescription = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var DialogDescription = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   SheetPrimitive__namespace.Description,
   {
     ref,
@@ -2755,7 +2824,7 @@ DialogDescription.displayName = SheetPrimitive__namespace.Description.displayNam
 var AlertDialog = AlertDialogPrimitive__namespace.Root;
 var AlertDialogTrigger = AlertDialogPrimitive__namespace.Trigger;
 var AlertDialogPortal = AlertDialogPrimitive__namespace.Portal;
-var AlertDialogOverlay = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AlertDialogOverlay = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AlertDialogPrimitive__namespace.Overlay,
   {
     className: cn(
@@ -2767,7 +2836,7 @@ var AlertDialogOverlay = React50__namespace.forwardRef(({ className, ...props },
   }
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive__namespace.Overlay.displayName;
-var AlertDialogContent = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(AlertDialogPortal, { children: [
+var AlertDialogContent = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(AlertDialogPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(AlertDialogOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsx(
     AlertDialogPrimitive__namespace.Content,
@@ -2810,7 +2879,7 @@ var AlertDialogFooter = ({
   }
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
-var AlertDialogTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AlertDialogTitle = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AlertDialogPrimitive__namespace.Title,
   {
     ref,
@@ -2819,7 +2888,7 @@ var AlertDialogTitle = React50__namespace.forwardRef(({ className, ...props }, r
   }
 ));
 AlertDialogTitle.displayName = AlertDialogPrimitive__namespace.Title.displayName;
-var AlertDialogDescription = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AlertDialogDescription = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AlertDialogPrimitive__namespace.Description,
   {
     ref,
@@ -2828,7 +2897,7 @@ var AlertDialogDescription = React50__namespace.forwardRef(({ className, ...prop
   }
 ));
 AlertDialogDescription.displayName = AlertDialogPrimitive__namespace.Description.displayName;
-var AlertDialogAction = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AlertDialogAction = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AlertDialogPrimitive__namespace.Action,
   {
     ref,
@@ -2837,7 +2906,7 @@ var AlertDialogAction = React50__namespace.forwardRef(({ className, ...props }, 
   }
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive__namespace.Action.displayName;
-var AlertDialogCancel = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var AlertDialogCancel = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   AlertDialogPrimitive__namespace.Cancel,
   {
     ref,
@@ -2898,7 +2967,7 @@ var Popover = PopoverPrimitive__namespace.Root;
 var PopoverTrigger = PopoverPrimitive__namespace.Trigger;
 var PopoverAnchor = PopoverPrimitive__namespace.Anchor;
 var PopoverClose = PopoverPrimitive__namespace.Close;
-var PopoverContent = React50__namespace.forwardRef(({ className, align = "center", sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(PopoverPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
+var PopoverContent = React51__namespace.forwardRef(({ className, align = "center", sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(PopoverPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
   PopoverPrimitive__namespace.Content,
   {
     ref,
@@ -2912,7 +2981,7 @@ var PopoverContent = React50__namespace.forwardRef(({ className, align = "center
   }
 ) }));
 PopoverContent.displayName = PopoverPrimitive__namespace.Content.displayName;
-var PopoverArrow = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var PopoverArrow = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   PopoverPrimitive__namespace.Arrow,
   {
     ref,
@@ -2924,7 +2993,7 @@ PopoverArrow.displayName = PopoverPrimitive__namespace.Arrow.displayName;
 var TooltipProvider = TooltipPrimitive__namespace.Provider;
 var Tooltip = TooltipPrimitive__namespace.Root;
 var TooltipTrigger = TooltipPrimitive__namespace.Trigger;
-var TooltipContent = React50__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(TooltipPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
+var TooltipContent = React51__namespace.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(TooltipPrimitive__namespace.Portal, { children: /* @__PURE__ */ jsxRuntime.jsx(
   TooltipPrimitive__namespace.Content,
   {
     ref,
@@ -2937,7 +3006,7 @@ var TooltipContent = React50__namespace.forwardRef(({ className, sideOffset = 4,
   }
 ) }));
 TooltipContent.displayName = TooltipPrimitive__namespace.Content.displayName;
-var TooltipArrow = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var TooltipArrow = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TooltipPrimitive__namespace.Arrow,
   {
     ref,
@@ -2959,7 +3028,7 @@ function SimpleTooltip({
   ] }) });
 }
 var ToastProvider = ToastPrimitives__namespace.Provider;
-var ToastViewport = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastViewport = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Viewport,
   {
     ref,
@@ -2988,7 +3057,7 @@ var toastVariants = classVarianceAuthority.cva(
     }
   }
 );
-var Toast = React50__namespace.forwardRef(({ className, variant, ...props }, ref) => {
+var Toast = React51__namespace.forwardRef(({ className, variant, ...props }, ref) => {
   return /* @__PURE__ */ jsxRuntime.jsx(
     ToastPrimitives__namespace.Root,
     {
@@ -2999,7 +3068,7 @@ var Toast = React50__namespace.forwardRef(({ className, variant, ...props }, ref
   );
 });
 Toast.displayName = ToastPrimitives__namespace.Root.displayName;
-var ToastAction = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastAction = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Action,
   {
     ref,
@@ -3011,7 +3080,7 @@ var ToastAction = React50__namespace.forwardRef(({ className, ...props }, ref) =
   }
 ));
 ToastAction.displayName = ToastPrimitives__namespace.Action.displayName;
-var ToastClose = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastClose = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Close,
   {
     ref,
@@ -3025,7 +3094,7 @@ var ToastClose = React50__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 ToastClose.displayName = ToastPrimitives__namespace.Close.displayName;
-var ToastTitle = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastTitle = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Title,
   {
     ref,
@@ -3034,7 +3103,7 @@ var ToastTitle = React50__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 ToastTitle.displayName = ToastPrimitives__namespace.Title.displayName;
-var ToastDescription = React50__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+var ToastDescription = React51__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   ToastPrimitives__namespace.Description,
   {
     ref,
@@ -3173,8 +3242,8 @@ function toast({ ...props }) {
   };
 }
 function useToast() {
-  const [state, setState] = React50__namespace.useState(memoryState);
-  React50__namespace.useEffect(() => {
+  const [state, setState] = React51__namespace.useState(memoryState);
+  React51__namespace.useEffect(() => {
     listeners.push(setState);
     return () => {
       const index = listeners.indexOf(setState);
@@ -3209,7 +3278,7 @@ function Toaster() {
     /* @__PURE__ */ jsxRuntime.jsx(ToastViewport, {})
   ] });
 }
-var Skeleton = React50__namespace.forwardRef(
+var Skeleton = React51__namespace.forwardRef(
   ({ className, variant = "default", width, height, animate = true, style, ...props }, ref) => {
     const variantStyles = {
       default: "rounded-sm",
@@ -3237,7 +3306,7 @@ var Skeleton = React50__namespace.forwardRef(
   }
 );
 Skeleton.displayName = "Skeleton";
-var SkeletonText = React50__namespace.forwardRef(
+var SkeletonText = React51__namespace.forwardRef(
   ({ lines = 3, gap = 8, className, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("space-y-2", className), style: { gap }, children: Array.from({ length: lines }).map((_, i) => /* @__PURE__ */ jsxRuntime.jsx(
       Skeleton,
@@ -3251,7 +3320,7 @@ var SkeletonText = React50__namespace.forwardRef(
   }
 );
 SkeletonText.displayName = "SkeletonText";
-var SkeletonCard = React50__namespace.forwardRef(
+var SkeletonCard = React51__namespace.forwardRef(
   ({ hasHeader = true, hasAvatar = false, className, ...props }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsxs(
       "div",
@@ -3303,7 +3372,7 @@ function generatePagination(currentPage, totalPages, siblingCount) {
   );
   return [1, "ellipsis", ...middleRange, "ellipsis", totalPages];
 }
-var Pagination = React50__namespace.forwardRef(
+var Pagination = React51__namespace.forwardRef(
   ({
     currentPage,
     totalPages,
@@ -3380,7 +3449,7 @@ var Pagination = React50__namespace.forwardRef(
   }
 );
 Pagination.displayName = "Pagination";
-var SimplePagination = React50__namespace.forwardRef(
+var SimplePagination = React51__namespace.forwardRef(
   ({
     currentPage,
     totalPages,
@@ -3442,7 +3511,7 @@ var SimplePagination = React50__namespace.forwardRef(
   }
 );
 SimplePagination.displayName = "SimplePagination";
-var StepProgress = React50__namespace.forwardRef(
+var StepProgress = React51__namespace.forwardRef(
   ({
     steps,
     currentStep,
@@ -3562,7 +3631,7 @@ var StepProgress = React50__namespace.forwardRef(
   }
 );
 StepProgress.displayName = "StepProgress";
-var StepDots = React50__namespace.forwardRef(
+var StepDots = React51__namespace.forwardRef(
   ({ totalSteps, currentStep, onStepClick, className }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("flex items-center gap-2", className), children: Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => {
       const isCompleted = step < currentStep;
@@ -3588,7 +3657,7 @@ var StepDots = React50__namespace.forwardRef(
   }
 );
 StepDots.displayName = "StepDots";
-var Breadcrumbs = React50__namespace.forwardRef(
+var Breadcrumbs = React51__namespace.forwardRef(
   ({
     items,
     LinkComponent,
@@ -3670,7 +3739,7 @@ var Breadcrumbs = React50__namespace.forwardRef(
   }
 );
 Breadcrumbs.displayName = "Breadcrumbs";
-var BreadcrumbLink = React50__namespace.forwardRef(
+var BreadcrumbLink = React51__namespace.forwardRef(
   ({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
     "a",
     {
@@ -3695,7 +3764,7 @@ var presetLabels = {
   "this-year": "This year",
   "custom": "Custom"
 };
-var DateRangePicker = React50__namespace.forwardRef(
+var DateRangePicker = React51__namespace.forwardRef(
   ({
     value,
     onChange,
@@ -3754,7 +3823,7 @@ var DateRangePicker = React50__namespace.forwardRef(
   }
 );
 DateRangePicker.displayName = "DateRangePicker";
-var DateRangeSelect = React50__namespace.forwardRef(
+var DateRangeSelect = React51__namespace.forwardRef(
   ({ value, onChange, presets = ["7d", "30d", "90d"], className }, ref) => {
     return /* @__PURE__ */ jsxRuntime.jsx(
       "select",
@@ -3850,12 +3919,12 @@ function FilePreview({
   showCard = true,
   emptyMessage = "No files uploaded"
 }) {
-  const [previewFile, setPreviewFile] = React50.useState(null);
-  const [videoError, setVideoError] = React50.useState(false);
-  const [signedUrl, setSignedUrl] = React50.useState(null);
-  const [loadingUrl, setLoadingUrl] = React50.useState(false);
-  const [urlError, setUrlError] = React50.useState(null);
-  const videoRef = React50.useRef(null);
+  const [previewFile, setPreviewFile] = React51.useState(null);
+  const [videoError, setVideoError] = React51.useState(false);
+  const [signedUrl, setSignedUrl] = React51.useState(null);
+  const [loadingUrl, setLoadingUrl] = React51.useState(false);
+  const [urlError, setUrlError] = React51.useState(null);
+  const videoRef = React51.useRef(null);
   const handleOpenPreview = async (file) => {
     setVideoError(false);
     setPreviewFile(file);
@@ -4093,7 +4162,7 @@ function FilePreview({
     /* @__PURE__ */ jsxRuntime.jsx(CardContent, { children: content })
   ] });
 }
-var SettingsNav = React50__namespace.forwardRef(
+var SettingsNav = React51__namespace.forwardRef(
   ({ groups, LinkComponent, className, ...props }, ref) => {
     const Link2 = LinkComponent || "a";
     return /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("space-y-8", className), ...props, children: groups.map((group) => /* @__PURE__ */ jsxRuntime.jsxs("div", { children: [
@@ -4124,7 +4193,7 @@ var SettingsNav = React50__namespace.forwardRef(
   }
 );
 SettingsNav.displayName = "SettingsNav";
-var SettingsNavLink = React50__namespace.forwardRef(
+var SettingsNavLink = React51__namespace.forwardRef(
   ({ title, description, icon, href, LinkComponent, className, ...props }, ref) => {
     const content = /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
       icon && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-center w-10 h-10 rounded-sm bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors", children: /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-gray-600 group-hover:text-[var(--cyan)] transition-colors [&>svg]:w-5 [&>svg]:h-5", children: icon }) }),
@@ -4259,11 +4328,11 @@ function ScenarioDialog({
   onSave,
   isLoading
 }) {
-  const [type, setType] = React50__namespace.useState(scenario?.type || "escalation");
-  const [situation, setSituation] = React50__namespace.useState(scenario?.situation || "");
-  const [action, setAction] = React50__namespace.useState(scenario?.action || "");
-  const [isSaving, setIsSaving] = React50__namespace.useState(false);
-  React50__namespace.useEffect(() => {
+  const [type, setType] = React51__namespace.useState(scenario?.type || "escalation");
+  const [situation, setSituation] = React51__namespace.useState(scenario?.situation || "");
+  const [action, setAction] = React51__namespace.useState(scenario?.action || "");
+  const [isSaving, setIsSaving] = React51__namespace.useState(false);
+  React51__namespace.useEffect(() => {
     if (open) {
       setType(scenario?.type || "escalation");
       setSituation(scenario?.situation || "");
@@ -4353,10 +4422,10 @@ function ScenariosManager({
   minScenariosToComplete = 1,
   className
 }) {
-  const [dialogOpen, setDialogOpen] = React50__namespace.useState(false);
-  const [editingScenario, setEditingScenario] = React50__namespace.useState(null);
-  const [deletingId, setDeletingId] = React50__namespace.useState(null);
-  const [isCompleting, setIsCompleting] = React50__namespace.useState(false);
+  const [dialogOpen, setDialogOpen] = React51__namespace.useState(false);
+  const [editingScenario, setEditingScenario] = React51__namespace.useState(null);
+  const [deletingId, setDeletingId] = React51__namespace.useState(null);
+  const [isCompleting, setIsCompleting] = React51__namespace.useState(false);
   const canComplete = scenarios.length >= minScenariosToComplete && !isComplete && onComplete;
   const handleAddClick = () => {
     setEditingScenario(null);
@@ -4497,11 +4566,11 @@ function ImpactMetricsForm({
   showToasts = true,
   className
 }) {
-  const [metrics, setMetrics] = React50.useState(initialMetrics);
-  const [savedMetrics, setSavedMetrics] = React50.useState(initialMetrics);
-  const [isSaving, setIsSaving] = React50.useState(false);
+  const [metrics, setMetrics] = React51.useState(initialMetrics);
+  const [savedMetrics, setSavedMetrics] = React51.useState(initialMetrics);
+  const [isSaving, setIsSaving] = React51.useState(false);
   const isInitiallySaved = initialMetrics.time_saved_minutes_per_run !== 30 || initialMetrics.hourly_rate_euros !== 20 || initialMetrics.fte_equivalent !== 0.1;
-  const [isEditing, setIsEditing] = React50.useState(!isInitiallySaved);
+  const [isEditing, setIsEditing] = React51.useState(!isInitiallySaved);
   const workerCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter;
   const workerCostPerYear = workerCostPerMonth * 12;
   const calculateAnnualSavings = (fteEquivalent, hourlyRate) => {
@@ -4722,9 +4791,9 @@ function ActivityTimeline({
   emptyMessage = "No activity yet",
   className = ""
 }) {
-  const [newNote, setNewNote] = React50.useState("");
-  const [expanded, setExpanded] = React50.useState(false);
-  const [isSubmitting, setIsSubmitting] = React50.useState(false);
+  const [newNote, setNewNote] = React51.useState("");
+  const [expanded, setExpanded] = React51.useState(false);
+  const [isSubmitting, setIsSubmitting] = React51.useState(false);
   const handleAddNote = async () => {
     if (!newNote.trim() || !onAddNote) return;
     setIsSubmitting(true);
@@ -4808,7 +4877,7 @@ function ActivityTimeline({
 
 // src/index.ts
 init_workflow_flow();
-var WorkflowFlow2 = React50.lazy(() => Promise.resolve().then(() => (init_workflow_flow(), workflow_flow_exports)).then((m) => ({ default: m.WorkflowFlow })));
+var WorkflowFlow2 = React51.lazy(() => Promise.resolve().then(() => (init_workflow_flow(), workflow_flow_exports)).then((m) => ({ default: m.WorkflowFlow })));
 var BLANK_N8N_WORKFLOW = {
   name: "New Workflow",
   nodes: [
@@ -5001,7 +5070,7 @@ function N8nWorkflowSummary({ workflow, showFlow = false }) {
         ] })
       ] })
     ] }),
-    showFlow && /* @__PURE__ */ jsxRuntime.jsx(React50.Suspense, { fallback: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "h-[320px] bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-slate-400 text-sm", children: "Loading..." }) }), children: /* @__PURE__ */ jsxRuntime.jsx(WorkflowFlow2, { workflow, height: 320 }) }),
+    showFlow && /* @__PURE__ */ jsxRuntime.jsx(React51.Suspense, { fallback: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "h-[320px] bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-slate-400 text-sm", children: "Loading..." }) }), children: /* @__PURE__ */ jsxRuntime.jsx(WorkflowFlow2, { workflow, height: 320 }) }),
     !showFlow && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-2", children: [
       /* @__PURE__ */ jsxRuntime.jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Workflow Nodes" }),
       /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex flex-wrap gap-1.5", children: nodes.map((node) => /* @__PURE__ */ jsxRuntime.jsx(
@@ -5140,29 +5209,29 @@ function WorkflowViewer({
   simWorkflowId,
   simStudioUrl
 }) {
-  const [viewMode, setViewMode] = React50.useState("summary");
-  const [editedJson, setEditedJson] = React50.useState("");
-  const [jsonError, setJsonError] = React50.useState(null);
-  const [message, setMessage] = React50.useState(null);
-  const [saving, setSaving] = React50.useState(false);
-  const [syncing, setSyncing] = React50.useState(false);
-  const [pulling, setPulling] = React50.useState(false);
-  const [creating, setCreating] = React50.useState(false);
-  const [selectedTemplate, setSelectedTemplate] = React50.useState("blank");
-  const [exporting, setExporting] = React50.useState(false);
-  const [backups, setBackups] = React50.useState([]);
-  const [loadingBackups, setLoadingBackups] = React50.useState(false);
-  const [pushingToSim, setPushingToSim] = React50.useState(false);
-  const [pullingFromSim, setPullingFromSim] = React50.useState(false);
-  const [switchingPlatform, setSwitchingPlatform] = React50.useState(false);
-  const [diffMode, setDiffMode] = React50.useState(false);
-  const [selectedBackupA, setSelectedBackupA] = React50.useState(null);
-  const [selectedBackupB, setSelectedBackupB] = React50.useState(null);
-  const [backupStateA, setBackupStateA] = React50.useState(null);
-  const [backupStateB, setBackupStateB] = React50.useState(null);
-  const [loadingDiff, setLoadingDiff] = React50.useState(false);
-  const [localPlatform, setLocalPlatform] = React50.useState(platform);
-  const [localIsActive, setLocalIsActive] = React50.useState(isActive ?? true);
+  const [viewMode, setViewMode] = React51.useState("summary");
+  const [editedJson, setEditedJson] = React51.useState("");
+  const [jsonError, setJsonError] = React51.useState(null);
+  const [message, setMessage] = React51.useState(null);
+  const [saving, setSaving] = React51.useState(false);
+  const [syncing, setSyncing] = React51.useState(false);
+  const [pulling, setPulling] = React51.useState(false);
+  const [creating, setCreating] = React51.useState(false);
+  const [selectedTemplate, setSelectedTemplate] = React51.useState("blank");
+  const [exporting, setExporting] = React51.useState(false);
+  const [backups, setBackups] = React51.useState([]);
+  const [loadingBackups, setLoadingBackups] = React51.useState(false);
+  const [pushingToSim, setPushingToSim] = React51.useState(false);
+  const [pullingFromSim, setPullingFromSim] = React51.useState(false);
+  const [switchingPlatform, setSwitchingPlatform] = React51.useState(false);
+  const [diffMode, setDiffMode] = React51.useState(false);
+  const [selectedBackupA, setSelectedBackupA] = React51.useState(null);
+  const [selectedBackupB, setSelectedBackupB] = React51.useState(null);
+  const [backupStateA, setBackupStateA] = React51.useState(null);
+  const [backupStateB, setBackupStateB] = React51.useState(null);
+  const [loadingDiff, setLoadingDiff] = React51.useState(false);
+  const [localPlatform, setLocalPlatform] = React51.useState(platform);
+  const [localIsActive, setLocalIsActive] = React51.useState(isActive ?? true);
   const hasUnsavedChanges = localPlatform !== platform || localIsActive !== (isActive ?? true);
   function copyToClipboard(text, label = "Copied") {
     navigator.clipboard.writeText(text);
@@ -5853,7 +5922,7 @@ function WorkflowViewer({
           )
         ] }),
         /* @__PURE__ */ jsxRuntime.jsx("pre", { className: "p-4 bg-[var(--black)] text-gray-100 text-xs overflow-auto max-h-[500px] font-mono", children: JSON.stringify(workflow, null, 2) })
-      ] }) : viewMode === "flow" ? /* @__PURE__ */ jsxRuntime.jsx(React50.Suspense, { fallback: loadingComponent || DefaultLoading, children: /* @__PURE__ */ jsxRuntime.jsx(WorkflowFlow2, { workflow, height: 380, platform }) }) : viewMode === "backups" ? /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-3", children: [
+      ] }) : viewMode === "flow" ? /* @__PURE__ */ jsxRuntime.jsx(React51.Suspense, { fallback: loadingComponent || DefaultLoading, children: /* @__PURE__ */ jsxRuntime.jsx(WorkflowFlow2, { workflow, height: 380, platform }) }) : viewMode === "backups" ? /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-3", children: [
         /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between", children: [
           /* @__PURE__ */ jsxRuntime.jsx("h4", { className: "text-sm font-medium", children: diffMode ? "Compare Versions" : "Backup History" }),
           /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
@@ -6120,6 +6189,7 @@ exports.IconBox = IconBox;
 exports.ImpactMetricsForm = ImpactMetricsForm;
 exports.Input = Input;
 exports.Label = Label2;
+exports.LabeledSlider = LabeledSlider;
 exports.LabeledSwitch = LabeledSwitch;
 exports.Logo = Logo;
 exports.Metric = Metric;
@@ -6168,6 +6238,7 @@ exports.SimpleTooltip = SimpleTooltip;
 exports.Skeleton = Skeleton;
 exports.SkeletonCard = SkeletonCard;
 exports.SkeletonText = SkeletonText;
+exports.Slider = Slider;
 exports.Stat = Stat;
 exports.StepDots = StepDots;
 exports.StepProgress = StepProgress;
