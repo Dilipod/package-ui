@@ -4448,8 +4448,8 @@ function ScenariosManager({
             /* @__PURE__ */ jsxs("div", { className: "text-left", children: [
               /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
                 /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Scenarios" }),
-                isComplete && /* @__PURE__ */ jsxs(Badge, { variant: "secondary", className: "bg-[var(--cyan)]/10 text-[var(--cyan)] border-[var(--cyan)]/20 font-medium", children: [
-                  /* @__PURE__ */ jsx(CheckCircle, { size: 12, weight: "fill", className: "mr-1" }),
+                isComplete && /* @__PURE__ */ jsxs(Badge, { variant: "primary", size: "sm", children: [
+                  /* @__PURE__ */ jsx(CheckCircle, { size: 12, weight: "fill" }),
                   "Complete"
                 ] })
               ] }),
