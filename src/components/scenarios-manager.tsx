@@ -348,14 +348,22 @@ export function ScenariosManager({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between hover:bg-muted/30 -mx-2 px-2 py-1 rounded-sm transition-colors"
+        className="w-full flex items-center justify-between bg-muted/30 border border-border/50 px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center">
-            <Lightning size={20} weight="fill" className="text-[var(--cyan)]" />
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-[var(--cyan)]/10 flex items-center justify-center">
+            <Lightning size={24} weight="fill" className="text-[var(--cyan)]" />
           </div>
           <div className="text-left">
-            <h3 className="font-semibold text-[var(--black)]">Scenarios</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-[var(--black)]">Scenarios</h3>
+              {isComplete && (
+                <Badge variant="secondary" className="bg-[var(--cyan)]/10 text-[var(--cyan)] border-[var(--cyan)]/20 font-medium">
+                  <CheckCircle size={12} weight="fill" className="mr-1" />
+                  Complete
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">
               {scenarios.length === 0
                 ? 'Define rules for edge cases and escalations'
@@ -363,13 +371,7 @@ export function ScenariosManager({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {isComplete && (
-            <div className="flex items-center gap-1.5 text-[var(--cyan)]">
-              <CheckCircle size={16} weight="fill" />
-              <span className="text-sm font-medium">Complete</span>
-            </div>
-          )}
+        <div className="flex items-center gap-3">
           {isExpanded ? (
             <CaretUp size={20} className="text-muted-foreground" />
           ) : (
