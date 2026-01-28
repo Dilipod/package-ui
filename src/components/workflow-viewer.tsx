@@ -97,7 +97,7 @@ export interface SimWorkflow {
   }>
 }
 
-export type WorkflowTemplate = 'blank' | 'request_analyzer' | 'documentation_updater' | 'execution_monitor' | 'usage_reporter' | 'custom'
+export type WorkflowTemplate = 'blank' | 'request_analyzer' | 'knowledge_builder' | 'execution_monitor' | 'usage_reporter' | 'custom'
 
 export interface WorkflowViewerProps {
   /** The workflow definition to display */

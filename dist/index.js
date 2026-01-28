@@ -4261,6 +4261,7 @@ function ScenarioCard({
     /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start gap-3 flex-1 min-w-0", children: [
       /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0", config.bgColor), children: /* @__PURE__ */ jsxRuntime.jsx(Icon, { size: 16, weight: "fill", className: config.color }) }),
       /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1 min-w-0 pt-0.5", children: [
+        /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center gap-2 mb-1.5", children: /* @__PURE__ */ jsxRuntime.jsx(Badge, { variant: "outline", size: "sm", className: "font-medium", children: config.label }) }),
         /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-sm text-[var(--black)]", children: [
           /* @__PURE__ */ jsxRuntime.jsx("span", { className: "font-medium", children: "When:" }),
           " ",
@@ -4641,6 +4642,7 @@ function ImpactMetricsForm({
   const impliedFrequencyPerMonth = Math.round(impliedFrequencyPerYear / 12);
   const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros;
   const netAnnualSavings = laborSavingsPerYear - workerCostPerYear;
+  const roiPercentage = workerCostPerYear > 0 ? netAnnualSavings / workerCostPerYear * 100 : 0;
   return /* @__PURE__ */ jsxRuntime.jsx(Card, { className: cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className), children: /* @__PURE__ */ jsxRuntime.jsxs(CardContent, { className: "p-5", children: [
     /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Impact Metrics (ROI)" }),
@@ -4758,17 +4760,32 @@ function ImpactMetricsForm({
         /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
           "\u20AC",
           laborSavingsPerYear.toLocaleString(void 0, { maximumFractionDigits: 0 }),
+          " ",
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "opacity-60", children: "labor saved" }),
           " \u2212 \u20AC",
-          workerCostPerYear
+          workerCostPerYear,
+          " ",
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "opacity-60", children: "worker cost" })
         ] })
       ] })
     ] }),
-    impliedFrequencyPerYear > 0 && /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-xs text-muted-foreground mt-4 pt-3 border-t border-border/50", children: [
-      "Implied: ~",
-      impliedFrequencyPerMonth,
-      "\xD7/month (",
-      impliedFrequencyPerYear,
-      "\xD7/year)"
+    /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "mt-4 pt-3 border-t border-border/50 flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxRuntime.jsxs("p", { className: cn(
+        "text-sm",
+        roiPercentage > 0 ? "font-bold text-[var(--cyan)]" : "text-muted-foreground"
+      ), children: [
+        "ROI: ",
+        roiPercentage >= 0 ? "+" : "",
+        roiPercentage.toLocaleString(void 0, { maximumFractionDigits: 0 }),
+        "%"
+      ] }),
+      impliedFrequencyPerYear > 0 && /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+        "Implied: ~",
+        impliedFrequencyPerMonth,
+        "\xD7/month (",
+        impliedFrequencyPerYear,
+        "\xD7/year)"
+      ] })
     ] })
   ] }) });
 }

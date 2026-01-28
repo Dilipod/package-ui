@@ -105,6 +105,9 @@ function ScenarioCard({
           <Icon size={16} weight="fill" className={config.color} />
         </div>
         <div className="flex-1 min-w-0 pt-0.5">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Badge variant="outline" size="sm" className="font-medium">{config.label}</Badge>
+          </div>
           <p className="text-sm text-[var(--black)]">
             <span className="font-medium">When:</span> {scenario.situation}
           </p>

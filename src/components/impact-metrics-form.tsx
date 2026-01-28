@@ -150,6 +150,9 @@ export function ImpactMetricsForm({
   // Net annual savings
   const netAnnualSavings = laborSavingsPerYear - workerCostPerYear
 
+  // ROI percentage: net savings relative to worker cost
+  const roiPercentage = workerCostPerYear > 0 ? (netAnnualSavings / workerCostPerYear) * 100 : 0
+
   return (
     <Card className={cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className)}>
       <CardContent className="p-5">
@@ -274,17 +277,25 @@ export function ImpactMetricsForm({
               €{netAnnualSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} − €{workerCostPerYear}
+              €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="opacity-60">labor saved</span> − €{workerCostPerYear} <span className="opacity-60">worker cost</span>
             </p>
           </div>
         </div>
 
-        {/* Implied frequency indicator */}
-        {impliedFrequencyPerYear > 0 && (
-          <p className="text-xs text-muted-foreground mt-4 pt-3 border-t border-border/50">
-            Implied: ~{impliedFrequencyPerMonth}×/month ({impliedFrequencyPerYear}×/year)
+        {/* ROI & Implied frequency */}
+        <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between">
+          <p className={cn(
+            "text-sm",
+            roiPercentage > 0 ? "font-bold text-[var(--cyan)]" : "text-muted-foreground"
+          )}>
+            ROI: {roiPercentage >= 0 ? '+' : ''}{roiPercentage.toLocaleString(undefined, { maximumFractionDigits: 0 })}%
           </p>
-        )}
+          {impliedFrequencyPerYear > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Implied: ~{impliedFrequencyPerMonth}×/month ({impliedFrequencyPerYear}×/year)
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
