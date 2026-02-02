@@ -293,6 +293,14 @@ export type {
   WorkflowTemplate 
 } from './components/workflow-viewer'
 
+// Worker Spec Components
+export { WorkerSpec } from './components/worker-spec'
+export type { WorkerSpecProps, WorkerSpecDocumentation } from './components/worker-spec'
+
+// Flowchart Diagram Components
+export { FlowchartDiagram } from './components/flowchart-diagram'
+export type { FlowchartDiagramProps } from './components/flowchart-diagram'
+
 // Utilities
 export { cn } from './lib/utils'
 

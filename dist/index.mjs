@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, CheckCircle, CaretUp, Plus, PaperPlaneTilt, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Robot, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
+import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, CheckCircle, CaretUp, Plus, PaperPlaneTilt, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, Robot, Target, Crosshair, ListNumbers, Wrench, Clock, TrendUp, CurrencyEur, Sparkle, Plugs, ShieldCheck, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as SliderPrimitive from '@radix-ui/react-slider';
@@ -392,6 +392,7 @@ __export(index_exports, {
   EmptyState: () => EmptyState,
   ErrorState: () => ErrorState,
   FilePreview: () => FilePreview,
+  FlowchartDiagram: () => FlowchartDiagram,
   FormField: () => FormField,
   IconBox: () => IconBox,
   ImpactMetricsForm: () => ImpactMetricsForm,
@@ -483,6 +484,7 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
+  WorkerSpec: () => WorkerSpec,
   WorkflowFlow: () => WorkflowFlow,
   WorkflowViewer: () => WorkflowViewer,
   alertVariants: () => alertVariants,
@@ -6107,10 +6109,426 @@ function WorkflowViewer({
     ] })
   ] });
 }
+function parseMermaidFlowchart(mermaid) {
+  const nodes = /* @__PURE__ */ new Map();
+  const edges = [];
+  const lines = mermaid.split(/\\n|\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("flowchart") && !l.startsWith("graph"));
+  function parseNodeDef(str) {
+    const decisionMatch = str.match(/^([A-Za-z0-9_]+)\{(.+?)\}$/);
+    if (decisionMatch) return { id: decisionMatch[1], label: decisionMatch[2], type: "decision" };
+    const bracketMatch = str.match(/^([A-Za-z0-9_]+)\[?\(?\[?(.+?)\]?\)?\]?$/);
+    if (bracketMatch) {
+      const label = bracketMatch[2];
+      const isTerminal = /^(start|end|begin|finish|done)$/i.test(label);
+      return { id: bracketMatch[1], label, type: isTerminal ? "terminal" : "action" };
+    }
+    return { id: str.trim() };
+  }
+  for (const line of lines) {
+    const edgeMatch = line.match(/^(.+?)\s*-->(?:\|(.+?)\|)?\s*(.+)$/);
+    if (!edgeMatch) continue;
+    const leftRaw = edgeMatch[1].trim();
+    const edgeLabel = edgeMatch[2]?.trim();
+    const rightRaw = edgeMatch[3].trim();
+    const left = parseNodeDef(leftRaw);
+    const right = parseNodeDef(rightRaw);
+    if (left.label && !nodes.has(left.id)) {
+      nodes.set(left.id, { id: left.id, label: left.label, type: left.type || "action" });
+    }
+    if (right.label && !nodes.has(right.id)) {
+      nodes.set(right.id, { id: right.id, label: right.label, type: right.type || "action" });
+    }
+    if (!nodes.has(left.id)) {
+      nodes.set(left.id, { id: left.id, label: left.id, type: "action" });
+    }
+    if (!nodes.has(right.id)) {
+      nodes.set(right.id, { id: right.id, label: right.id, type: "action" });
+    }
+    edges.push({ from: left.id, to: right.id, label: edgeLabel });
+  }
+  return { nodes: Array.from(nodes.values()), edges };
+}
+function findMergePoint(branchStarts, outgoing) {
+  const reachable = /* @__PURE__ */ new Map();
+  for (const start of branchStarts) {
+    const q2 = [start];
+    const seen2 = /* @__PURE__ */ new Set();
+    while (q2.length > 0) {
+      const id = q2.shift();
+      if (seen2.has(id)) continue;
+      seen2.add(id);
+      if (!reachable.has(id)) reachable.set(id, /* @__PURE__ */ new Set());
+      reachable.get(id).add(start);
+      const outs = outgoing.get(id) || [];
+      for (const e of outs) q2.push(e.to);
+    }
+  }
+  const allBranches = new Set(branchStarts);
+  const q = [branchStarts[0]];
+  const seen = /* @__PURE__ */ new Set();
+  while (q.length > 0) {
+    const id = q.shift();
+    if (seen.has(id)) continue;
+    seen.add(id);
+    if (!allBranches.has(id) && reachable.get(id)?.size === branchStarts.length) {
+      return id;
+    }
+    const outs = outgoing.get(id) || [];
+    for (const e of outs) q.push(e.to);
+  }
+  return null;
+}
+function buildLayout(startId, outgoing, incoming, nodeMap, visited) {
+  const items = [];
+  let currentId = startId;
+  while (currentId) {
+    if (visited.has(currentId)) break;
+    const node = nodeMap.get(currentId);
+    if (!node) break;
+    const outs = outgoing.get(currentId) || [];
+    if (outs.length <= 1) {
+      visited.add(currentId);
+      items.push({ type: "node", nodeId: currentId });
+      if (outs.length === 1) {
+        const nextId = outs[0].to;
+        if (visited.has(nextId)) break;
+        items.push({ type: "arrow", label: outs[0].label });
+        currentId = nextId;
+      } else {
+        currentId = null;
+      }
+    } else {
+      visited.add(currentId);
+      items.push({ type: "node", nodeId: currentId });
+      const branchStarts = outs.map((e) => e.to);
+      const mergeId = findMergePoint(branchStarts, outgoing);
+      const branches = [];
+      for (const edge of outs) {
+        if (visited.has(edge.to) && edge.to !== mergeId) {
+          branches.push({ label: edge.label, items: [] });
+          continue;
+        }
+        const branchItems = buildLayout(edge.to, outgoing, incoming, nodeMap, visited);
+        branches.push({ label: edge.label, items: branchItems });
+      }
+      items.push({ type: "branch", decision: currentId, branches, mergeId });
+      if (mergeId && !visited.has(mergeId)) {
+        items.push({ type: "arrow" });
+        currentId = mergeId;
+      } else {
+        currentId = null;
+      }
+    }
+  }
+  return items;
+}
+function FlowArrow({ label }) {
+  return /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center", children: [
+    label && /* @__PURE__ */ jsx("span", { className: "text-[10px] font-medium text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-0.5", children: label }),
+    /* @__PURE__ */ jsx("div", { className: "w-px h-4 bg-gray-300" }),
+    /* @__PURE__ */ jsx("div", { className: "w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-300" })
+  ] });
+}
+function FlowNodeBox({ node }) {
+  if (node.type === "decision") {
+    return /* @__PURE__ */ jsxs(
+      "div",
+      {
+        className: "bg-amber-50 border-2 border-amber-300 rounded-lg px-4 py-2.5 text-xs font-medium text-amber-800 text-center my-1",
+        style: { minWidth: "120px" },
+        children: [
+          /* @__PURE__ */ jsx("span", { className: "text-amber-400 mr-1", children: "\u25C7" }),
+          node.label
+        ]
+      }
+    );
+  }
+  if (node.type === "terminal") {
+    return /* @__PURE__ */ jsx("div", { className: "bg-gray-100 border border-gray-200 rounded-full px-5 py-1.5 text-xs font-medium text-gray-500 text-center my-1", children: node.label });
+  }
+  return /* @__PURE__ */ jsx("div", { className: "bg-white border border-gray-200 rounded-sm px-4 py-2 text-xs font-medium text-[var(--black)] text-center shadow-sm my-1 max-w-[220px]", children: node.label });
+}
+function RenderLayoutItems({ items, nodeMap }) {
+  return /* @__PURE__ */ jsx(Fragment, { children: items.map((item, i) => {
+    if (item.type === "node") {
+      const node = nodeMap.get(item.nodeId);
+      if (!node) return null;
+      return /* @__PURE__ */ jsx(FlowNodeBox, { node }, `node-${item.nodeId}`);
+    }
+    if (item.type === "arrow") {
+      return /* @__PURE__ */ jsx(FlowArrow, { label: item.label }, `arrow-${i}`);
+    }
+    if (item.type === "branch") {
+      return /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center w-full", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-px h-3 bg-gray-300" }),
+        /* @__PURE__ */ jsx("div", { className: "flex items-start justify-center gap-6 w-full", children: item.branches.map((branch, j) => /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center min-w-[100px]", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center", children: [
+            branch.label && /* @__PURE__ */ jsx("span", { className: "text-[10px] font-medium text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-1", children: branch.label }),
+            /* @__PURE__ */ jsx("div", { className: "w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-300" })
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "flex flex-col items-center", children: /* @__PURE__ */ jsx(RenderLayoutItems, { items: branch.items, nodeMap }) })
+        ] }, j)) }),
+        item.mergeId && /* @__PURE__ */ jsx("div", { className: "w-px h-3 bg-gray-300" })
+      ] }, `branch-${item.decision}-${i}`);
+    }
+    return null;
+  }) });
+}
+function FlowchartDiagram({ mermaid, className }) {
+  const { nodes, edges } = parseMermaidFlowchart(mermaid);
+  if (nodes.length === 0) {
+    return /* @__PURE__ */ jsx("pre", { className: "text-xs bg-white border border-gray-100 rounded-sm p-3 overflow-x-auto whitespace-pre-wrap", children: mermaid });
+  }
+  const outgoing = /* @__PURE__ */ new Map();
+  const incoming = /* @__PURE__ */ new Map();
+  for (const edge of edges) {
+    if (!outgoing.has(edge.from)) outgoing.set(edge.from, []);
+    outgoing.get(edge.from).push(edge);
+    if (!incoming.has(edge.to)) incoming.set(edge.to, []);
+    incoming.get(edge.to).push(edge);
+  }
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  const roots = nodes.filter((n) => !incoming.has(n.id) || incoming.get(n.id).length === 0);
+  const startId = roots.length > 0 ? roots[0].id : nodes[0].id;
+  const visited = /* @__PURE__ */ new Set();
+  const layout = buildLayout(startId, outgoing, incoming, nodeMap, visited);
+  return /* @__PURE__ */ jsx("div", { className, children: /* @__PURE__ */ jsx("div", { className: "flex flex-col items-center py-2", children: /* @__PURE__ */ jsx(RenderLayoutItems, { items: layout, nodeMap }) }) });
+}
+var frequencyLabels = {
+  multiple_daily: "occurrence",
+  daily: "day",
+  weekly: "week",
+  monthly: "month",
+  quarterly: "quarter",
+  yearly: "year"
+};
+function SectionHeader({
+  icon,
+  title,
+  count: count2,
+  expanded,
+  onToggle,
+  iconColor = "text-[var(--cyan)]"
+}) {
+  return /* @__PURE__ */ jsxs(
+    "button",
+    {
+      onClick: onToggle,
+      className: "flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide hover:text-[var(--black)] transition-colors w-full",
+      children: [
+        expanded ? /* @__PURE__ */ jsx(CaretDown, { size: 12 }) : /* @__PURE__ */ jsx(CaretRight, { size: 12 }),
+        /* @__PURE__ */ jsx("span", { className: iconColor, children: icon }),
+        title,
+        count2 !== void 0 && /* @__PURE__ */ jsxs("span", { className: "text-muted-foreground font-normal", children: [
+          "(",
+          count2,
+          ")"
+        ] })
+      ]
+    }
+  );
+}
+function WorkerSpec({ documentation, className }) {
+  const [expandedSections, setExpandedSections] = useState(
+    /* @__PURE__ */ new Set(["goal", "scope", "steps", "diagram", "impact", "requirements", "edge_cases"])
+  );
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  };
+  if (!documentation) {
+    return /* @__PURE__ */ jsx("div", { className, children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 p-6 rounded-sm border border-dashed border-gray-300 bg-gray-50/50", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-gray-100 flex items-center justify-center", children: /* @__PURE__ */ jsx(Robot, { size: 20, className: "text-gray-400" }) }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Worker Spec Pending" }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "The final specification will be generated automatically after the documentation is approved." })
+      ] })
+    ] }) });
+  }
+  const freqLabel = documentation.expected_impact?.frequency ? frequencyLabels[documentation.expected_impact.frequency] || documentation.expected_impact.frequency : "occurrence";
+  return /* @__PURE__ */ jsx("div", { className, children: /* @__PURE__ */ jsxs("div", { className: "space-y-5", children: [
+    documentation.goal && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(Target, { size: 12, weight: "fill" }),
+          title: "Goal",
+          expanded: expandedSections.has("goal"),
+          onToggle: () => toggleSection("goal")
+        }
+      ),
+      expandedSections.has("goal") && /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground leading-relaxed pl-5 mt-2", children: documentation.goal })
+    ] }),
+    documentation.scope && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(Crosshair, { size: 12, weight: "fill" }),
+          title: "Scope",
+          expanded: expandedSections.has("scope"),
+          onToggle: () => toggleSection("scope")
+        }
+      ),
+      expandedSections.has("scope") && /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground leading-relaxed pl-5 mt-2", children: documentation.scope })
+    ] }),
+    documentation.steps && documentation.steps.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(ListNumbers, { size: 12, weight: "fill" }),
+          title: "Steps",
+          count: documentation.steps.length,
+          expanded: expandedSections.has("steps"),
+          onToggle: () => toggleSection("steps")
+        }
+      ),
+      expandedSections.has("steps") && /* @__PURE__ */ jsx("div", { className: "space-y-3 pl-5 mt-2", children: documentation.steps.map((step, i) => /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsx("span", { className: "w-6 h-6 rounded-sm bg-[var(--cyan)]/10 flex items-center justify-center text-xs font-bold text-[var(--cyan)] shrink-0 mt-0.5", children: step.step || i + 1 }),
+        /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+          /* @__PURE__ */ jsx("p", { className: "text-sm font-medium text-[var(--black)]", children: step.title }),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mt-0.5", children: step.description }),
+          step.tools_used && step.tools_used.length > 0 && /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1 mt-1.5", children: step.tools_used.map((tool, j) => /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-gray-100 text-[10px] font-medium text-gray-600", children: [
+            /* @__PURE__ */ jsx(Wrench, { size: 10 }),
+            tool
+          ] }, j)) })
+        ] })
+      ] }, i)) })
+    ] }),
+    documentation.diagram && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(TreeStructure, { size: 12, weight: "fill" }),
+          title: "Workflow Diagram",
+          expanded: expandedSections.has("diagram"),
+          onToggle: () => toggleSection("diagram"),
+          iconColor: "text-purple-500"
+        }
+      ),
+      expandedSections.has("diagram") && /* @__PURE__ */ jsx("div", { className: "pl-5 mt-2", children: /* @__PURE__ */ jsx("div", { className: "bg-white border border-gray-100 rounded-sm p-4 overflow-x-auto", children: /* @__PURE__ */ jsx(FlowchartDiagram, { mermaid: documentation.diagram }) }) })
+    ] }),
+    documentation.expected_impact && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(Lightning, { size: 12, weight: "fill" }),
+          title: "Expected Impact",
+          expanded: expandedSections.has("impact"),
+          onToggle: () => toggleSection("impact"),
+          iconColor: "text-purple-500"
+        }
+      ),
+      expandedSections.has("impact") && /* @__PURE__ */ jsx("div", { className: "pl-5 mt-2", children: /* @__PURE__ */ jsxs("div", { className: "bg-emerald-50/50 border border-emerald-100 rounded-sm p-4", children: [
+        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-3 gap-3 mb-3", children: [
+          /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-sm p-3 border border-emerald-100 text-center", children: [
+            /* @__PURE__ */ jsx(Clock, { size: 18, className: "text-emerald-600 mx-auto mb-1" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-lg font-bold text-[var(--black)]", children: [
+              documentation.expected_impact.time_saved_per_occurrence_minutes,
+              " min"
+            ] }),
+            /* @__PURE__ */ jsxs("p", { className: "text-[10px] text-muted-foreground", children: [
+              "saved per ",
+              freqLabel
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-sm p-3 border border-emerald-100 text-center", children: [
+            /* @__PURE__ */ jsx(TrendUp, { size: 18, className: "text-emerald-600 mx-auto mb-1" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-lg font-bold text-[var(--black)]", children: [
+              documentation.expected_impact.yearly_hours_saved,
+              "h"
+            ] }),
+            /* @__PURE__ */ jsx("p", { className: "text-[10px] text-muted-foreground", children: "saved per year" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "bg-white rounded-sm p-3 border border-emerald-100 text-center", children: [
+            /* @__PURE__ */ jsx(CurrencyEur, { size: 18, className: "text-emerald-600 mx-auto mb-1" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-lg font-bold text-[var(--black)]", children: [
+              "\u20AC",
+              documentation.expected_impact.yearly_cost_savings_euros.toLocaleString()
+            ] }),
+            /* @__PURE__ */ jsx("p", { className: "text-[10px] text-muted-foreground", children: "estimated yearly savings" })
+          ] })
+        ] }),
+        documentation.expected_impact.qualitative_benefits && documentation.expected_impact.qualitative_benefits.length > 0 && /* @__PURE__ */ jsx("div", { className: "space-y-1", children: documentation.expected_impact.qualitative_benefits.map((benefit, i) => /* @__PURE__ */ jsxs("div", { className: "flex items-start gap-2 text-sm text-emerald-700", children: [
+          /* @__PURE__ */ jsx(Sparkle, { size: 14, className: "text-emerald-500 shrink-0 mt-0.5", weight: "fill" }),
+          benefit
+        ] }, i)) })
+      ] }) })
+    ] }),
+    (documentation.technical_requirements && documentation.technical_requirements.length > 0 || documentation.integration_points && documentation.integration_points.length > 0) && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(Plugs, { size: 12, weight: "fill" }),
+          title: "Requirements & Integrations",
+          expanded: expandedSections.has("requirements"),
+          onToggle: () => toggleSection("requirements")
+        }
+      ),
+      expandedSections.has("requirements") && /* @__PURE__ */ jsxs("div", { className: "grid md:grid-cols-2 gap-4 pl-5 mt-2", children: [
+        documentation.technical_requirements && documentation.technical_requirements.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2", children: "Technical Requirements" }),
+          /* @__PURE__ */ jsx("ul", { className: "space-y-1.5", children: documentation.technical_requirements.map((req, i) => /* @__PURE__ */ jsxs("li", { className: "flex items-start gap-2 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ jsx(Wrench, { size: 12, className: "text-gray-400 shrink-0 mt-1" }),
+            req
+          ] }, i)) })
+        ] }),
+        documentation.integration_points && documentation.integration_points.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2", children: "Integration Points" }),
+          /* @__PURE__ */ jsx("ul", { className: "space-y-1.5", children: documentation.integration_points.map((point, i) => /* @__PURE__ */ jsxs("li", { className: "flex items-start gap-2 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ jsx(Plugs, { size: 12, className: "text-gray-400 shrink-0 mt-1" }),
+            point
+          ] }, i)) })
+        ] })
+      ] })
+    ] }),
+    documentation.edge_cases_handled && documentation.edge_cases_handled.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx(
+        SectionHeader,
+        {
+          icon: /* @__PURE__ */ jsx(ShieldCheck, { size: 12, weight: "fill" }),
+          title: "Edge Cases Handled",
+          count: documentation.edge_cases_handled.length,
+          expanded: expandedSections.has("edge_cases"),
+          onToggle: () => toggleSection("edge_cases"),
+          iconColor: "text-amber-500"
+        }
+      ),
+      expandedSections.has("edge_cases") && /* @__PURE__ */ jsx("div", { className: "space-y-2 pl-5 mt-2", children: documentation.edge_cases_handled.map((ec, i) => /* @__PURE__ */ jsxs("div", { className: "text-sm p-3 bg-gray-50 rounded-sm border border-gray-100", children: [
+        /* @__PURE__ */ jsx("p", { className: "font-medium text-[var(--black)]", children: ec.scenario }),
+        /* @__PURE__ */ jsxs("p", { className: "text-muted-foreground mt-1", children: [
+          "\u2192 ",
+          ec.handling
+        ] })
+      ] }, i)) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "pt-3 border-t border-gray-100 flex items-center gap-2 text-xs text-muted-foreground", children: [
+      /* @__PURE__ */ jsxs(Badge, { variant: "outline", size: "sm", children: [
+        "v",
+        documentation.version
+      ] }),
+      documentation.model_used && /* @__PURE__ */ jsxs(Fragment, { children: [
+        /* @__PURE__ */ jsx("span", { children: "\u2022" }),
+        /* @__PURE__ */ jsx("span", { children: documentation.model_used })
+      ] }),
+      /* @__PURE__ */ jsx("span", { children: "\u2022" }),
+      /* @__PURE__ */ jsxs("span", { children: [
+        "Updated ",
+        new Date(documentation.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      ] })
+    ] })
+  ] }) });
+}
 
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
