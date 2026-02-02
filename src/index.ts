@@ -295,7 +295,7 @@ export type {
 
 // Worker Spec Components
 export { WorkerSpec } from './components/worker-spec'
-export type { WorkerSpecProps, WorkerSpecDocumentation } from './components/worker-spec'
+export type { WorkerSpecProps, WorkerSpecDocumentation, AnalysisSource, AnalysisSummary } from './components/worker-spec'
 
 // Flowchart Diagram Components
 export { FlowchartDiagram } from './components/flowchart-diagram'

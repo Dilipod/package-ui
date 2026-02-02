@@ -6362,6 +6362,30 @@ function SectionHeader({
     }
   );
 }
+function AnalysisContextRenderer({ content }) {
+  const sections = content.split(/^## /gm).filter(Boolean);
+  const getIcon = (title) => {
+    if (title.includes("Request")) return /* @__PURE__ */ jsxRuntime.jsx(react_star.Target, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Video")) return /* @__PURE__ */ jsxRuntime.jsx(react_star.VideoCamera, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Document")) return /* @__PURE__ */ jsxRuntime.jsx(react_star.FileText, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Rules")) return /* @__PURE__ */ jsxRuntime.jsx(react_star.Lightbulb, { size: 14, className: "text-amber-500" });
+    if (title.includes("Context")) return /* @__PURE__ */ jsxRuntime.jsx(react_star.TextT, { size: 14, className: "text-[var(--cyan)]" });
+    return null;
+  };
+  return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "space-y-6", children: sections.map((section, index) => {
+    const lines = section.split("\n");
+    const title = lines[0]?.trim();
+    const body = lines.slice(1).join("\n").trim();
+    if (!body) return null;
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { children: [
+      /* @__PURE__ */ jsxRuntime.jsxs("h4", { className: "text-sm font-medium text-[var(--black)] flex items-center gap-2 mb-3", children: [
+        getIcon(title),
+        title
+      ] }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-muted-foreground pl-5 space-y-2 whitespace-pre-line", children: body })
+    ] }, index);
+  }) });
+}
 function WorkerSpec({ documentation, className }) {
   const [expandedSections, setExpandedSections] = React51.useState(
     /* @__PURE__ */ new Set(["goal", "scope", "steps", "diagram", "impact", "requirements", "edge_cases"])
@@ -6387,7 +6411,64 @@ function WorkerSpec({ documentation, className }) {
     ] }) });
   }
   const freqLabel = documentation.expected_impact?.frequency ? frequencyLabels[documentation.expected_impact.frequency] || documentation.expected_impact.frequency : "occurrence";
+  const hasAnalysis = documentation.analysis_context || documentation.analysis_sources && documentation.analysis_sources.length > 0;
   return /* @__PURE__ */ jsxRuntime.jsx("div", { className, children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-5", children: [
+    hasAnalysis && /* @__PURE__ */ jsxRuntime.jsx("div", { children: /* @__PURE__ */ jsxRuntime.jsxs(Dialog, { children: [
+      /* @__PURE__ */ jsxRuntime.jsx(DialogTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs("button", { className: "flex items-center gap-2 text-sm font-medium text-[var(--cyan)] hover:text-[var(--cyan)]/80 transition-colors", children: [
+        /* @__PURE__ */ jsxRuntime.jsx(react_star.MagnifyingGlass, { size: 16 }),
+        "What was analyzed",
+        documentation.analysis_summary && /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "text-xs text-muted-foreground font-normal", children: [
+          "(",
+          documentation.analysis_summary.total_sources,
+          " source",
+          documentation.analysis_summary.total_sources !== 1 ? "s" : "",
+          ")"
+        ] }),
+        /* @__PURE__ */ jsxRuntime.jsx(react_star.CaretRight, { size: 12 })
+      ] }) }),
+      /* @__PURE__ */ jsxRuntime.jsxs(DialogContent, { className: "max-w-xl max-h-[80vh] overflow-y-auto", children: [
+        /* @__PURE__ */ jsxRuntime.jsxs(DialogHeader, { children: [
+          /* @__PURE__ */ jsxRuntime.jsx(DialogTitle, { children: "What was analyzed" }),
+          documentation.analysis_summary && /* @__PURE__ */ jsxRuntime.jsxs(DialogDescription, { className: "flex items-center gap-4 text-xs", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs("span", { children: [
+              documentation.analysis_summary.total_sources,
+              " source",
+              documentation.analysis_summary.total_sources !== 1 ? "s" : ""
+            ] }),
+            documentation.analysis_summary.video_count > 0 && /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ jsxRuntime.jsx(react_star.FilmStrip, { size: 12 }),
+              documentation.analysis_summary.video_count,
+              " video",
+              documentation.analysis_summary.video_count !== 1 ? "s" : ""
+            ] }),
+            documentation.analysis_summary.document_count > 0 && /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ jsxRuntime.jsx(react_star.FileText, { size: 12 }),
+              documentation.analysis_summary.document_count,
+              " doc",
+              documentation.analysis_summary.document_count !== 1 ? "s" : ""
+            ] })
+          ] })
+        ] }),
+        documentation.analysis_sources && documentation.analysis_sources.length > 0 && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-2", children: [
+          /* @__PURE__ */ jsxRuntime.jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Sources" }),
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "space-y-1.5", children: documentation.analysis_sources.map((source, i) => /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2 text-sm", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-shrink-0 text-muted-foreground", children: [
+              source.type === "video" && /* @__PURE__ */ jsxRuntime.jsx(react_star.FilmStrip, { size: 14 }),
+              (source.type === "document" || source.type === "pdf") && /* @__PURE__ */ jsxRuntime.jsx(react_star.FileText, { size: 14 }),
+              source.type === "spreadsheet" && /* @__PURE__ */ jsxRuntime.jsx(react_star.FileText, { size: 14 }),
+              source.type === "image" && /* @__PURE__ */ jsxRuntime.jsx(react_star.ImageSquare, { size: 14 }),
+              source.type === "description" && /* @__PURE__ */ jsxRuntime.jsx(react_star.TextT, { size: 14 })
+            ] }),
+            /* @__PURE__ */ jsxRuntime.jsx("span", { className: "truncate text-[var(--black)]", children: source.name }),
+            source.size > 0 && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-xs text-muted-foreground flex-shrink-0", children: source.size > 1024 * 1024 ? `${(source.size / 1024 / 1024).toFixed(1)}MB` : `${Math.round(source.size / 1024)}KB` })
+          ] }, i)) })
+        ] }),
+        documentation.analysis_context && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "border-t border-gray-100 pt-4 space-y-1", children: [
+          /* @__PURE__ */ jsxRuntime.jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3", children: "Analysis Details" }),
+          /* @__PURE__ */ jsxRuntime.jsx(AnalysisContextRenderer, { content: documentation.analysis_context })
+        ] })
+      ] })
+    ] }) }),
     documentation.goal && /* @__PURE__ */ jsxRuntime.jsxs("div", { children: [
       /* @__PURE__ */ jsxRuntime.jsx(
         SectionHeader,

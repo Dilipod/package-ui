@@ -19,13 +19,44 @@ import {
   Sparkle,
   Lightbulb,
   Robot,
+  MagnifyingGlass,
+  FilmStrip,
+  FileText,
+  TextT,
+  VideoCamera,
+  ImageSquare,
 } from '@phosphor-icons/react'
 import { FlowchartDiagram } from './flowchart-diagram'
 import { Badge } from './badge'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from './dialog'
 
 // ============================================
 // Types
 // ============================================
+
+export interface AnalysisSource {
+  type: string
+  name: string
+  size: number
+  insights?: string[]
+  processing_time_ms?: number
+}
+
+export interface AnalysisSummary {
+  total_sources: number
+  video_count: number
+  document_count: number
+  image_count: number
+  total_insights: number
+  analyzed_at: string
+}
 
 export interface WorkerSpecDocumentation {
   scope: string | null
@@ -50,6 +81,9 @@ export interface WorkerSpecDocumentation {
     scenario: string
     handling: string
   }> | null
+  analysis_sources: AnalysisSource[] | null
+  analysis_summary: AnalysisSummary | null
+  analysis_context: string | null
   version: number
   model_used: string | null
   updated_at: string
@@ -110,6 +144,47 @@ function SectionHeader({
 }
 
 // ============================================
+// Analysis Context Renderer
+// ============================================
+
+function AnalysisContextRenderer({ content }: { content: string }) {
+  const sections = content.split(/^## /gm).filter(Boolean)
+
+  const getIcon = (title: string) => {
+    if (title.includes('Request')) return <Target size={14} className="text-[var(--cyan)]" />
+    if (title.includes('Video')) return <VideoCamera size={14} className="text-[var(--cyan)]" />
+    if (title.includes('Document')) return <FileText size={14} className="text-[var(--cyan)]" />
+    if (title.includes('Rules')) return <Lightbulb size={14} className="text-amber-500" />
+    if (title.includes('Context')) return <TextT size={14} className="text-[var(--cyan)]" />
+    return null
+  }
+
+  return (
+    <div className="space-y-6">
+      {sections.map((section, index) => {
+        const lines = section.split('\n')
+        const title = lines[0]?.trim()
+        const body = lines.slice(1).join('\n').trim()
+
+        if (!body) return null
+
+        return (
+          <div key={index}>
+            <h4 className="text-sm font-medium text-[var(--black)] flex items-center gap-2 mb-3">
+              {getIcon(title)}
+              {title}
+            </h4>
+            <div className="text-sm text-muted-foreground pl-5 space-y-2 whitespace-pre-line">
+              {body}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ============================================
 // Main Component
 // ============================================
 
@@ -153,9 +228,89 @@ export function WorkerSpec({ documentation, className }: WorkerSpecProps) {
     ? frequencyLabels[documentation.expected_impact.frequency] || documentation.expected_impact.frequency
     : 'occurrence'
 
+  const hasAnalysis = documentation.analysis_context || (documentation.analysis_sources && documentation.analysis_sources.length > 0)
+
   return (
     <div className={className}>
       <div className="space-y-5">
+        {/* What was analyzed */}
+        {hasAnalysis && (
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="flex items-center gap-2 text-sm font-medium text-[var(--cyan)] hover:text-[var(--cyan)]/80 transition-colors">
+                  <MagnifyingGlass size={16} />
+                  What was analyzed
+                  {documentation.analysis_summary && (
+                    <span className="text-xs text-muted-foreground font-normal">
+                      ({documentation.analysis_summary.total_sources} source{documentation.analysis_summary.total_sources !== 1 ? 's' : ''})
+                    </span>
+                  )}
+                  <CaretRight size={12} />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>What was analyzed</DialogTitle>
+                  {documentation.analysis_summary && (
+                    <DialogDescription className="flex items-center gap-4 text-xs">
+                      <span>{documentation.analysis_summary.total_sources} source{documentation.analysis_summary.total_sources !== 1 ? 's' : ''}</span>
+                      {documentation.analysis_summary.video_count > 0 && (
+                        <span className="flex items-center gap-1">
+                          <FilmStrip size={12} />
+                          {documentation.analysis_summary.video_count} video{documentation.analysis_summary.video_count !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {documentation.analysis_summary.document_count > 0 && (
+                        <span className="flex items-center gap-1">
+                          <FileText size={12} />
+                          {documentation.analysis_summary.document_count} doc{documentation.analysis_summary.document_count !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                    </DialogDescription>
+                  )}
+                </DialogHeader>
+
+                {/* Sources Section */}
+                {documentation.analysis_sources && documentation.analysis_sources.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Sources</h4>
+                    <div className="space-y-1.5">
+                      {documentation.analysis_sources.map((source, i) => (
+                        <div key={i} className="flex items-center gap-2 text-sm">
+                          <div className="flex-shrink-0 text-muted-foreground">
+                            {source.type === 'video' && <FilmStrip size={14} />}
+                            {(source.type === 'document' || source.type === 'pdf') && <FileText size={14} />}
+                            {source.type === 'spreadsheet' && <FileText size={14} />}
+                            {source.type === 'image' && <ImageSquare size={14} />}
+                            {source.type === 'description' && <TextT size={14} />}
+                          </div>
+                          <span className="truncate text-[var(--black)]">{source.name}</span>
+                          {source.size > 0 && (
+                            <span className="text-xs text-muted-foreground flex-shrink-0">
+                              {source.size > 1024 * 1024
+                                ? `${(source.size / 1024 / 1024).toFixed(1)}MB`
+                                : `${Math.round(source.size / 1024)}KB`}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Analysis Details Section */}
+                {documentation.analysis_context && (
+                  <div className="border-t border-gray-100 pt-4 space-y-1">
+                    <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Analysis Details</h4>
+                    <AnalysisContextRenderer content={documentation.analysis_context} />
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
+
         {/* Goal */}
         {documentation.goal && (
           <div>

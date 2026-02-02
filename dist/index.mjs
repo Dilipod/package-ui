@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as react_star from '@phosphor-icons/react';
-import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, CheckCircle, CaretUp, Plus, PaperPlaneTilt, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, Robot, Target, Crosshair, ListNumbers, Wrench, Clock, TrendUp, CurrencyEur, Sparkle, Plugs, ShieldCheck, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Globe, GitBranch, Package, Timer } from '@phosphor-icons/react';
+import { X, CaretDown, Circle, CaretLeft, DotsThree, CaretRight, Check, House, Info, WarningCircle, Play, Download, Folder, ArrowSquareOut, CircleNotch, File, FileVideo, Lightning, CheckCircle, CaretUp, Plus, PaperPlaneTilt, Eye, TreeStructure, Code, PencilSimple, WebhooksLogo, Copy, CloudArrowUp, CloudArrowDown, ArrowsClockwise, DownloadSimple, ClockCounterClockwise, ArrowsLeftRight, Minus, Pencil, Robot, MagnifyingGlass, FilmStrip, FileText, ImageSquare, TextT, Target, Crosshair, ListNumbers, Wrench, Clock, TrendUp, CurrencyEur, Sparkle, Plugs, ShieldCheck, FileImage, FilePdf, FileDoc, Question, Warning, Trash, Globe, GitBranch, Package, Timer, VideoCamera, Lightbulb } from '@phosphor-icons/react';
 import 'react-dom';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as SliderPrimitive from '@radix-ui/react-slider';
@@ -6328,6 +6328,30 @@ function SectionHeader({
     }
   );
 }
+function AnalysisContextRenderer({ content }) {
+  const sections = content.split(/^## /gm).filter(Boolean);
+  const getIcon = (title) => {
+    if (title.includes("Request")) return /* @__PURE__ */ jsx(Target, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Video")) return /* @__PURE__ */ jsx(VideoCamera, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Document")) return /* @__PURE__ */ jsx(FileText, { size: 14, className: "text-[var(--cyan)]" });
+    if (title.includes("Rules")) return /* @__PURE__ */ jsx(Lightbulb, { size: 14, className: "text-amber-500" });
+    if (title.includes("Context")) return /* @__PURE__ */ jsx(TextT, { size: 14, className: "text-[var(--cyan)]" });
+    return null;
+  };
+  return /* @__PURE__ */ jsx("div", { className: "space-y-6", children: sections.map((section, index) => {
+    const lines = section.split("\n");
+    const title = lines[0]?.trim();
+    const body = lines.slice(1).join("\n").trim();
+    if (!body) return null;
+    return /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsxs("h4", { className: "text-sm font-medium text-[var(--black)] flex items-center gap-2 mb-3", children: [
+        getIcon(title),
+        title
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "text-sm text-muted-foreground pl-5 space-y-2 whitespace-pre-line", children: body })
+    ] }, index);
+  }) });
+}
 function WorkerSpec({ documentation, className }) {
   const [expandedSections, setExpandedSections] = useState(
     /* @__PURE__ */ new Set(["goal", "scope", "steps", "diagram", "impact", "requirements", "edge_cases"])
@@ -6353,7 +6377,64 @@ function WorkerSpec({ documentation, className }) {
     ] }) });
   }
   const freqLabel = documentation.expected_impact?.frequency ? frequencyLabels[documentation.expected_impact.frequency] || documentation.expected_impact.frequency : "occurrence";
+  const hasAnalysis = documentation.analysis_context || documentation.analysis_sources && documentation.analysis_sources.length > 0;
   return /* @__PURE__ */ jsx("div", { className, children: /* @__PURE__ */ jsxs("div", { className: "space-y-5", children: [
+    hasAnalysis && /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(Dialog, { children: [
+      /* @__PURE__ */ jsx(DialogTrigger, { asChild: true, children: /* @__PURE__ */ jsxs("button", { className: "flex items-center gap-2 text-sm font-medium text-[var(--cyan)] hover:text-[var(--cyan)]/80 transition-colors", children: [
+        /* @__PURE__ */ jsx(MagnifyingGlass, { size: 16 }),
+        "What was analyzed",
+        documentation.analysis_summary && /* @__PURE__ */ jsxs("span", { className: "text-xs text-muted-foreground font-normal", children: [
+          "(",
+          documentation.analysis_summary.total_sources,
+          " source",
+          documentation.analysis_summary.total_sources !== 1 ? "s" : "",
+          ")"
+        ] }),
+        /* @__PURE__ */ jsx(CaretRight, { size: 12 })
+      ] }) }),
+      /* @__PURE__ */ jsxs(DialogContent, { className: "max-w-xl max-h-[80vh] overflow-y-auto", children: [
+        /* @__PURE__ */ jsxs(DialogHeader, { children: [
+          /* @__PURE__ */ jsx(DialogTitle, { children: "What was analyzed" }),
+          documentation.analysis_summary && /* @__PURE__ */ jsxs(DialogDescription, { className: "flex items-center gap-4 text-xs", children: [
+            /* @__PURE__ */ jsxs("span", { children: [
+              documentation.analysis_summary.total_sources,
+              " source",
+              documentation.analysis_summary.total_sources !== 1 ? "s" : ""
+            ] }),
+            documentation.analysis_summary.video_count > 0 && /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ jsx(FilmStrip, { size: 12 }),
+              documentation.analysis_summary.video_count,
+              " video",
+              documentation.analysis_summary.video_count !== 1 ? "s" : ""
+            ] }),
+            documentation.analysis_summary.document_count > 0 && /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ jsx(FileText, { size: 12 }),
+              documentation.analysis_summary.document_count,
+              " doc",
+              documentation.analysis_summary.document_count !== 1 ? "s" : ""
+            ] })
+          ] })
+        ] }),
+        documentation.analysis_sources && documentation.analysis_sources.length > 0 && /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+          /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Sources" }),
+          /* @__PURE__ */ jsx("div", { className: "space-y-1.5", children: documentation.analysis_sources.map((source, i) => /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-sm", children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex-shrink-0 text-muted-foreground", children: [
+              source.type === "video" && /* @__PURE__ */ jsx(FilmStrip, { size: 14 }),
+              (source.type === "document" || source.type === "pdf") && /* @__PURE__ */ jsx(FileText, { size: 14 }),
+              source.type === "spreadsheet" && /* @__PURE__ */ jsx(FileText, { size: 14 }),
+              source.type === "image" && /* @__PURE__ */ jsx(ImageSquare, { size: 14 }),
+              source.type === "description" && /* @__PURE__ */ jsx(TextT, { size: 14 })
+            ] }),
+            /* @__PURE__ */ jsx("span", { className: "truncate text-[var(--black)]", children: source.name }),
+            source.size > 0 && /* @__PURE__ */ jsx("span", { className: "text-xs text-muted-foreground flex-shrink-0", children: source.size > 1024 * 1024 ? `${(source.size / 1024 / 1024).toFixed(1)}MB` : `${Math.round(source.size / 1024)}KB` })
+          ] }, i)) })
+        ] }),
+        documentation.analysis_context && /* @__PURE__ */ jsxs("div", { className: "border-t border-gray-100 pt-4 space-y-1", children: [
+          /* @__PURE__ */ jsx("h4", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3", children: "Analysis Details" }),
+          /* @__PURE__ */ jsx(AnalysisContextRenderer, { content: documentation.analysis_context })
+        ] })
+      ] })
+    ] }) }),
     documentation.goal && /* @__PURE__ */ jsxs("div", { children: [
       /* @__PURE__ */ jsx(
         SectionHeader,
