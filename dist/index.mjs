@@ -508,7 +508,7 @@ function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 var buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer",
   {
     variants: {
       variant: {
@@ -646,7 +646,7 @@ var SheetContent = React51.forwardRef(({ side = "right", className, children, ..
       ...props,
       children: [
         children,
-        /* @__PURE__ */ jsxs(SheetPrimitive.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
+        /* @__PURE__ */ jsxs(SheetPrimitive.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
           /* @__PURE__ */ jsx(X, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Close" })
         ] })
@@ -1501,8 +1501,8 @@ var Input = React51.forwardRef(
       {
         type,
         className: cn(
-          "flex h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--black)] placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
-          error ? "border-red-500 focus-visible:ring-red-500" : "border-gray-300 focus-visible:ring-[var(--cyan)]",
+          "flex h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--black)] placeholder:text-gray-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
+          error ? "border-red-500" : "border-gray-300",
           className
         ),
         ref,
@@ -1581,8 +1581,8 @@ var Textarea = React51.forwardRef(
       "textarea",
       {
         className: cn(
-          "flex min-h-[80px] w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors resize-none",
-          error ? "border-red-500 focus-visible:ring-red-500" : "border-gray-300 focus-visible:ring-[var(--cyan)]",
+          "flex min-h-[80px] w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] placeholder:text-gray-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors resize-none",
+          error ? "border-red-500" : "border-gray-300",
           className
         ),
         ref,
@@ -1601,12 +1601,12 @@ var Select = React51.forwardRef(
         {
           ref,
           className: cn(
-            "h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background",
+            "h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)]",
             "placeholder:text-gray-500",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+            "focus-visible:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors",
             "appearance-none pr-10",
-            error ? "border-red-500 focus-visible:ring-red-500" : "border-gray-300 focus-visible:ring-[var(--cyan)]",
+            error ? "border-red-500" : "border-gray-300",
             className
           ),
           "aria-invalid": error ? "true" : void 0,
@@ -1679,7 +1679,7 @@ var Switch = React51.forwardRef(({ className, size = "default", ...props }, ref)
     SwitchPrimitive.Root,
     {
       className: cn(
-        "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[var(--cyan)] data-[state=unchecked]:bg-input",
+        "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[var(--cyan)] data-[state=unchecked]:bg-input",
         sizeStyles[size].root,
         className
       ),
@@ -1769,8 +1769,8 @@ var Slider = React51.forwardRef(({ className, showValue, formatValue, size = "de
             SliderPrimitive.Thumb,
             {
               className: cn(
-                "block rounded-full border-2 border-[var(--cyan)] bg-white shadow-md ring-offset-background transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2",
+                "block rounded-full border-2 border-[var(--cyan)] bg-white shadow-md transition-colors",
+                "focus-visible:outline-none",
                 "disabled:pointer-events-none disabled:opacity-50",
                 "hover:border-[var(--cyan-dark,#00bfaa)] cursor-pointer",
                 sizeStyles[size].thumb
@@ -1809,7 +1809,7 @@ var RadioGroupItem = React51.forwardRef(({ className, ...props }, ref) => {
     {
       ref,
       className: cn(
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className
       ),
       ...props,
@@ -1844,7 +1844,7 @@ var RadioGroupCard = React51.forwardRef(({ label, description, children, classNa
       ref,
       id: cardId,
       className: cn(
-        "relative flex cursor-pointer rounded-lg border bg-background p-4 transition-all hover:border-[var(--cyan)]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[state=checked]:border-[var(--cyan)] data-[state=checked]:ring-1 data-[state=checked]:ring-[var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50",
+        "relative flex cursor-pointer rounded-lg border bg-background p-4 transition-all hover:border-[var(--cyan)]/50 focus:outline-none focus-visible:outline-none data-[state=checked]:border-[var(--cyan)] data-[state=checked]:ring-1 data-[state=checked]:ring-[var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50",
         className
       ),
       ...props,
@@ -2523,7 +2523,7 @@ var FormField = React51.forwardRef(
           "aria-describedby": error ? errorId : helperText ? helperId : void 0,
           className: cn(
             childProps.className,
-            error && "border-red-500 focus-visible:ring-red-500"
+            error && "border-red-500"
           )
         });
       }
@@ -2658,7 +2658,7 @@ var TabsTrigger = React51.forwardRef(({ className, ...props }, ref) => /* @__PUR
   {
     ref,
     className: cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
       className
     ),
     ...props
@@ -2670,7 +2670,7 @@ var TabsContent = React51.forwardRef(({ className, ...props }, ref) => /* @__PUR
   {
     ref,
     className: cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-2 focus-visible:outline-none",
       className
     ),
     ...props
@@ -2732,7 +2732,7 @@ var DialogContent = React51.forwardRef(({ className, children, ...props }, ref) 
       ...props,
       children: [
         children,
-        /* @__PURE__ */ jsxs(SheetPrimitive.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
+        /* @__PURE__ */ jsxs(SheetPrimitive.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
           /* @__PURE__ */ jsx(X, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Close" })
         ] })
@@ -3042,7 +3042,7 @@ var ToastAction = React51.forwardRef(({ className, ...props }, ref) => /* @__PUR
   {
     ref,
     className: cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-sm border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-sm border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-gray-100 focus:outline-none disabled:pointer-events-none disabled:opacity-50",
       className
     ),
     ...props
@@ -3801,7 +3801,7 @@ var DateRangeSelect = React51.forwardRef(
         value,
         onChange: (e) => onChange(e.target.value),
         className: cn(
-          "h-9 rounded-sm border border-input bg-background px-3 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "h-9 rounded-sm border border-input bg-background px-3 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           className
         ),
         children: presets.map((preset) => /* @__PURE__ */ jsx("option", { value: preset, children: presetLabels[preset] }, preset))
@@ -4657,7 +4657,7 @@ function ImpactMetricsForm({
                 ...prev,
                 time_saved_minutes_per_run: parseInt(e.target.value) || 0
               })),
-              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background",
               min: "0"
             }
           ),
@@ -4680,7 +4680,7 @@ function ImpactMetricsForm({
                 ...prev,
                 hourly_rate_euros: parseFloat(e.target.value) || 0
               })),
-              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background",
               min: "0",
               step: "0.5"
             }
@@ -4704,7 +4704,7 @@ function ImpactMetricsForm({
                 ...prev,
                 fte_equivalent: (parseFloat(e.target.value) || 0) / 100
               })),
-              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background",
+              className: "w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background",
               min: "0",
               max: "1000",
               step: "5"

@@ -205,7 +205,7 @@ export function ImpactMetricsForm({
                     ...prev, 
                     time_saved_minutes_per_run: parseInt(e.target.value) || 0 
                   }))}
-                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background"
                   min="0"
                 />
                 <span className="text-sm text-muted-foreground">min</span>
@@ -230,7 +230,7 @@ export function ImpactMetricsForm({
                     ...prev, 
                     hourly_rate_euros: parseFloat(e.target.value) || 0 
                   }))}
-                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background"
                   min="0"
                   step="0.5"
                 />
@@ -255,7 +255,7 @@ export function ImpactMetricsForm({
                     ...prev, 
                     fte_equivalent: (parseFloat(e.target.value) || 0) / 100
                   }))}
-                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] bg-background"
+                  className="w-16 px-2 py-1 text-2xl font-bold border border-border rounded-sm focus:outline-none bg-background"
                   min="0"
                   max="1000"
                   step="5"

@@ -241,10 +241,9 @@ a:not([disabled]), button:not([disabled]) {
   cursor: pointer;
 }
 
-/* Better focus styles */
+/* Remove default focus outline */
 *:focus-visible {
-  outline: 2px solid hsl(var(--ring));
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Smooth scroll */

@@ -27,7 +27,7 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        'aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        'aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}
@@ -91,7 +91,7 @@ const RadioGroupCard = React.forwardRef<
       ref={ref}
       id={cardId}
       className={cn(
-        'relative flex cursor-pointer rounded-lg border bg-background p-4 transition-all hover:border-[var(--cyan)]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[state=checked]:border-[var(--cyan)] data-[state=checked]:ring-1 data-[state=checked]:ring-[var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50',
+        'relative flex cursor-pointer rounded-lg border bg-background p-4 transition-all hover:border-[var(--cyan)]/50 focus:outline-none focus-visible:outline-none data-[state=checked]:border-[var(--cyan)] data-[state=checked]:ring-1 data-[state=checked]:ring-[var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}

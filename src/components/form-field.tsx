@@ -39,7 +39,7 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
           'aria-describedby': error ? errorId : helperText ? helperId : undefined,
           className: cn(
             childProps.className,
-            error && 'border-red-500 focus-visible:ring-red-500'
+            error && 'border-red-500'
           ),
         })
       }

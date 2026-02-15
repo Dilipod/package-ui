@@ -15,14 +15,14 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={cn(
-            'h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)] ring-offset-background',
+            'h-10 w-full rounded-sm border bg-white px-3 py-2 text-base text-[var(--black)]',
             'placeholder:text-gray-500',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+            'focus-visible:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors',
             'appearance-none pr-10',
             error
-              ? 'border-red-500 focus-visible:ring-red-500'
-              : 'border-gray-300 focus-visible:ring-[var(--cyan)]',
+              ? 'border-red-500'
+              : 'border-gray-300',
             className
           )}
           aria-invalid={error ? 'true' : undefined}

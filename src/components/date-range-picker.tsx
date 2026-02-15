@@ -124,7 +124,7 @@ const DateRangeSelect = React.forwardRef<HTMLSelectElement, DateRangeSelectProps
         value={value}
         onChange={(e) => onChange(e.target.value as DateRangePreset)}
         className={cn(
-          'h-9 rounded-sm border border-input bg-background px-3 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'h-9 rounded-sm border border-input bg-background px-3 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
       >

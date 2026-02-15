@@ -56,8 +56,8 @@ const Slider = React.forwardRef<
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
           className={cn(
-            'block rounded-full border-2 border-[var(--cyan)] bg-white shadow-md ring-offset-background transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2',
+            'block rounded-full border-2 border-[var(--cyan)] bg-white shadow-md transition-colors',
+            'focus-visible:outline-none',
             'disabled:pointer-events-none disabled:opacity-50',
             'hover:border-[var(--cyan-dark,#00bfaa)] cursor-pointer',
             sizeStyles[size].thumb
