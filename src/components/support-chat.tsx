@@ -12,7 +12,7 @@ import {
 // Types
 // ============================================
 
-export interface SupportSupportChatMessage {
+export interface SupportChatMessage {
   id: string
   role: 'customer' | 'admin' | 'system'
   content: string

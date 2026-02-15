@@ -451,6 +451,7 @@ __export(index_exports, {
   Stat: () => Stat,
   StepDots: () => StepDots,
   StepProgress: () => StepProgress,
+  SupportChat: () => SupportChat,
   Switch: () => Switch,
   Table: () => Table,
   TableBody: () => TableBody,
@@ -484,7 +485,6 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
-  WorkerChat: () => WorkerChat,
   WorkerSpec: () => WorkerSpec,
   WorkflowFlow: () => WorkflowFlow,
   WorkflowViewer: () => WorkflowViewer,
@@ -4879,7 +4879,7 @@ function formatMessageTime(dateStr) {
   if (diffHours < 24) return `${diffHours}h ago`;
   return d.toLocaleDateString(void 0, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
-function WorkerChat({
+function SupportChat({
   messagesEndpoint,
   sendEndpoint,
   currentRole,
@@ -6740,6 +6740,6 @@ function WorkerSpec({ documentation, className }) {
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerChat, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, SupportChat, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonVariants, cn, getDateRangeFromPreset, iconBoxVariants, metricCardVariants, navigationMenuTriggerStyle, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

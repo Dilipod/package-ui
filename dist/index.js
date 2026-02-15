@@ -485,6 +485,7 @@ __export(index_exports, {
   Stat: () => Stat,
   StepDots: () => StepDots,
   StepProgress: () => StepProgress,
+  SupportChat: () => SupportChat,
   Switch: () => Switch,
   Table: () => Table,
   TableBody: () => TableBody,
@@ -518,7 +519,6 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
-  WorkerChat: () => WorkerChat,
   WorkerSpec: () => WorkerSpec,
   WorkflowFlow: () => WorkflowFlow,
   WorkflowViewer: () => WorkflowViewer,
@@ -4913,7 +4913,7 @@ function formatMessageTime(dateStr) {
   if (diffHours < 24) return `${diffHours}h ago`;
   return d.toLocaleDateString(void 0, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
-function WorkerChat({
+function SupportChat({
   messagesEndpoint,
   sendEndpoint,
   currentRole,
@@ -6897,6 +6897,7 @@ exports.Slider = Slider;
 exports.Stat = Stat;
 exports.StepDots = StepDots;
 exports.StepProgress = StepProgress;
+exports.SupportChat = SupportChat;
 exports.Switch = Switch;
 exports.Table = Table;
 exports.TableBody = TableBody;
@@ -6930,7 +6931,6 @@ exports.TooltipProvider = TooltipProvider;
 exports.TooltipTrigger = TooltipTrigger;
 exports.UsageBar = UsageBar;
 exports.UsageChart = UsageChart;
-exports.WorkerChat = WorkerChat;
 exports.WorkerSpec = WorkerSpec;
 exports.WorkflowFlow = WorkflowFlow;
 exports.WorkflowViewer = WorkflowViewer;
