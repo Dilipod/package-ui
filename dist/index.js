@@ -518,6 +518,7 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
+  WorkerChat: () => WorkerChat,
   WorkerSpec: () => WorkerSpec,
   WorkflowFlow: () => WorkflowFlow,
   WorkflowViewer: () => WorkflowViewer,
@@ -4901,6 +4902,135 @@ function ActivityTimeline({
     ] })
   ] });
 }
+function formatMessageTime(dateStr) {
+  const d = new Date(dateStr);
+  const now = /* @__PURE__ */ new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMins = Math.floor(diffMs / 6e4);
+  const diffHours = Math.floor(diffMs / 36e5);
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  return d.toLocaleDateString(void 0, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+function WorkerChat({
+  messagesEndpoint,
+  sendEndpoint,
+  currentRole,
+  pollInterval = 5e3,
+  placeholder = "Type a message...",
+  emptyMessage = "No messages yet. Start the conversation!",
+  className = ""
+}) {
+  const [messages, setMessages] = React51.useState([]);
+  const [loading, setLoading] = React51.useState(true);
+  const [sending, setSending] = React51.useState(false);
+  const [inputValue, setInputValue] = React51.useState("");
+  const scrollRef = React51.useRef(null);
+  const prevMessageCountRef = React51.useRef(0);
+  const fetchMessages = React51.useCallback(async () => {
+    try {
+      const res = await fetch(messagesEndpoint);
+      if (!res.ok) return;
+      const data = await res.json();
+      setMessages(data.messages || []);
+    } catch {
+    } finally {
+      setLoading(false);
+    }
+  }, [messagesEndpoint]);
+  React51.useEffect(() => {
+    fetchMessages();
+    if (pollInterval > 0) {
+      const interval = setInterval(fetchMessages, pollInterval);
+      return () => clearInterval(interval);
+    }
+  }, [fetchMessages, pollInterval]);
+  React51.useEffect(() => {
+    if (messages.length > prevMessageCountRef.current) {
+      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    }
+    prevMessageCountRef.current = messages.length;
+  }, [messages.length]);
+  const handleSend = async () => {
+    const content = inputValue.trim();
+    if (!content || sending) return;
+    setSending(true);
+    setInputValue("");
+    const optimisticMsg = {
+      id: `temp-${Date.now()}`,
+      role: currentRole,
+      content,
+      type: "message",
+      created_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+    try {
+      const res = await fetch(sendEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content })
+      });
+      if (res.ok) {
+        await fetchMessages();
+      } else {
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
+      }
+    } catch {
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
+    } finally {
+      setSending(false);
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+  if (loading) {
+    return /* @__PURE__ */ jsxRuntime.jsx("div", { className: `flex items-center justify-center py-8 ${className}`, children: /* @__PURE__ */ jsxRuntime.jsx(react_star.CircleNotch, { className: "w-5 h-5 animate-spin text-muted-foreground" }) });
+  }
+  return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: `flex flex-col ${className}`, children: [
+    /* @__PURE__ */ jsxRuntime.jsx("div", { ref: scrollRef, className: "flex-1 overflow-y-auto space-y-3 mb-4 max-h-[400px] min-h-[200px] px-1", children: messages.length === 0 ? /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-center h-full text-sm text-muted-foreground py-8", children: typeof emptyMessage === "string" ? /* @__PURE__ */ jsxRuntime.jsx("p", { children: emptyMessage }) : emptyMessage }) : messages.map((msg) => {
+      if (msg.type === "event" || msg.role === "system") {
+        return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "bg-gray-50 border border-gray-100 rounded-full px-3 py-1 text-xs text-muted-foreground max-w-[90%] text-center", children: [
+          msg.content,
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "ml-2 opacity-60", children: formatMessageTime(msg.created_at) })
+        ] }) }, msg.id);
+      }
+      const isCurrentUser = msg.role === currentRole;
+      return /* @__PURE__ */ jsxRuntime.jsx("div", { className: `flex ${isCurrentUser ? "justify-end" : "justify-start"}`, children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: `max-w-[80%] rounded-lg px-3 py-2 ${isCurrentUser ? "bg-[var(--cyan)] text-white" : "bg-gray-100 text-[var(--black)]"}`, children: [
+        !isCurrentUser && /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-xs font-medium mb-0.5 opacity-70", children: msg.role === "admin" ? "Dilipod Team" : "You" }),
+        /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm whitespace-pre-wrap", children: msg.content }),
+        /* @__PURE__ */ jsxRuntime.jsx("p", { className: `text-[10px] mt-1 ${isCurrentUser ? "text-white/60" : "text-muted-foreground"}`, children: formatMessageTime(msg.created_at) })
+      ] }) }, msg.id);
+    }) }),
+    /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex gap-2 border-t border-gray-100 pt-3", children: [
+      /* @__PURE__ */ jsxRuntime.jsx(
+        Textarea,
+        {
+          value: inputValue,
+          onChange: (e) => setInputValue(e.target.value),
+          onKeyDown: handleKeyDown,
+          placeholder,
+          rows: 1,
+          className: "resize-none min-h-[36px] py-2 flex-1"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntime.jsx(
+        Button,
+        {
+          onClick: handleSend,
+          disabled: sending || !inputValue.trim(),
+          size: "sm",
+          className: "flex-shrink-0 h-9",
+          children: sending ? /* @__PURE__ */ jsxRuntime.jsx(react_star.CircleNotch, { className: "w-4 h-4 animate-spin" }) : /* @__PURE__ */ jsxRuntime.jsx(react_star.PaperPlaneTilt, { className: "w-4 h-4", weight: "bold" })
+        }
+      )
+    ] })
+  ] });
+}
 
 // src/index.ts
 init_workflow_flow();
@@ -6800,6 +6930,7 @@ exports.TooltipProvider = TooltipProvider;
 exports.TooltipTrigger = TooltipTrigger;
 exports.UsageBar = UsageBar;
 exports.UsageChart = UsageChart;
+exports.WorkerChat = WorkerChat;
 exports.WorkerSpec = WorkerSpec;
 exports.WorkflowFlow = WorkflowFlow;
 exports.WorkflowViewer = WorkflowViewer;

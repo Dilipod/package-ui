@@ -281,6 +281,10 @@ export type { ImpactMetrics, ImpactMetricsFormProps } from './components/impact-
 export { ActivityTimeline } from './components/activity-timeline'
 export type { Activity, ActivityTimelineProps } from './components/activity-timeline'
 
+// Support Chat Components
+export { SupportChat } from './components/support-chat'
+export type { SupportChatMessage, SupportChatProps } from './components/support-chat'
+
 // Workflow Components
 export { WorkflowFlow } from './components/workflow-flow'
 export type { WorkflowFlowProps, N8nWorkflow as WorkflowFlowN8nWorkflow, N8nNode } from './components/workflow-flow'
