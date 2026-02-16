@@ -24,6 +24,7 @@ var AlertDialogPrimitive = require('@radix-ui/react-alert-dialog');
 var PopoverPrimitive = require('@radix-ui/react-popover');
 var TooltipPrimitive = require('@radix-ui/react-tooltip');
 var ToastPrimitives = require('@radix-ui/react-toast');
+var dateFns = require('date-fns');
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
@@ -425,6 +426,7 @@ __export(index_exports, {
   DropdownMenuTrigger: () => DropdownMenuTrigger,
   EmptyState: () => EmptyState,
   ErrorState: () => ErrorState,
+  ExpandableSection: () => ExpandableSection,
   FilePreview: () => FilePreview,
   FlowchartDiagram: () => FlowchartDiagram,
   FormField: () => FormField,
@@ -526,6 +528,10 @@ __export(index_exports, {
   badgeVariants: () => badgeVariants,
   buttonVariants: () => buttonVariants,
   cn: () => cn,
+  formatCentsToEuros: () => formatCentsToEuros,
+  formatDuration: () => formatDuration,
+  formatEuros: () => formatEuros,
+  formatRelativeTime: () => formatRelativeTime,
   getDateRangeFromPreset: () => getDateRangeFromPreset,
   iconBoxVariants: () => iconBoxVariants,
   metricCardVariants: () => metricCardVariants,
@@ -535,6 +541,8 @@ __export(index_exports, {
   tagVariants: () => tagVariants,
   toast: () => toast,
   usageBarVariants: () => usageBarVariants,
+  useExpandedSections: () => useExpandedSections,
+  useServiceWorker: () => useServiceWorker,
   useToast: () => useToast,
   valueVariants: () => valueVariants
 });
@@ -6770,6 +6778,113 @@ function WorkerSpec({ documentation, className }) {
     ] })
   ] }) });
 }
+function ExpandableSection({
+  sectionKey,
+  label,
+  icon,
+  count: count2,
+  expanded,
+  onToggle,
+  children,
+  className,
+  contentClassName,
+  show = true
+}) {
+  if (!show) return null;
+  return /* @__PURE__ */ jsxRuntime.jsxs("div", { className, children: [
+    /* @__PURE__ */ jsxRuntime.jsxs(
+      "button",
+      {
+        onClick: () => onToggle(sectionKey),
+        className: "flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors w-full text-left",
+        type: "button",
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsx(
+            "svg",
+            {
+              width: "12",
+              height: "12",
+              viewBox: "0 0 12 12",
+              fill: "none",
+              className: cn(
+                "shrink-0 transition-transform",
+                expanded ? "rotate-0" : "-rotate-90"
+              ),
+              children: /* @__PURE__ */ jsxRuntime.jsx("path", { d: "M2.5 4.5L6 8L9.5 4.5", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" })
+            }
+          ),
+          icon,
+          /* @__PURE__ */ jsxRuntime.jsx("span", { children: label }),
+          count2 !== void 0 && /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "text-muted-foreground/60", children: [
+            "(",
+            count2,
+            ")"
+          ] })
+        ]
+      }
+    ),
+    expanded && /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("mt-2 pl-4", contentClassName), children })
+  ] });
+}
+function useExpandedSections(initialExpanded = []) {
+  const [expanded, setExpanded] = React51__namespace.useState(
+    () => new Set(initialExpanded)
+  );
+  const toggle = React51__namespace.useCallback((key) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }, []);
+  const isExpanded = React51__namespace.useCallback(
+    (key) => expanded.has(key),
+    [expanded]
+  );
+  return { expanded, toggle, isExpanded };
+}
+ExpandableSection.displayName = "ExpandableSection";
+function useServiceWorker() {
+  React51.useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then((registration) => {
+        console.log("Service Worker registered:", registration.scope);
+        setInterval(() => {
+          registration.update();
+        }, 60 * 60 * 1e3);
+      }).catch((error) => {
+        console.error("Service Worker registration failed:", error);
+      });
+    }
+  }, []);
+}
+function formatCentsToEuros(cents) {
+  return `\u20AC${(cents / 100).toLocaleString()}`;
+}
+function formatEuros(euros, decimals) {
+  if (decimals !== void 0) {
+    return `\u20AC${euros.toFixed(decimals)}`;
+  }
+  return `\u20AC${euros.toLocaleString()}`;
+}
+function formatDuration(ms) {
+  return `${(ms / 1e3).toFixed(1)}s`;
+}
+function formatRelativeTime(date) {
+  if (!date) return "\u2014";
+  const d = typeof date === "string" ? new Date(date) : date;
+  const hours = dateFns.differenceInHours(/* @__PURE__ */ new Date(), d);
+  if (hours < 1) {
+    const mins = dateFns.differenceInMinutes(/* @__PURE__ */ new Date(), d);
+    return `${mins}m`;
+  }
+  if (hours < 48) return `${hours}h`;
+  return dateFns.formatDistanceToNow(d, { addSuffix: false });
+}
 
 // src/index.ts
 __reExport(index_exports, icons_exports);
@@ -6837,6 +6952,7 @@ exports.DropdownMenuSubTrigger = DropdownMenuSubTrigger;
 exports.DropdownMenuTrigger = DropdownMenuTrigger;
 exports.EmptyState = EmptyState;
 exports.ErrorState = ErrorState;
+exports.ExpandableSection = ExpandableSection;
 exports.FilePreview = FilePreview;
 exports.FlowchartDiagram = FlowchartDiagram;
 exports.FormField = FormField;
@@ -6938,6 +7054,10 @@ exports.alertVariants = alertVariants;
 exports.badgeVariants = badgeVariants;
 exports.buttonVariants = buttonVariants;
 exports.cn = cn;
+exports.formatCentsToEuros = formatCentsToEuros;
+exports.formatDuration = formatDuration;
+exports.formatEuros = formatEuros;
+exports.formatRelativeTime = formatRelativeTime;
 exports.getDateRangeFromPreset = getDateRangeFromPreset;
 exports.iconBoxVariants = iconBoxVariants;
 exports.metricCardVariants = metricCardVariants;
@@ -6947,6 +7067,8 @@ exports.statVariants = statVariants;
 exports.tagVariants = tagVariants;
 exports.toast = toast;
 exports.usageBarVariants = usageBarVariants;
+exports.useExpandedSections = useExpandedSections;
+exports.useServiceWorker = useServiceWorker;
 exports.useToast = useToast;
 exports.valueVariants = valueVariants;
 //# sourceMappingURL=index.js.map

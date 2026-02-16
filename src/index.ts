@@ -305,6 +305,16 @@ export type { WorkerSpecProps, WorkerSpecDocumentation, AnalysisSource, Analysis
 export { FlowchartDiagram } from './components/flowchart-diagram'
 export type { FlowchartDiagramProps } from './components/flowchart-diagram'
 
+// Expandable Section
+export { ExpandableSection, useExpandedSections } from './components/expandable-section'
+export type { ExpandableSectionProps } from './components/expandable-section'
+
+// Hooks
+export { useServiceWorker } from './hooks/use-service-worker'
+
+// Formatting Utilities
+export { formatCentsToEuros, formatEuros, formatDuration, formatRelativeTime } from './lib/formatting'
+
 // Utilities
 export { cn } from './lib/utils'
 
