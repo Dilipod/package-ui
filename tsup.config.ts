@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/server.ts'],
   format: ['cjs', 'esm'],
   dts: false, // Generate with tsc instead due to tsup DTS issues
   splitting: false,
@@ -15,12 +15,13 @@ export default defineConfig({
   esbuildOptions(options) {
     options.logOverride = { 'this-is-undefined-in-esm': 'silent' }
   },
-  // Add 'use client' directive after build completes
+  // Add 'use client' directive to the main bundle only (not server)
   // This is required for Next.js App Router / RSC to properly handle the package
   async onSuccess() {
     const distDir = join(process.cwd(), 'dist')
+    // Only add "use client" to the main index bundle, NOT the server bundle
     const files = ['index.js', 'index.mjs']
-    
+
     for (const file of files) {
       const filePath = join(distDir, file)
       try {
