@@ -541,6 +541,10 @@ __export(index_exports, {
   navigationMenuTriggerStyle: () => navigationMenuTriggerStyle,
   noteBoxHtml: () => noteBoxHtml,
   progressVariants: () => progressVariants,
+  slackActions: () => slackActions,
+  slackFields: () => slackFields,
+  slackMessage: () => slackMessage,
+  slackSection: () => slackSection,
   statVariants: () => statVariants,
   tagVariants: () => tagVariants,
   toast: () => toast,
@@ -6991,6 +6995,53 @@ function noteBoxHtml(text) {
 </div>`;
 }
 
+// src/lib/slack.ts
+function slackSection(mrkdwn) {
+  return {
+    type: "section",
+    text: { type: "mrkdwn", text: mrkdwn }
+  };
+}
+function slackFields(fields) {
+  return {
+    type: "section",
+    fields: Object.entries(fields).map(([key, value]) => ({
+      type: "mrkdwn",
+      text: `*${key}:*
+${value}`
+    }))
+  };
+}
+function slackActions(buttons) {
+  return {
+    type: "actions",
+    elements: buttons.map((btn) => ({
+      type: "button",
+      text: { type: "plain_text", text: btn.text },
+      ...btn.url ? { url: btn.url } : {},
+      ...btn.value ? { value: btn.value } : {},
+      ...btn.actionId ? { action_id: btn.actionId } : {},
+      ...btn.style ? { style: btn.style } : {}
+    }))
+  };
+}
+function slackMessage(options) {
+  const blocks = [slackSection(`*${options.title}*`)];
+  if (options.details && Object.keys(options.details).length > 0) {
+    blocks.push(slackFields(options.details));
+  }
+  if (options.note) {
+    blocks.push(slackSection(options.note));
+  }
+  if (options.buttonUrl && options.buttonText) {
+    blocks.push(slackActions([{ text: options.buttonText, url: options.buttonUrl }]));
+  }
+  return {
+    text: options.title,
+    blocks
+  };
+}
+
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
@@ -7172,6 +7223,10 @@ exports.metricCardVariants = metricCardVariants;
 exports.navigationMenuTriggerStyle = navigationMenuTriggerStyle;
 exports.noteBoxHtml = noteBoxHtml;
 exports.progressVariants = progressVariants;
+exports.slackActions = slackActions;
+exports.slackFields = slackFields;
+exports.slackMessage = slackMessage;
+exports.slackSection = slackSection;
 exports.statVariants = statVariants;
 exports.tagVariants = tagVariants;
 exports.toast = toast;

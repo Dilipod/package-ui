@@ -318,6 +318,10 @@ export { formatCentsToEuros, formatEuros, formatDuration, formatRelativeTime } f
 // Email Template Helpers
 export { emailTemplate, buttonHtml, infoBoxHtml, noteBoxHtml } from './lib/email'
 
+// Slack Block Kit Helpers
+export { slackMessage, slackSection, slackFields, slackActions } from './lib/slack'
+export type { SlackBlock, SlackElement, SlackField, SlackMessage } from './lib/slack'
+
 // Utilities
 export { cn } from './lib/utils'
 

@@ -507,6 +507,10 @@ __export(index_exports, {
   navigationMenuTriggerStyle: () => navigationMenuTriggerStyle,
   noteBoxHtml: () => noteBoxHtml,
   progressVariants: () => progressVariants,
+  slackActions: () => slackActions,
+  slackFields: () => slackFields,
+  slackMessage: () => slackMessage,
+  slackSection: () => slackSection,
   statVariants: () => statVariants,
   tagVariants: () => tagVariants,
   toast: () => toast,
@@ -6957,9 +6961,56 @@ function noteBoxHtml(text) {
 </div>`;
 }
 
+// src/lib/slack.ts
+function slackSection(mrkdwn) {
+  return {
+    type: "section",
+    text: { type: "mrkdwn", text: mrkdwn }
+  };
+}
+function slackFields(fields) {
+  return {
+    type: "section",
+    fields: Object.entries(fields).map(([key, value]) => ({
+      type: "mrkdwn",
+      text: `*${key}:*
+${value}`
+    }))
+  };
+}
+function slackActions(buttons) {
+  return {
+    type: "actions",
+    elements: buttons.map((btn) => ({
+      type: "button",
+      text: { type: "plain_text", text: btn.text },
+      ...btn.url ? { url: btn.url } : {},
+      ...btn.value ? { value: btn.value } : {},
+      ...btn.actionId ? { action_id: btn.actionId } : {},
+      ...btn.style ? { style: btn.style } : {}
+    }))
+  };
+}
+function slackMessage(options) {
+  const blocks = [slackSection(`*${options.title}*`)];
+  if (options.details && Object.keys(options.details).length > 0) {
+    blocks.push(slackFields(options.details));
+  }
+  if (options.note) {
+    blocks.push(slackSection(options.note));
+  }
+  if (options.buttonUrl && options.buttonText) {
+    blocks.push(slackActions([{ text: options.buttonText, url: options.buttonUrl }]));
+  }
+  return {
+    text: options.title,
+    blocks
+  };
+}
+
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, ExpandableSection, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, SupportChat, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonHtml, buttonVariants, cn, emailTemplate, formatCentsToEuros, formatDuration, formatEuros, formatRelativeTime, getDateRangeFromPreset, iconBoxVariants, infoBoxHtml, metricCardVariants, navigationMenuTriggerStyle, noteBoxHtml, progressVariants, statVariants, tagVariants, toast, usageBarVariants, useExpandedSections, useServiceWorker, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, ExpandableSection, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, SupportChat, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonHtml, buttonVariants, cn, emailTemplate, formatCentsToEuros, formatDuration, formatEuros, formatRelativeTime, getDateRangeFromPreset, iconBoxVariants, infoBoxHtml, metricCardVariants, navigationMenuTriggerStyle, noteBoxHtml, progressVariants, slackActions, slackFields, slackMessage, slackSection, statVariants, tagVariants, toast, usageBarVariants, useExpandedSections, useServiceWorker, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
