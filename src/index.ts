@@ -315,6 +315,9 @@ export { useServiceWorker } from './hooks/use-service-worker'
 // Formatting Utilities
 export { formatCentsToEuros, formatEuros, formatDuration, formatRelativeTime } from './lib/formatting'
 
+// Email Template Helpers
+export { emailTemplate, buttonHtml, infoBoxHtml, noteBoxHtml } from './lib/email'
+
 // Utilities
 export { cn } from './lib/utils'
 
