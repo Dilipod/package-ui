@@ -112,12 +112,12 @@ export interface WorkflowViewerProps {
   workflowId?: string | null
   /** Internal workflow definition ID */
   workflowDefinitionId?: string | null
-  /** Associated worker/agent ID */
-  workerId?: string | null
-  /** Associated worker/agent name */
-  workerName?: string | null
-  /** Internal worker type for templates */
-  internalWorkerType?: string | null
+  /** Associated process ID */
+  processId?: string | null
+  /** Associated process name */
+  processName?: string | null
+  /** Internal process type for templates */
+  internalProcessType?: string | null
   /** Last sync timestamp */
   lastSynced?: string | null
   /** Whether the workflow is active */
@@ -149,7 +149,7 @@ export interface WorkflowViewerProps {
     /** Save settings (platform, status) */
     saveSettings?: (workflowDefId: string, settings: { platform?: 'n8n' | 'sim'; is_active?: boolean }) => Promise<{ success: boolean; error?: string }>
     /** Push workflow to n8n */
-    pushToN8n?: (workerId: string) => Promise<{ success: boolean; error?: string }>
+    pushToN8n?: (processId: string) => Promise<{ success: boolean; error?: string }>
     /** Pull workflow from n8n */
     pullFromN8n?: (workflowDefId: string) => Promise<{ success: boolean; error?: string; descriptionSync?: { needsUpdate: boolean; reason?: string } }>
     /** Export workflow from Sim Studio (backup) */
@@ -163,9 +163,9 @@ export interface WorkflowViewerProps {
     /** Pull workflow from Sim Studio */
     pullFromSim?: (workflowDefId: string) => Promise<{ success: boolean; error?: string; descriptionSync?: { needsUpdate: boolean; reason?: string } }>
     /** Create new workflow */
-    createWorkflow?: (data: { agent_id: string; name: string; platform: 'n8n' | 'sim'; n8n_workflow?: N8nWorkflow | null; sim_workflow?: SimWorkflow | null; is_active: boolean; is_global: boolean }) => Promise<{ success: boolean; error?: string; workflow?: { id: string } }>
+    createWorkflow?: (data: { process_id: string; name: string; platform: 'n8n' | 'sim'; n8n_workflow?: N8nWorkflow | null; sim_workflow?: SimWorkflow | null; is_active: boolean; is_global: boolean }) => Promise<{ success: boolean; error?: string; workflow?: { id: string } }>
     /** Load workflow template */
-    loadTemplate?: (type: string, workerId: string) => Promise<{ success: boolean; error?: string; workflow?: N8nWorkflow | SimWorkflow }>
+    loadTemplate?: (type: string, processId: string) => Promise<{ success: boolean; error?: string; workflow?: N8nWorkflow | SimWorkflow }>
     /** Switch workflow platform (e.g., n8n to Sim) */
     switchPlatform?: (workflowDefId: string, targetPlatform: 'n8n' | 'sim') => Promise<{ success: boolean; error?: string; simWorkflowId?: string }>
   }
@@ -589,9 +589,9 @@ export function WorkflowViewer({
   webhookUrl,
   workflowId,
   workflowDefinitionId,
-  workerId,
-  workerName,
-  internalWorkerType,
+  processId: processIdProp,
+  processName: processNameProp,
+  internalProcessType: internalProcessTypeProp,
   lastSynced,
   isActive,
   syncError,
@@ -610,6 +610,10 @@ export function WorkflowViewer({
   simWorkflowId,
   simStudioUrl,
 }: WorkflowViewerProps) {
+  const processId = processIdProp ?? null
+  const processName = processNameProp ?? null
+  const internalProcessType = internalProcessTypeProp ?? null
+
   const [viewMode, setViewMode] = useState<'summary' | 'flow' | 'json' | 'edit' | 'create' | 'backups'>('summary')
   const [editedJson, setEditedJson] = useState('')
   const [jsonError, setJsonError] = useState<string | null>(null)
@@ -763,8 +767,8 @@ export function WorkflowViewer({
   }
 
   async function pushToN8n() {
-    if (!workerId || !apiHandlers?.pushToN8n) {
-      setMessage({ type: 'error', text: 'Cannot sync - no worker ID or API handler' })
+    if (!processId || !apiHandlers?.pushToN8n) {
+      setMessage({ type: 'error', text: 'Cannot sync - no process ID or API handler' })
       return
     }
 
@@ -772,7 +776,7 @@ export function WorkflowViewer({
     setMessage(null)
 
     try {
-      const result = await apiHandlers.pushToN8n(workerId)
+      const result = await apiHandlers.pushToN8n(processId)
 
       if (result.success) {
         setMessage({ type: 'success', text: 'Pushed to n8n successfully' })
@@ -802,7 +806,7 @@ export function WorkflowViewer({
         if (result.descriptionSync?.needsUpdate) {
           setMessage({ 
             type: 'success', 
-            text: `Pulled from n8n. Note: ${result.descriptionSync.reason || 'Worker description may need updating.'}` 
+            text: `Pulled from n8n. Note: ${result.descriptionSync.reason || 'Process description may need updating.'}` 
           })
         } else {
           setMessage({ type: 'success', text: 'Pulled from n8n successfully' })
@@ -967,7 +971,7 @@ export function WorkflowViewer({
         if (result.descriptionSync?.needsUpdate) {
           setMessage({ 
             type: 'success', 
-            text: `Pulled from Sim Studio. Note: ${result.descriptionSync.reason || 'Worker description may need updating.'}` 
+            text: `Pulled from Sim Studio. Note: ${result.descriptionSync.reason || 'Process description may need updating.'}` 
           })
         } else {
           setMessage({ type: 'success', text: 'Pulled from Sim Studio successfully' })
@@ -985,8 +989,8 @@ export function WorkflowViewer({
   }
 
   function startCreating() {
-    if (internalWorkerType) {
-      setSelectedTemplate(internalWorkerType as WorkflowTemplate)
+    if (internalProcessType) {
+      setSelectedTemplate(internalProcessType as WorkflowTemplate)
     } else {
       setSelectedTemplate('blank')
     }
@@ -1002,8 +1006,8 @@ export function WorkflowViewer({
       return
     }
 
-    if (!workerId || !apiHandlers?.createWorkflow) {
-      setJsonError('Cannot create - no worker ID or API handler.')
+    if (!processId || !apiHandlers?.createWorkflow) {
+      setJsonError('Cannot create - no process ID or API handler.')
       return
     }
 
@@ -1011,11 +1015,11 @@ export function WorkflowViewer({
     setJsonError(null)
 
     try {
-      const workflowName = (parsed as N8nWorkflow).name || 
-        `${workerName || 'Worker'} Workflow`
+      const workflowName = (parsed as N8nWorkflow).name ||
+        `${processName || 'Process'} Workflow`
 
       const result = await apiHandlers.createWorkflow({
-        agent_id: workerId,
+        process_id: processId,
         name: workflowName,
         platform,
         n8n_workflow: platform === 'n8n' ? parsed as N8nWorkflow : null,
@@ -1069,8 +1073,8 @@ export function WorkflowViewer({
   }
 
   async function loadTemplate() {
-    if (!workerId || !workerName || !apiHandlers?.loadTemplate) {
-      setJsonError('Worker information or API handler required to generate template.')
+    if (!processId || !processName || !apiHandlers?.loadTemplate) {
+      setJsonError('Process information or API handler required to generate template.')
       return
     }
 
@@ -1082,7 +1086,7 @@ export function WorkflowViewer({
     setJsonError(null)
 
     try {
-      const result = await apiHandlers.loadTemplate(selectedTemplate, workerId)
+      const result = await apiHandlers.loadTemplate(selectedTemplate, processId)
       
       if (result.success && result.workflow) {
         setEditedJson(JSON.stringify(result.workflow, null, 2))
@@ -1140,16 +1144,16 @@ export function WorkflowViewer({
                   >
                     Blank
                   </Button>
-                  {internalWorkerType && apiHandlers?.loadTemplate && (
+                  {internalProcessType && apiHandlers?.loadTemplate && (
                     <Button
                       onClick={() => {
-                        setSelectedTemplate(internalWorkerType as WorkflowTemplate)
+                        setSelectedTemplate(internalProcessType as WorkflowTemplate)
                         loadTemplate()
                       }}
-                      variant={selectedTemplate === internalWorkerType ? 'primary' : 'outline'}
+                      variant={selectedTemplate === internalProcessType ? 'primary' : 'outline'}
                       size="sm"
                     >
-                      {internalWorkerType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Template
+                      {internalProcessType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Template
                     </Button>
                   )}
                 </div>
@@ -1362,7 +1366,7 @@ export function WorkflowViewer({
         )}
 
         {/* n8n sync buttons */}
-        {editable && workerId && platform === 'n8n' && viewMode !== 'edit' && apiHandlers?.pushToN8n && (
+        {editable && processId && platform === 'n8n' && viewMode !== 'edit' && apiHandlers?.pushToN8n && (
           <div className="flex flex-wrap gap-2">
             <Button onClick={pushToN8n} disabled={syncing} variant="primary" size="sm" icon={<CloudArrowUp size={16} />}>
               {syncing ? 'Pushing...' : 'Push to n8n'}

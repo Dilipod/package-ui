@@ -397,7 +397,7 @@ export function ScenariosManager({
           {scenarios.length === 0 && (
             <div className="px-4 py-6 text-center">
               <p className="text-sm text-muted-foreground mb-4">
-                No scenarios yet. Add rules for how the worker should handle edge cases.
+                No scenarios yet. Add rules for how the process should handle edge cases.
               </p>
               <Button variant="outline" size="sm" onClick={handleAddClick}>
                 <Plus size={16} className="mr-1.5" />
@@ -458,7 +458,7 @@ export function ScenariosManager({
           {isComplete && (
             <div className="px-4 pt-3 mt-2 border-t border-border/50">
               <p className="text-xs text-muted-foreground">
-                You can still add or edit scenarios while we build your worker.
+                You can still add or edit scenarios while we build your AI Employee.
               </p>
             </div>
           )}

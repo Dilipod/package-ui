@@ -43,7 +43,7 @@ describe('ScenariosManager', () => {
     it('should show empty state when no scenarios exist', () => {
       render(<ScenariosManager {...defaultProps} />)
       
-      expect(screen.getByText('No scenarios yet. Add rules for how the worker should handle edge cases.')).toBeInTheDocument()
+      expect(screen.getByText('No scenarios yet. Add rules for how the process should handle edge cases.')).toBeInTheDocument()
     })
 
     it('should show "Add your first scenario" button in empty state', () => {

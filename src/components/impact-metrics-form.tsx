@@ -10,7 +10,7 @@ import { cn } from '../lib/utils'
 // 40 hrs/week × 47 weeks (52 - 4 vacation - 1 holidays) = 1,880 hours
 const HOURS_PER_FTE_YEAR = 1880
 
-// Price per worker by tier (euros/month)
+// Price per process by tier (euros/month)
 const TIER_PRICING: Record<string, number> = {
   starter: 29,
   growth: 25,
@@ -26,34 +26,35 @@ export interface ImpactMetrics {
 }
 
 export interface ImpactMetricsFormProps {
-  /** The worker/agent ID */
-  workerId: string
+  /** The process ID */
+  processId?: string
   /** Initial metrics values */
   initialMetrics: ImpactMetrics
-  /** Total executions for this worker */
+  /** Total executions for this process */
   totalExecutions?: number
   /** Customer's pricing plan */
   customerPlan?: string
-  /** API endpoint to save metrics (e.g., "/api/workers" or "/api/agents") */
+  /** API endpoint to save metrics (e.g., "/api/processes" or "/api/agents") */
   apiBasePath?: string
   /** Optional custom save handler - if provided, will be called instead of default API */
-  onSave?: (workerId: string, metrics: ImpactMetrics) => Promise<boolean>
+  onSave?: (processId: string, metrics: ImpactMetrics) => Promise<boolean>
   /** Whether to show toast notifications */
   showToasts?: boolean
   /** Custom class name */
   className?: string
 }
 
-export function ImpactMetricsForm({ 
-  workerId, 
-  initialMetrics, 
-  totalExecutions = 0, 
+export function ImpactMetricsForm({
+  processId: processIdProp,
+  initialMetrics,
+  totalExecutions = 0,
   customerPlan = 'starter',
-  apiBasePath = '/api/workers',
+  apiBasePath = '/api/processes',
   onSave,
   showToasts = true,
   className,
 }: ImpactMetricsFormProps) {
+  const processId = processIdProp ?? ''
   const [metrics, setMetrics] = useState(initialMetrics)
   const [savedMetrics, setSavedMetrics] = useState(initialMetrics)
   const [isSaving, setIsSaving] = useState(false)
@@ -66,14 +67,14 @@ export function ImpactMetricsForm({
   
   const [isEditing, setIsEditing] = useState(!isInitiallySaved)
 
-  // Worker cost based on customer's plan
-  const workerCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter
-  const workerCostPerYear = workerCostPerMonth * 12
+  // Process cost based on customer's plan
+  const processCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter
+  const processCostPerYear = processCostPerMonth * 12
 
-  // Calculate estimated annual savings based on FTE equivalent minus worker cost
+  // Calculate estimated annual savings based on FTE equivalent minus process cost
   const calculateAnnualSavings = (fteEquivalent: number, hourlyRate: number) => {
     const laborSavings = fteEquivalent * HOURS_PER_FTE_YEAR * hourlyRate
-    return laborSavings - workerCostPerYear
+    return laborSavings - processCostPerYear
   }
 
   const handleSave = async () => {
@@ -90,10 +91,10 @@ export function ImpactMetricsForm({
       
       if (onSave) {
         // Use custom save handler
-        success = await onSave(workerId, updatedMetrics)
+        success = await onSave(processId, updatedMetrics)
       } else {
         // Use default API
-        const response = await fetch(`${apiBasePath}/${workerId}/impact-metrics`, {
+        const response = await fetch(`${apiBasePath}/${processId}/impact-metrics`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedMetrics),
@@ -144,14 +145,14 @@ export function ImpactMetricsForm({
     : 0
   const impliedFrequencyPerMonth = Math.round(impliedFrequencyPerYear / 12)
   
-  // Calculate labor savings (before worker cost)
+  // Calculate labor savings (before process cost)
   const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros
-  
-  // Net annual savings
-  const netAnnualSavings = laborSavingsPerYear - workerCostPerYear
 
-  // ROI percentage: net savings relative to worker cost
-  const roiPercentage = workerCostPerYear > 0 ? (netAnnualSavings / workerCostPerYear) * 100 : 0
+  // Net annual savings
+  const netAnnualSavings = laborSavingsPerYear - processCostPerYear
+
+  // ROI percentage: net savings relative to process cost
+  const roiPercentage = processCostPerYear > 0 ? (netAnnualSavings / processCostPerYear) * 100 : 0
 
   return (
     <Card className={cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className)}>
@@ -277,7 +278,7 @@ export function ImpactMetricsForm({
               €{netAnnualSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="opacity-60">labor saved</span> − €{workerCostPerYear} <span className="opacity-60">worker cost</span>
+              €{laborSavingsPerYear.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span className="opacity-60">labor saved</span> − €{processCostPerYear} <span className="opacity-60">process cost</span>
             </p>
           </div>
         </div>

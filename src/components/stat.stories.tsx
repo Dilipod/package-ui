@@ -55,7 +55,7 @@ export const Large: Story = {
   args: {
     value: '24h',
     suffix: 'to deploy',
-    label: 'From call to working agent in one day',
+    label: 'From call to working AI Employee in one day',
     valueSize: 'lg',
   },
 }
@@ -92,9 +92,9 @@ export const SolutionStats: Story = {
   render: () => (
     <div className="grid grid-cols-4 gap-8">
       <Stat value="80%" suffix="cheaper" label="€6-12K/year vs €40-60K" valueSize="lg" />
-      <Stat value="24h" suffix="to deploy" label="From call to working agent" valueSize="lg" />
+      <Stat value="24h" suffix="to deploy" label="From call to working AI Employee" valueSize="lg" />
       <Stat value="Zero" suffix="maintenance" label="We handle everything" valueSize="lg" />
-      <Stat value="Instant" suffix="capacity" label="Add more agents on demand" valueSize="lg" />
+      <Stat value="Instant" suffix="capacity" label="Add more AI Employees on demand" valueSize="lg" />
     </div>
   ),
 }

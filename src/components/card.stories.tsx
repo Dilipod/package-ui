@@ -32,12 +32,12 @@ export const WithFooter: Story = {
   render: () => (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Create Agent</CardTitle>
-        <CardDescription>Deploy a new AI agent for your workflow.</CardDescription>
+        <CardTitle>Create AI Employee</CardTitle>
+        <CardDescription>Deploy a new AI Employee for your workflow.</CardDescription>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-gray-600">
-          Configure your agent settings and connect it to your tools.
+          Configure your AI Employee settings and connect it to your tools.
         </p>
       </CardContent>
       <CardFooter className="gap-2">
@@ -54,7 +54,7 @@ export const WithBadge: Story = {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <CardTitle>Compliance Agent</CardTitle>
+            <CardTitle>Compliance AI Employee</CardTitle>
             <CardDescription>KYC & Document Review</CardDescription>
           </div>
           <Badge variant="primary" pulse>Active</Badge>

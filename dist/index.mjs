@@ -423,6 +423,7 @@ __export(index_exports, {
   PopoverClose: () => PopoverClose,
   PopoverContent: () => PopoverContent,
   PopoverTrigger: () => PopoverTrigger,
+  ProcessSpec: () => ProcessSpec,
   Progress: () => Progress,
   RadioGroup: () => RadioGroup,
   RadioGroupCard: () => RadioGroupCard,
@@ -487,7 +488,6 @@ __export(index_exports, {
   TooltipTrigger: () => TooltipTrigger,
   UsageBar: () => UsageBar,
   UsageChart: () => UsageChart,
-  WorkerSpec: () => WorkerSpec,
   WorkflowFlow: () => WorkflowFlow,
   WorkflowViewer: () => WorkflowViewer,
   alertVariants: () => alertVariants,
@@ -4490,7 +4490,7 @@ function ScenariosManager({
         scenario.id
       )) }),
       scenarios.length === 0 && /* @__PURE__ */ jsxs("div", { className: "px-4 py-6 text-center", children: [
-        /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the worker should handle edge cases." }),
+        /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground mb-4", children: "No scenarios yet. Add rules for how the process should handle edge cases." }),
         /* @__PURE__ */ jsxs(Button, { variant: "outline", size: "sm", onClick: handleAddClick, children: [
           /* @__PURE__ */ jsx(Plus, { size: 16, className: "mr-1.5" }),
           "Add your first scenario"
@@ -4529,7 +4529,7 @@ function ScenariosManager({
           }
         )
       ] }) }),
-      isComplete && /* @__PURE__ */ jsx("div", { className: "px-4 pt-3 mt-2 border-t border-border/50", children: /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "You can still add or edit scenarios while we build your worker." }) })
+      isComplete && /* @__PURE__ */ jsx("div", { className: "px-4 pt-3 mt-2 border-t border-border/50", children: /* @__PURE__ */ jsx("p", { className: "text-xs text-muted-foreground", children: "You can still add or edit scenarios while we build your AI Employee." }) })
     ] }),
     /* @__PURE__ */ jsx(
       ScenarioDialog,
@@ -4551,25 +4551,26 @@ var TIER_PRICING = {
   enterprise: 21
 };
 function ImpactMetricsForm({
-  workerId,
+  processId: processIdProp,
   initialMetrics,
   totalExecutions = 0,
   customerPlan = "starter",
-  apiBasePath = "/api/workers",
+  apiBasePath = "/api/processes",
   onSave,
   showToasts = true,
   className
 }) {
+  const processId = processIdProp ?? "";
   const [metrics, setMetrics] = useState(initialMetrics);
   const [savedMetrics, setSavedMetrics] = useState(initialMetrics);
   const [isSaving, setIsSaving] = useState(false);
   const isInitiallySaved = initialMetrics.time_saved_minutes_per_run !== 30 || initialMetrics.hourly_rate_euros !== 20 || initialMetrics.fte_equivalent !== 0.1;
   const [isEditing, setIsEditing] = useState(!isInitiallySaved);
-  const workerCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter;
-  const workerCostPerYear = workerCostPerMonth * 12;
+  const processCostPerMonth = TIER_PRICING[customerPlan] || TIER_PRICING.starter;
+  const processCostPerYear = processCostPerMonth * 12;
   const calculateAnnualSavings = (fteEquivalent, hourlyRate) => {
     const laborSavings = fteEquivalent * HOURS_PER_FTE_YEAR * hourlyRate;
-    return laborSavings - workerCostPerYear;
+    return laborSavings - processCostPerYear;
   };
   const handleSave = async () => {
     setIsSaving(true);
@@ -4581,9 +4582,9 @@ function ImpactMetricsForm({
       const updatedMetrics = { ...metrics, estimated_annual_savings_euros: annualSavings };
       let success = false;
       if (onSave) {
-        success = await onSave(workerId, updatedMetrics);
+        success = await onSave(processId, updatedMetrics);
       } else {
-        const response = await fetch(`${apiBasePath}/${workerId}/impact-metrics`, {
+        const response = await fetch(`${apiBasePath}/${processId}/impact-metrics`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedMetrics)
@@ -4626,8 +4627,8 @@ function ImpactMetricsForm({
   const impliedFrequencyPerYear = timePerTaskHours > 0 ? Math.round(hoursSavedPerYear / timePerTaskHours) : 0;
   const impliedFrequencyPerMonth = Math.round(impliedFrequencyPerYear / 12);
   const laborSavingsPerYear = metrics.fte_equivalent * HOURS_PER_FTE_YEAR * metrics.hourly_rate_euros;
-  const netAnnualSavings = laborSavingsPerYear - workerCostPerYear;
-  const roiPercentage = workerCostPerYear > 0 ? netAnnualSavings / workerCostPerYear * 100 : 0;
+  const netAnnualSavings = laborSavingsPerYear - processCostPerYear;
+  const roiPercentage = processCostPerYear > 0 ? netAnnualSavings / processCostPerYear * 100 : 0;
   return /* @__PURE__ */ jsx(Card, { className: cn("border-[var(--cyan)]/20 bg-gradient-to-br from-white to-[var(--cyan)]/5", className), children: /* @__PURE__ */ jsxs(CardContent, { className: "p-5", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ jsx("p", { className: "text-xs font-medium text-muted-foreground uppercase tracking-wide", children: "Impact Metrics (ROI)" }),
@@ -4748,9 +4749,9 @@ function ImpactMetricsForm({
           " ",
           /* @__PURE__ */ jsx("span", { className: "opacity-60", children: "labor saved" }),
           " \u2212 \u20AC",
-          workerCostPerYear,
+          processCostPerYear,
           " ",
-          /* @__PURE__ */ jsx("span", { className: "opacity-60", children: "worker cost" })
+          /* @__PURE__ */ jsx("span", { className: "opacity-60", children: "process cost" })
         ] })
       ] })
     ] }),
@@ -5327,9 +5328,9 @@ function WorkflowViewer({
   webhookUrl,
   workflowId,
   workflowDefinitionId,
-  workerId,
-  workerName,
-  internalWorkerType,
+  processId: processIdProp,
+  processName: processNameProp,
+  internalProcessType: internalProcessTypeProp,
   lastSynced,
   isActive,
   syncError,
@@ -5348,6 +5349,9 @@ function WorkflowViewer({
   simWorkflowId,
   simStudioUrl
 }) {
+  const processId = processIdProp ?? null;
+  const processName = processNameProp ?? null;
+  const internalProcessType = internalProcessTypeProp ?? null;
   const [viewMode, setViewMode] = useState("summary");
   const [editedJson, setEditedJson] = useState("");
   const [jsonError, setJsonError] = useState(null);
@@ -5477,14 +5481,14 @@ function WorkflowViewer({
     }
   }
   async function pushToN8n() {
-    if (!workerId || !apiHandlers?.pushToN8n) {
-      setMessage({ type: "error", text: "Cannot sync - no worker ID or API handler" });
+    if (!processId || !apiHandlers?.pushToN8n) {
+      setMessage({ type: "error", text: "Cannot sync - no process ID or API handler" });
       return;
     }
     setSyncing(true);
     setMessage(null);
     try {
-      const result = await apiHandlers.pushToN8n(workerId);
+      const result = await apiHandlers.pushToN8n(processId);
       if (result.success) {
         setMessage({ type: "success", text: "Pushed to n8n successfully" });
       } else {
@@ -5509,7 +5513,7 @@ function WorkflowViewer({
         if (result.descriptionSync?.needsUpdate) {
           setMessage({
             type: "success",
-            text: `Pulled from n8n. Note: ${result.descriptionSync.reason || "Worker description may need updating."}`
+            text: `Pulled from n8n. Note: ${result.descriptionSync.reason || "Process description may need updating."}`
           });
         } else {
           setMessage({ type: "success", text: "Pulled from n8n successfully" });
@@ -5649,7 +5653,7 @@ function WorkflowViewer({
         if (result.descriptionSync?.needsUpdate) {
           setMessage({
             type: "success",
-            text: `Pulled from Sim Studio. Note: ${result.descriptionSync.reason || "Worker description may need updating."}`
+            text: `Pulled from Sim Studio. Note: ${result.descriptionSync.reason || "Process description may need updating."}`
           });
         } else {
           setMessage({ type: "success", text: "Pulled from Sim Studio successfully" });
@@ -5665,8 +5669,8 @@ function WorkflowViewer({
     }
   }
   function startCreating() {
-    if (internalWorkerType) {
-      setSelectedTemplate(internalWorkerType);
+    if (internalProcessType) {
+      setSelectedTemplate(internalProcessType);
     } else {
       setSelectedTemplate("blank");
     }
@@ -5680,16 +5684,16 @@ function WorkflowViewer({
       setJsonError("Invalid JSON. Please check the syntax.");
       return;
     }
-    if (!workerId || !apiHandlers?.createWorkflow) {
-      setJsonError("Cannot create - no worker ID or API handler.");
+    if (!processId || !apiHandlers?.createWorkflow) {
+      setJsonError("Cannot create - no process ID or API handler.");
       return;
     }
     setCreating(true);
     setJsonError(null);
     try {
-      const workflowName = parsed.name || `${workerName || "Worker"} Workflow`;
+      const workflowName = parsed.name || `${processName || "Process"} Workflow`;
       const result = await apiHandlers.createWorkflow({
-        agent_id: workerId,
+        process_id: processId,
         name: workflowName,
         platform,
         n8n_workflow: platform === "n8n" ? parsed : null,
@@ -5734,8 +5738,8 @@ function WorkflowViewer({
     }
   }
   async function loadTemplate() {
-    if (!workerId || !workerName || !apiHandlers?.loadTemplate) {
-      setJsonError("Worker information or API handler required to generate template.");
+    if (!processId || !processName || !apiHandlers?.loadTemplate) {
+      setJsonError("Process information or API handler required to generate template.");
       return;
     }
     if (selectedTemplate === "blank" || selectedTemplate === "custom") {
@@ -5744,7 +5748,7 @@ function WorkflowViewer({
     setCreating(true);
     setJsonError(null);
     try {
-      const result = await apiHandlers.loadTemplate(selectedTemplate, workerId);
+      const result = await apiHandlers.loadTemplate(selectedTemplate, processId);
       if (result.success && result.workflow) {
         setEditedJson(JSON.stringify(result.workflow, null, 2));
         setMessage({ type: "success", text: "Template loaded" });
@@ -5782,17 +5786,17 @@ function WorkflowViewer({
                 children: "Blank"
               }
             ),
-            internalWorkerType && apiHandlers?.loadTemplate && /* @__PURE__ */ jsxs(
+            internalProcessType && apiHandlers?.loadTemplate && /* @__PURE__ */ jsxs(
               Button,
               {
                 onClick: () => {
-                  setSelectedTemplate(internalWorkerType);
+                  setSelectedTemplate(internalProcessType);
                   loadTemplate();
                 },
-                variant: selectedTemplate === internalWorkerType ? "primary" : "outline",
+                variant: selectedTemplate === internalProcessType ? "primary" : "outline",
                 size: "sm",
                 children: [
-                  internalWorkerType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+                  internalProcessType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
                   " Template"
                 ]
               }
@@ -5959,7 +5963,7 @@ function WorkflowViewer({
         " ",
         syncError
       ] }),
-      editable && workerId && platform === "n8n" && viewMode !== "edit" && apiHandlers?.pushToN8n && /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2", children: [
+      editable && processId && platform === "n8n" && viewMode !== "edit" && apiHandlers?.pushToN8n && /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2", children: [
         /* @__PURE__ */ jsx(Button, { onClick: pushToN8n, disabled: syncing, variant: "primary", size: "sm", icon: /* @__PURE__ */ jsx(CloudArrowUp, { size: 16 }), children: syncing ? "Pushing..." : "Push to n8n" }),
         workflowId && apiHandlers?.pullFromN8n && /* @__PURE__ */ jsx(Button, { onClick: pullFromN8n, disabled: pulling, variant: "outline", size: "sm", icon: /* @__PURE__ */ jsx(CloudArrowDown, { size: 16 }), children: pulling ? "Pulling..." : "Pull from n8n" }),
         workflowDefinitionId && apiHandlers?.switchPlatform && /* @__PURE__ */ jsx(
@@ -6498,7 +6502,7 @@ function AnalysisContextRenderer({ content }) {
     ] }, index);
   }) });
 }
-function WorkerSpec({ documentation, className }) {
+function ProcessSpec({ documentation, className }) {
   const [expandedSections, setExpandedSections] = useState(
     /* @__PURE__ */ new Set(["goal", "scope", "steps", "diagram", "impact", "requirements", "edge_cases"])
   );
@@ -6517,7 +6521,7 @@ function WorkerSpec({ documentation, className }) {
     return /* @__PURE__ */ jsx("div", { className, children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 p-6 rounded-sm border border-dashed border-gray-300 bg-gray-50/50", children: [
       /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-sm bg-gray-100 flex items-center justify-center", children: /* @__PURE__ */ jsx(Robot, { size: 20, className: "text-gray-400" }) }),
       /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Worker Spec Pending" }),
+        /* @__PURE__ */ jsx("h3", { className: "font-semibold text-[var(--black)]", children: "Process Spec Pending" }),
         /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "The final specification will be generated automatically after the documentation is approved." })
       ] })
     ] }) });
@@ -7011,6 +7015,6 @@ function slackMessage(options) {
 // src/index.ts
 __reExport(index_exports, icons_exports);
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, ExpandableSection, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, SupportChat, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkerSpec, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonHtml, buttonVariants, cn, emailTemplate, formatCentsToEuros, formatDuration, formatEuros, formatRelativeTime, getDateRangeFromPreset, iconBoxVariants, infoBoxHtml, metricCardVariants, navigationMenuTriggerStyle, noteBoxHtml, progressVariants, slackActions, slackFields, slackMessage, slackSection, statVariants, tagVariants, toast, usageBarVariants, useExpandedSections, useServiceWorker, useToast, valueVariants };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, ActivityTimeline, Alert, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, Avatar, AvatarFallback, AvatarImage, Badge, BreadcrumbLink, Breadcrumbs, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, CodeBlock, ConfirmDialog, DateRangePicker, DateRangeSelect, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Divider, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EmptyState, ErrorState, ExpandableSection, FilePreview, FlowchartDiagram, FormField, IconBox, ImpactMetricsForm, Input, Label2 as Label, LabeledSlider, LabeledSwitch, Logo, Metric, MetricCard, MetricLabel, MetricSubtext, MetricValue, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, Popover, PopoverAnchor, PopoverArrow, PopoverClose, PopoverContent, PopoverTrigger, ProcessSpec, Progress, RadioGroup, RadioGroupCard, RadioGroupItem, RadioGroupOption, ScenariosManager, Select, Separator2 as Separator, SettingsNav, SettingsNavLink, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SimplePagination, SimpleTooltip, Skeleton, SkeletonCard, SkeletonText, Slider, Stat, StepDots, StepProgress, SupportChat, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsListUnderline, TabsTrigger, TabsTriggerUnderline, Tag, Textarea, Toast, ToastAction, ToastClose, ToastDescription, ToastIcon, ToastProvider, ToastTitle, ToastViewport, Toaster, Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger, UsageBar, UsageChart, WorkflowFlow, WorkflowViewer, alertVariants, badgeVariants, buttonHtml, buttonVariants, cn, emailTemplate, formatCentsToEuros, formatDuration, formatEuros, formatRelativeTime, getDateRangeFromPreset, iconBoxVariants, infoBoxHtml, metricCardVariants, navigationMenuTriggerStyle, noteBoxHtml, progressVariants, slackActions, slackFields, slackMessage, slackSection, statVariants, tagVariants, toast, usageBarVariants, useExpandedSections, useServiceWorker, useToast, valueVariants };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

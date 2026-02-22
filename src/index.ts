@@ -297,9 +297,9 @@ export type {
   WorkflowTemplate 
 } from './components/workflow-viewer'
 
-// Worker Spec Components
-export { WorkerSpec } from './components/worker-spec'
-export type { WorkerSpecProps, WorkerSpecDocumentation, AnalysisSource, AnalysisSummary } from './components/worker-spec'
+// Process Spec Components
+export { ProcessSpec } from './components/process-spec'
+export type { ProcessSpecProps, ProcessSpecDocumentation, AnalysisSource, AnalysisSummary } from './components/process-spec'
 
 // Flowchart Diagram Components
 export { FlowchartDiagram } from './components/flowchart-diagram'

@@ -56,7 +56,7 @@ export function slackSection(mrkdwn: string): SlackBlock {
 /**
  * Build a key-value fields block.
  *
- *   slackFields({ Worker: 'Invoice Bot', Status: 'Live' })
+ *   slackFields({ Process: 'Invoice Bot', Status: 'Live' })
  */
 export function slackFields(fields: Record<string, string | number>): SlackBlock {
   return {

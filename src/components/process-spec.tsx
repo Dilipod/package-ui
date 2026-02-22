@@ -58,7 +58,7 @@ export interface AnalysisSummary {
   analyzed_at: string
 }
 
-export interface WorkerSpecDocumentation {
+export interface ProcessSpecDocumentation {
   scope: string | null
   goal: string | null
   steps: Array<{
@@ -89,9 +89,9 @@ export interface WorkerSpecDocumentation {
   updated_at: string
 }
 
-export interface WorkerSpecProps {
+export interface ProcessSpecProps {
   /** The Knowledge Builder final documentation */
-  documentation: WorkerSpecDocumentation | null
+  documentation: ProcessSpecDocumentation | null
   /** Optional className for the container */
   className?: string
 }
@@ -188,7 +188,7 @@ function AnalysisContextRenderer({ content }: { content: string }) {
 // Main Component
 // ============================================
 
-export function WorkerSpec({ documentation, className }: WorkerSpecProps) {
+export function ProcessSpec({ documentation, className }: ProcessSpecProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(['goal', 'scope', 'steps', 'diagram', 'impact', 'requirements', 'edge_cases'])
   )
@@ -214,7 +214,7 @@ export function WorkerSpec({ documentation, className }: WorkerSpecProps) {
             <Robot size={20} className="text-gray-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-[var(--black)]">Worker Spec Pending</h3>
+            <h3 className="font-semibold text-[var(--black)]">Process Spec Pending</h3>
             <p className="text-sm text-muted-foreground">
               The final specification will be generated automatically after the documentation is approved.
             </p>
