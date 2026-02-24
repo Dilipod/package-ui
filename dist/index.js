@@ -4186,24 +4186,17 @@ var SettingsNav = React51__namespace.forwardRef(
     const Link2 = LinkComponent || "a";
     return /* @__PURE__ */ jsxRuntime.jsx("div", { ref, className: cn("space-y-8", className), ...props, children: groups.map((group) => /* @__PURE__ */ jsxRuntime.jsxs("div", { children: [
       /* @__PURE__ */ jsxRuntime.jsx("h2", { className: "text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3 px-1", children: group.title }),
-      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "space-y-1", children: group.items.map((item) => /* @__PURE__ */ jsxRuntime.jsxs(
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3", children: group.items.map((item) => /* @__PURE__ */ jsxRuntime.jsxs(
         Link2,
         {
           href: item.href,
-          className: "group flex items-center gap-4 p-4 rounded-sm transition-all hover:bg-gray-50 border border-transparent hover:border-gray-200",
+          className: "group flex items-start gap-4 p-5 rounded-lg transition-all bg-white border border-gray-200 hover:border-[var(--cyan)]/40 hover:shadow-sm",
           children: [
-            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-center w-10 h-10 rounded-sm bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors", children: /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-gray-600 group-hover:text-[var(--cyan)] transition-colors [&>svg]:w-5 [&>svg]:h-5", children: item.icon }) }),
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors shrink-0", children: /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-gray-600 group-hover:text-[var(--cyan)] transition-colors [&>svg]:w-5 [&>svg]:h-5", children: item.icon }) }),
             /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1 min-w-0", children: [
               /* @__PURE__ */ jsxRuntime.jsx("h3", { className: "font-medium text-[var(--black)] group-hover:text-[var(--cyan)] transition-colors", children: item.title }),
-              /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm text-muted-foreground", children: item.description })
-            ] }),
-            /* @__PURE__ */ jsxRuntime.jsx(
-              react_star.CaretRight,
-              {
-                size: 18,
-                className: "text-gray-300 group-hover:text-[var(--cyan)] group-hover:translate-x-0.5 transition-all shrink-0"
-              }
-            )
+              /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm text-muted-foreground mt-0.5 leading-snug", children: item.description })
+            ] })
           ]
         },
         item.href

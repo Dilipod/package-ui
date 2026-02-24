@@ -37,14 +37,14 @@ const SettingsNav = React.forwardRef<HTMLDivElement, SettingsNavProps>(
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3 px-1">
               {group.title}
             </h2>
-            <div className="space-y-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {group.items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group flex items-center gap-4 p-4 rounded-sm transition-all hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                  className="group flex items-start gap-4 p-5 rounded-lg transition-all bg-white border border-gray-200 hover:border-[var(--cyan)]/40 hover:shadow-sm"
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-sm bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-[var(--cyan)]/10 transition-colors shrink-0">
                     <span className="text-gray-600 group-hover:text-[var(--cyan)] transition-colors [&>svg]:w-5 [&>svg]:h-5">
                       {item.icon}
                     </span>
@@ -53,14 +53,10 @@ const SettingsNav = React.forwardRef<HTMLDivElement, SettingsNavProps>(
                     <h3 className="font-medium text-[var(--black)] group-hover:text-[var(--cyan)] transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mt-0.5 leading-snug">
                       {item.description}
                     </p>
                   </div>
-                  <CaretRight
-                    size={18}
-                    className="text-gray-300 group-hover:text-[var(--cyan)] group-hover:translate-x-0.5 transition-all shrink-0"
-                  />
                 </Link>
               ))}
             </div>
