@@ -10,8 +10,25 @@
 export { emailTemplate, buttonHtml, infoBoxHtml, noteBoxHtml } from './lib/email'
 
 // Slack Block Kit Helpers
-export { slackMessage, slackSection, slackFields, slackActions } from './lib/slack'
-export type { SlackBlock, SlackElement, SlackField, SlackMessage } from './lib/slack'
+export {
+  slackMessage,
+  slackSection,
+  slackFields,
+  slackActions,
+  slackModal,
+  slackStaticSelect,
+  slackTextInput,
+  slackDivider,
+  slackContext,
+} from './lib/slack'
+export type {
+  SlackBlock,
+  SlackElement,
+  SlackField,
+  SlackMessage,
+  SlackModalView,
+  SlackOptionGroup,
+} from './lib/slack'
 
 // Formatting Utilities
 export { formatCentsToEuros, formatEuros, formatDuration, formatRelativeTime } from './lib/formatting'

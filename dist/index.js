@@ -686,7 +686,7 @@ var sheetVariants = classVarianceAuthority.cva(
     }
   }
 );
-var SheetContent = React51__namespace.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
+var SheetContent = React51__namespace.forwardRef(({ side = "right", className, children, hideClose, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsxs(SheetPortal, { children: [
   /* @__PURE__ */ jsxRuntime.jsx(SheetOverlay, {}),
   /* @__PURE__ */ jsxRuntime.jsxs(
     SheetPrimitive__namespace.Content,
@@ -696,6 +696,7 @@ var SheetContent = React51__namespace.forwardRef(({ side = "right", className, c
       ...props,
       children: [
         children,
+        !hideClose && // @ts-expect-error - Radix Dialog Close accepts className and children at runtime
         /* @__PURE__ */ jsxRuntime.jsxs(SheetPrimitive__namespace.Close, { className: "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-gray-100", children: [
           /* @__PURE__ */ jsxRuntime.jsx(react_star.X, { className: "h-4 w-4" }),
           /* @__PURE__ */ jsxRuntime.jsx("span", { className: "sr-only", children: "Close" })

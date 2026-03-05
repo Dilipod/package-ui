@@ -99,6 +99,157 @@ export function slackActions(
 }
 
 // ============================================
+// Modal & Select Builders
+// ============================================
+
+export interface SlackModalView {
+  type: 'modal'
+  callback_id: string
+  title: { type: 'plain_text'; text: string }
+  submit?: { type: 'plain_text'; text: string }
+  close?: { type: 'plain_text'; text: string }
+  blocks: SlackBlock[]
+  private_metadata?: string
+}
+
+export interface SlackOptionGroup {
+  label: { type: 'plain_text'; text: string }
+  options: Array<{
+    text: { type: 'plain_text'; text: string }
+    value: string
+  }>
+}
+
+/**
+ * Build a modal view for Slack.
+ *
+ *   slackModal({
+ *     callbackId: 'run_process',
+ *     title: 'Run a Process',
+ *     submitText: 'Run',
+ *     blocks: [...],
+ *   })
+ */
+export function slackModal(options: {
+  callbackId: string
+  title: string
+  submitText?: string
+  closeText?: string
+  blocks: SlackBlock[]
+  privateMetadata?: string
+}): SlackModalView {
+  return {
+    type: 'modal',
+    callback_id: options.callbackId,
+    title: { type: 'plain_text', text: options.title },
+    ...(options.submitText
+      ? { submit: { type: 'plain_text', text: options.submitText } }
+      : {}),
+    ...(options.closeText
+      ? { close: { type: 'plain_text', text: options.closeText } }
+      : {}),
+    blocks: options.blocks,
+    ...(options.privateMetadata
+      ? { private_metadata: options.privateMetadata }
+      : {}),
+  }
+}
+
+/**
+ * Build a static select input block (for modals or messages).
+ *
+ *   slackStaticSelect({
+ *     blockId: 'process_select',
+ *     actionId: 'process_id',
+ *     label: 'Process',
+ *     placeholder: 'Select a process',
+ *     optionGroups: [
+ *       { label: 'Invoice Bot', options: [{ text: 'Send Invoices', value: 'uuid' }] },
+ *     ],
+ *   })
+ */
+export function slackStaticSelect(options: {
+  blockId: string
+  actionId: string
+  label: string
+  placeholder?: string
+  options?: Array<{ text: string; value: string }>
+  optionGroups?: Array<{ label: string; options: Array<{ text: string; value: string }> }>
+}): SlackBlock {
+  const element: Record<string, unknown> = {
+    type: 'static_select',
+    action_id: options.actionId,
+    placeholder: { type: 'plain_text', text: options.placeholder || 'Select...' },
+  }
+
+  if (options.optionGroups) {
+    element.option_groups = options.optionGroups.map((group) => ({
+      label: { type: 'plain_text', text: group.label },
+      options: group.options.map((opt) => ({
+        text: { type: 'plain_text', text: opt.text },
+        value: opt.value,
+      })),
+    }))
+  } else if (options.options) {
+    element.options = options.options.map((opt) => ({
+      text: { type: 'plain_text', text: opt.text },
+      value: opt.value,
+    }))
+  }
+
+  return {
+    type: 'input',
+    block_id: options.blockId,
+    label: { type: 'plain_text', text: options.label },
+    element,
+  } as unknown as SlackBlock
+}
+
+/**
+ * Build a plain text input block (for modals).
+ */
+export function slackTextInput(options: {
+  blockId: string
+  actionId: string
+  label: string
+  placeholder?: string
+  optional?: boolean
+  multiline?: boolean
+}): SlackBlock {
+  return {
+    type: 'input',
+    block_id: options.blockId,
+    optional: options.optional ?? false,
+    label: { type: 'plain_text', text: options.label },
+    element: {
+      type: 'plain_text_input',
+      action_id: options.actionId,
+      ...(options.placeholder
+        ? { placeholder: { type: 'plain_text', text: options.placeholder } }
+        : {}),
+      ...(options.multiline ? { multiline: true } : {}),
+    },
+  } as unknown as SlackBlock
+}
+
+/**
+ * Build a divider block.
+ */
+export function slackDivider(): SlackBlock {
+  return { type: 'divider' } as SlackBlock
+}
+
+/**
+ * Build a context block (small muted text).
+ */
+export function slackContext(text: string): SlackBlock {
+  return {
+    type: 'context',
+    elements: [{ type: 'mrkdwn', text }],
+  } as unknown as SlackBlock
+}
+
+// ============================================
 // Message Builder
 // ============================================
 
