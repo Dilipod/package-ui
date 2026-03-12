@@ -22,6 +22,7 @@ export interface UploadedFile {
   type: string
   size: number
   url?: string
+  processing?: boolean
 }
 
 export interface FilePreviewProps {
@@ -157,11 +158,12 @@ export function FilePreview({
             const FileIcon = getFileIcon(file.type)
             const typeLabel = getTypeLabel(file.type)
             const sizeLabel = formatSize(file.size)
-            const isPreviewable = canPreview(file)
+            const isProcessing = file.processing === true
+            const isPreviewable = !isProcessing && canPreview(file)
             const previewType = getPreviewType(file)
-            
+
             return (
-              <div 
+              <div
                 key={i}
                 className={`flex items-center justify-between p-3 rounded-md bg-gray-50 transition-colors ${
                   isPreviewable ? 'hover:bg-gray-100 cursor-pointer' : ''
@@ -171,29 +173,41 @@ export function FilePreview({
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative shrink-0">
                     <div className="w-10 h-10 rounded-sm bg-white border border-gray-200 flex items-center justify-center">
-                      <FileIcon className="w-5 h-5 text-[var(--cyan)]" weight="fill" />
+                      {isProcessing ? (
+                        <CircleNotch className="w-5 h-5 text-[var(--cyan)] animate-spin" />
+                      ) : (
+                        <FileIcon className="w-5 h-5 text-[var(--cyan)]" weight="fill" />
+                      )}
                     </div>
-                    {previewType === 'video' && (
+                    {!isProcessing && previewType === 'video' && (
                       <Play className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 text-[var(--cyan)] bg-white rounded-full" weight="fill" />
                     )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[var(--black)] truncate">{file.filename}</p>
                     <p className="text-xs text-muted-foreground">
-                      {typeLabel} · {sizeLabel}
-                      {isPreviewable && (
-                        <span className="text-[var(--cyan)] ml-1">· Click to preview</span>
+                      {isProcessing ? (
+                        <span className="text-amber-600">Processing video — this takes about a minute</span>
+                      ) : (
+                        <>
+                          {typeLabel} · {sizeLabel}
+                          {isPreviewable && (
+                            <span className="text-[var(--cyan)] ml-1">· Click to preview</span>
+                          )}
+                        </>
                       )}
                     </p>
                   </div>
                 </div>
-                <button 
-                  onClick={(e) => handleDownload(e, file)}
-                  className="p-2 rounded-sm hover:bg-gray-200 transition-colors shrink-0"
-                  title="Download"
-                >
-                  <Download className="w-4 h-4 text-muted-foreground" />
-                </button>
+                {!isProcessing && (
+                  <button
+                    onClick={(e) => handleDownload(e, file)}
+                    className="p-2 rounded-sm hover:bg-gray-200 transition-colors shrink-0"
+                    title="Download"
+                  >
+                    <Download className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                )}
               </div>
             )
           })}

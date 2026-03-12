@@ -3991,7 +3991,8 @@ function FilePreview({
       const FileIcon = getFileIcon(file.type);
       const typeLabel = getTypeLabel(file.type);
       const sizeLabel = formatSize(file.size);
-      const isPreviewable = canPreview(file);
+      const isProcessing = file.processing === true;
+      const isPreviewable = !isProcessing && canPreview(file);
       const previewType = getPreviewType(file);
       return /* @__PURE__ */ jsxRuntime.jsxs(
         "div",
@@ -4001,20 +4002,20 @@ function FilePreview({
           children: [
             /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
               /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "relative shrink-0", children: [
-                /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-10 h-10 rounded-sm bg-white border border-gray-200 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntime.jsx(FileIcon, { className: "w-5 h-5 text-[var(--cyan)]", weight: "fill" }) }),
-                previewType === "video" && /* @__PURE__ */ jsxRuntime.jsx(react_star.Play, { className: "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 text-[var(--cyan)] bg-white rounded-full", weight: "fill" })
+                /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-10 h-10 rounded-sm bg-white border border-gray-200 flex items-center justify-center", children: isProcessing ? /* @__PURE__ */ jsxRuntime.jsx(react_star.CircleNotch, { className: "w-5 h-5 text-[var(--cyan)] animate-spin" }) : /* @__PURE__ */ jsxRuntime.jsx(FileIcon, { className: "w-5 h-5 text-[var(--cyan)]", weight: "fill" }) }),
+                !isProcessing && previewType === "video" && /* @__PURE__ */ jsxRuntime.jsx(react_star.Play, { className: "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 text-[var(--cyan)] bg-white rounded-full", weight: "fill" })
               ] }),
               /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "min-w-0", children: [
                 /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-sm font-medium text-[var(--black)] truncate", children: file.filename }),
-                /* @__PURE__ */ jsxRuntime.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                /* @__PURE__ */ jsxRuntime.jsx("p", { className: "text-xs text-muted-foreground", children: isProcessing ? /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-amber-600", children: "Processing video \u2014 this takes about a minute" }) : /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
                   typeLabel,
                   " \xB7 ",
                   sizeLabel,
                   isPreviewable && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-[var(--cyan)] ml-1", children: "\xB7 Click to preview" })
-                ] })
+                ] }) })
               ] })
             ] }),
-            /* @__PURE__ */ jsxRuntime.jsx(
+            !isProcessing && /* @__PURE__ */ jsxRuntime.jsx(
               "button",
               {
                 onClick: (e) => handleDownload(e, file),
@@ -6287,190 +6288,383 @@ function WorkflowViewer({
     ] })
   ] });
 }
+var NODE_WIDTH = 180;
+var NODE_HEIGHT = 44;
+var DIAMOND_SIZE = 72;
+var X_GAP = 50;
+var Y_GAP = 64;
+var PADDING = 40;
+var FONT_SIZE = 11;
+var CHAR_WIDTH = 6.2;
+var LINE_HEIGHT = 14;
+function stripQuotes(s) {
+  const t = s.trim();
+  if (t.startsWith('"') && t.endsWith('"') || t.startsWith("'") && t.endsWith("'")) {
+    return t.slice(1, -1);
+  }
+  return t;
+}
+function parseNodeRef(raw) {
+  const s = raw.trim();
+  const decision = s.match(/^([A-Za-z0-9_]+)\{(.+)\}$/);
+  if (decision) return { id: decision[1], label: stripQuotes(decision[2]), type: "decision" };
+  const stadium = s.match(/^([A-Za-z0-9_]+)\(\[(.+)\]\)$/);
+  if (stadium) return { id: stadium[1], label: stripQuotes(stadium[2]), type: "terminal" };
+  const circle = s.match(/^([A-Za-z0-9_]+)\(\((.+)\)\)$/);
+  if (circle) return { id: circle[1], label: stripQuotes(circle[2]), type: "terminal" };
+  const rounded = s.match(/^([A-Za-z0-9_]+)\(([^[(].+?)\)$/);
+  if (rounded) return { id: rounded[1], label: stripQuotes(rounded[2]), type: "action" };
+  const rect = s.match(/^([A-Za-z0-9_]+)\[([^(].+?)\]$/);
+  if (rect) {
+    const label = stripQuotes(rect[2]);
+    const isTerminal = /^(start|end|begin|finish|done|stop)$/i.test(label);
+    return { id: rect[1], label, type: isTerminal ? "terminal" : "action" };
+  }
+  const bareId = s.match(/^([A-Za-z0-9_]+)$/);
+  if (bareId) return { id: bareId[1] };
+  return { id: s };
+}
+function registerNode(map, ref) {
+  if (!ref.id) return;
+  const existing = map.get(ref.id);
+  if (existing) {
+    if (ref.label && existing.label === existing.id) {
+      existing.label = ref.label;
+    }
+    if (ref.type && ref.type !== "action" && existing.type === "action") {
+      existing.type = ref.type;
+    }
+    return;
+  }
+  map.set(ref.id, {
+    id: ref.id,
+    label: ref.label || ref.id,
+    type: ref.type || "action"
+  });
+}
 function parseMermaidFlowchart(mermaid) {
-  const nodes = /* @__PURE__ */ new Map();
+  const nodeMap = /* @__PURE__ */ new Map();
   const edges = [];
-  const lines = mermaid.split(/\\n|\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("flowchart") && !l.startsWith("graph"));
-  function parseNodeDef(str) {
-    const decisionMatch = str.match(/^([A-Za-z0-9_]+)\{(.+?)\}$/);
-    if (decisionMatch) return { id: decisionMatch[1], label: decisionMatch[2], type: "decision" };
-    const bracketMatch = str.match(/^([A-Za-z0-9_]+)\[?\(?\[?(.+?)\]?\)?\]?$/);
-    if (bracketMatch) {
-      const label = bracketMatch[2];
-      const isTerminal = /^(start|end|begin|finish|done)$/i.test(label);
-      return { id: bracketMatch[1], label, type: isTerminal ? "terminal" : "action" };
-    }
-    return { id: str.trim() };
-  }
+  const lines = mermaid.split(/\\n|\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("%%"));
   for (const line of lines) {
-    const edgeMatch = line.match(/^(.+?)\s*-->(?:\|(.+?)\|)?\s*(.+)$/);
-    if (!edgeMatch) continue;
-    const leftRaw = edgeMatch[1].trim();
-    const edgeLabel = edgeMatch[2]?.trim();
-    const rightRaw = edgeMatch[3].trim();
-    const left = parseNodeDef(leftRaw);
-    const right = parseNodeDef(rightRaw);
-    if (left.label && !nodes.has(left.id)) {
-      nodes.set(left.id, { id: left.id, label: left.label, type: left.type || "action" });
+    if (/^(flowchart|graph|subgraph|end|style|classDef|class|click|linkStyle)\b/i.test(line)) continue;
+    const edgeMatch = line.match(
+      /^(.+?)\s*(?:-->|==>|-\.->|---)\s*(?:\|([^|]*)\|)?\s*(.+)$/
+    );
+    if (edgeMatch) {
+      const leftNode = parseNodeRef(edgeMatch[1].trim());
+      const edgeLabel = edgeMatch[2]?.trim() || void 0;
+      const rightNode = parseNodeRef(edgeMatch[3].trim());
+      registerNode(nodeMap, leftNode);
+      registerNode(nodeMap, rightNode);
+      edges.push({ from: leftNode.id, to: rightNode.id, label: edgeLabel });
+      continue;
     }
-    if (right.label && !nodes.has(right.id)) {
-      nodes.set(right.id, { id: right.id, label: right.label, type: right.type || "action" });
+    const nodeDef = parseNodeRef(line);
+    if (nodeDef.label) {
+      registerNode(nodeMap, nodeDef);
     }
-    if (!nodes.has(left.id)) {
-      nodes.set(left.id, { id: left.id, label: left.id, type: "action" });
-    }
-    if (!nodes.has(right.id)) {
-      nodes.set(right.id, { id: right.id, label: right.id, type: "action" });
-    }
-    edges.push({ from: left.id, to: right.id, label: edgeLabel });
   }
-  return { nodes: Array.from(nodes.values()), edges };
+  return { nodes: Array.from(nodeMap.values()), edges };
 }
-function findMergePoint(branchStarts, outgoing) {
-  const reachable = /* @__PURE__ */ new Map();
-  for (const start of branchStarts) {
-    const q2 = [start];
-    const seen2 = /* @__PURE__ */ new Set();
-    while (q2.length > 0) {
-      const id = q2.shift();
-      if (seen2.has(id)) continue;
-      seen2.add(id);
-      if (!reachable.has(id)) reachable.set(id, /* @__PURE__ */ new Set());
-      reachable.get(id).add(start);
-      const outs = outgoing.get(id) || [];
-      for (const e of outs) q2.push(e.to);
-    }
+function computeLayout(nodes, edges) {
+  if (nodes.length === 0) return { layoutNodes: [], svgWidth: 0, svgHeight: 0 };
+  const forward = /* @__PURE__ */ new Map();
+  const backward = /* @__PURE__ */ new Map();
+  for (const e of edges) {
+    if (!forward.has(e.from)) forward.set(e.from, []);
+    forward.get(e.from).push(e.to);
+    if (!backward.has(e.to)) backward.set(e.to, []);
+    backward.get(e.to).push(e.from);
   }
-  const allBranches = new Set(branchStarts);
-  const q = [branchStarts[0]];
-  const seen = /* @__PURE__ */ new Set();
-  while (q.length > 0) {
-    const id = q.shift();
-    if (seen.has(id)) continue;
-    seen.add(id);
-    if (!allBranches.has(id) && reachable.get(id)?.size === branchStarts.length) {
-      return id;
-    }
-    const outs = outgoing.get(id) || [];
-    for (const e of outs) q.push(e.to);
+  const roots = nodes.filter((n) => !backward.has(n.id) || backward.get(n.id).length === 0);
+  if (roots.length === 0) roots.push(nodes[0]);
+  const layers = /* @__PURE__ */ new Map();
+  const queue = [];
+  for (const r of roots) {
+    layers.set(r.id, 0);
+    queue.push(r.id);
   }
-  return null;
-}
-function buildLayout(startId, outgoing, incoming, nodeMap, visited) {
-  const items = [];
-  let currentId = startId;
-  while (currentId) {
-    if (visited.has(currentId)) break;
-    const node = nodeMap.get(currentId);
-    if (!node) break;
-    const outs = outgoing.get(currentId) || [];
-    if (outs.length <= 1) {
-      visited.add(currentId);
-      items.push({ type: "node", nodeId: currentId });
-      if (outs.length === 1) {
-        const nextId = outs[0].to;
-        if (visited.has(nextId)) break;
-        items.push({ type: "arrow", label: outs[0].label });
-        currentId = nextId;
-      } else {
-        currentId = null;
+  const visited = /* @__PURE__ */ new Set();
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    const myLayer = layers.get(id) || 0;
+    for (const child of forward.get(id) || []) {
+      const childLayer = layers.get(child);
+      if (childLayer === void 0 || myLayer + 1 > childLayer) {
+        layers.set(child, myLayer + 1);
       }
+      if (!visited.has(child)) queue.push(child);
+    }
+  }
+  const maxLayer = Math.max(0, ...Array.from(layers.values()));
+  for (const n of nodes) {
+    if (!layers.has(n.id)) layers.set(n.id, maxLayer + 1);
+  }
+  const nodesByLayer = /* @__PURE__ */ new Map();
+  for (const n of nodes) {
+    const layer = layers.get(n.id);
+    if (!nodesByLayer.has(layer)) nodesByLayer.set(layer, []);
+    nodesByLayer.get(layer).push(n);
+  }
+  const sortedLayers = Array.from(nodesByLayer.keys()).sort((a, b) => a - b);
+  const posInLayer = /* @__PURE__ */ new Map();
+  for (let li = 0; li < sortedLayers.length; li++) {
+    const layer = sortedLayers[li];
+    const nodesInLayer = nodesByLayer.get(layer);
+    if (li > 0) {
+      nodesInLayer.sort((a, b) => {
+        const parentsA = backward.get(a.id) || [];
+        const parentsB = backward.get(b.id) || [];
+        const avgA = parentsA.length > 0 ? parentsA.reduce((s, p) => s + (posInLayer.get(p) ?? 0), 0) / parentsA.length : 0;
+        const avgB = parentsB.length > 0 ? parentsB.reduce((s, p) => s + (posInLayer.get(p) ?? 0), 0) / parentsB.length : 0;
+        return avgA - avgB;
+      });
+    }
+    nodesInLayer.forEach((n, i) => posInLayer.set(n.id, i));
+  }
+  const layoutNodes = [];
+  for (const layer of sortedLayers) {
+    const nodesInLayer = nodesByLayer.get(layer);
+    const widths = nodesInLayer.map((n) => nodeWidth(n));
+    const heights = nodesInLayer.map((n) => nodeHeight(n));
+    const totalWidth = widths.reduce((s, w) => s + w, 0) + (nodesInLayer.length - 1) * X_GAP;
+    let startX = -totalWidth / 2;
+    nodesInLayer.forEach((n, i) => {
+      layoutNodes.push({
+        id: n.id,
+        x: startX + widths[i] / 2,
+        y: layer * (NODE_HEIGHT + Y_GAP),
+        width: widths[i],
+        height: heights[i],
+        layer,
+        node: n
+      });
+      startX += widths[i] + X_GAP;
+    });
+  }
+  const minX = Math.min(...layoutNodes.map((n) => n.x - n.width / 2));
+  const minY = Math.min(...layoutNodes.map((n) => n.y - n.height / 2));
+  const offsetX = PADDING - minX;
+  const offsetY = PADDING - minY;
+  for (const n of layoutNodes) {
+    n.x += offsetX;
+    n.y += offsetY;
+  }
+  const svgWidth = Math.max(...layoutNodes.map((n) => n.x + n.width / 2)) + PADDING;
+  const svgHeight = Math.max(...layoutNodes.map((n) => n.y + n.height / 2)) + PADDING;
+  return { layoutNodes, svgWidth, svgHeight };
+}
+function nodeWidth(n) {
+  if (n.type === "decision") return Math.max(DIAMOND_SIZE * 1.4, 100);
+  const textWidth = n.label.length * CHAR_WIDTH + 32;
+  return Math.max(100, Math.min(NODE_WIDTH, textWidth));
+}
+function nodeHeight(n) {
+  if (n.type === "decision") return DIAMOND_SIZE;
+  const w = nodeWidth(n);
+  const lines = wrapText(n.label, w - 24);
+  return Math.max(NODE_HEIGHT, lines.length * LINE_HEIGHT + 16);
+}
+function wrapText(text, maxPixelWidth) {
+  const charsPerLine = Math.max(8, Math.floor(maxPixelWidth / CHAR_WIDTH));
+  if (text.length <= charsPerLine) return [text];
+  const words = text.split(" ");
+  const lines = [];
+  let cur = "";
+  for (const word of words) {
+    const test = cur ? `${cur} ${word}` : word;
+    if (test.length > charsPerLine && cur) {
+      lines.push(cur);
+      cur = word;
     } else {
-      visited.add(currentId);
-      items.push({ type: "node", nodeId: currentId });
-      const branchStarts = outs.map((e) => e.to);
-      const mergeId = findMergePoint(branchStarts, outgoing);
-      const branches = [];
-      for (const edge of outs) {
-        if (visited.has(edge.to) && edge.to !== mergeId) {
-          branches.push({ label: edge.label, items: [] });
-          continue;
-        }
-        const branchItems = buildLayout(edge.to, outgoing, incoming, nodeMap, visited);
-        branches.push({ label: edge.label, items: branchItems });
-      }
-      items.push({ type: "branch", decision: currentId, branches, mergeId });
-      if (mergeId && !visited.has(mergeId)) {
-        items.push({ type: "arrow" });
-        currentId = mergeId;
-      } else {
-        currentId = null;
-      }
+      cur = test;
     }
   }
-  return items;
+  if (cur) lines.push(cur);
+  if (lines.length > 3) {
+    lines.length = 3;
+    lines[2] = lines[2].slice(0, -1) + "\u2026";
+  }
+  return lines;
 }
-function FlowArrow({ label }) {
-  return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-center", children: [
-    label && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-[10px] font-medium text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-0.5", children: label }),
-    /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-px h-4 bg-gray-300" }),
-    /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-300" })
+function computeEdgePath(from, to) {
+  let startX = from.x;
+  let startY = from.y + from.height / 2;
+  if (from.node.type === "decision") {
+    const dx = to.x - from.x;
+    const halfDiamond = DIAMOND_SIZE / 2;
+    if (Math.abs(dx) > halfDiamond) {
+      startX = from.x + (dx > 0 ? halfDiamond : -halfDiamond);
+      startY = from.y;
+    }
+  }
+  const endX = to.x;
+  const endY = to.y - to.height / 2;
+  const midY = (startY + endY) / 2;
+  return `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+}
+function SvgDefs() {
+  return /* @__PURE__ */ jsxRuntime.jsxs("defs", { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(
+      "marker",
+      {
+        id: "fc-arrowhead",
+        viewBox: "0 0 10 7",
+        refX: "10",
+        refY: "3.5",
+        markerWidth: "8",
+        markerHeight: "6",
+        orient: "auto-start-reverse",
+        children: /* @__PURE__ */ jsxRuntime.jsx("polygon", { points: "0 0, 10 3.5, 0 7", fill: "#D1D5DB" })
+      }
+    ),
+    /* @__PURE__ */ jsxRuntime.jsx("filter", { id: "fc-shadow", x: "-4%", y: "-4%", width: "108%", height: "116%", children: /* @__PURE__ */ jsxRuntime.jsx("feDropShadow", { dx: "0", dy: "1", stdDeviation: "1.5", floodOpacity: "0.07" }) })
   ] });
 }
-function FlowNodeBox({ node }) {
-  if (node.type === "decision") {
-    return /* @__PURE__ */ jsxRuntime.jsxs(
-      "div",
-      {
-        className: "bg-amber-50 border-2 border-amber-300 rounded-lg px-4 py-2.5 text-xs font-medium text-amber-800 text-center my-1",
-        style: { minWidth: "120px" },
-        children: [
-          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-amber-400 mr-1", children: "\u25C7" }),
-          node.label
-        ]
-      }
-    );
-  }
-  if (node.type === "terminal") {
-    return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "bg-gray-100 border border-gray-200 rounded-full px-5 py-1.5 text-xs font-medium text-gray-500 text-center my-1", children: node.label });
-  }
-  return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "bg-white border border-gray-200 rounded-sm px-4 py-2 text-xs font-medium text-[var(--black)] text-center shadow-sm my-1 max-w-[220px]", children: node.label });
+function TextBlock({ lines, x, y, fill, fontSize }) {
+  const startY = y - (lines.length - 1) * LINE_HEIGHT / 2;
+  return /* @__PURE__ */ jsxRuntime.jsx(
+    "text",
+    {
+      x,
+      textAnchor: "middle",
+      fill,
+      style: { fontSize: `${fontSize}px`, fontFamily: "var(--font-outfit, system-ui, sans-serif)", fontWeight: 500 },
+      children: lines.map((line, i) => /* @__PURE__ */ jsxRuntime.jsx("tspan", { x, y: startY + i * LINE_HEIGHT, children: line }, i))
+    }
+  );
 }
-function RenderLayoutItems({ items, nodeMap }) {
-  return /* @__PURE__ */ jsxRuntime.jsx(jsxRuntime.Fragment, { children: items.map((item, i) => {
-    if (item.type === "node") {
-      const node = nodeMap.get(item.nodeId);
-      if (!node) return null;
-      return /* @__PURE__ */ jsxRuntime.jsx(FlowNodeBox, { node }, `node-${item.nodeId}`);
-    }
-    if (item.type === "arrow") {
-      return /* @__PURE__ */ jsxRuntime.jsx(FlowArrow, { label: item.label }, `arrow-${i}`);
-    }
-    if (item.type === "branch") {
-      return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-center w-full", children: [
-        /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-px h-3 bg-gray-300" }),
-        /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-start justify-center gap-6 w-full", children: item.branches.map((branch, j) => /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-center min-w-[100px]", children: [
-          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-center", children: [
-            branch.label && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-[10px] font-medium text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-1", children: branch.label }),
-            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-300" })
-          ] }),
-          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex flex-col items-center", children: /* @__PURE__ */ jsxRuntime.jsx(RenderLayoutItems, { items: branch.items, nodeMap }) })
-        ] }, j)) }),
-        item.mergeId && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-px h-3 bg-gray-300" })
-      ] }, `branch-${item.decision}-${i}`);
-    }
-    return null;
-  }) });
+function ActionNodeSvg({ n }) {
+  const lines = wrapText(n.node.label, n.width - 24);
+  return /* @__PURE__ */ jsxRuntime.jsxs("g", { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(
+      "rect",
+      {
+        x: n.x - n.width / 2,
+        y: n.y - n.height / 2,
+        width: n.width,
+        height: n.height,
+        rx: 3,
+        fill: "white",
+        stroke: "#E5E7EB",
+        strokeWidth: 1,
+        filter: "url(#fc-shadow)"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntime.jsx(TextBlock, { lines, x: n.x, y: n.y, fill: "#0A0A0A", fontSize: FONT_SIZE })
+  ] });
+}
+function DecisionNodeSvg({ n }) {
+  const half = DIAMOND_SIZE / 2;
+  const points = `${n.x},${n.y - half} ${n.x + half},${n.y} ${n.x},${n.y + half} ${n.x - half},${n.y}`;
+  const lines = wrapText(n.node.label, DIAMOND_SIZE - 16);
+  return /* @__PURE__ */ jsxRuntime.jsxs("g", { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(
+      "polygon",
+      {
+        points,
+        fill: "#FFFBEB",
+        stroke: "#FCD34D",
+        strokeWidth: 2
+      }
+    ),
+    /* @__PURE__ */ jsxRuntime.jsx(TextBlock, { lines, x: n.x, y: n.y, fill: "#92400E", fontSize: 10 })
+  ] });
+}
+function TerminalNodeSvg({ n }) {
+  return /* @__PURE__ */ jsxRuntime.jsxs("g", { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(
+      "rect",
+      {
+        x: n.x - n.width / 2,
+        y: n.y - n.height / 2,
+        width: n.width,
+        height: n.height,
+        rx: n.height / 2,
+        fill: "#F3F4F6",
+        stroke: "#E5E7EB",
+        strokeWidth: 1
+      }
+    ),
+    /* @__PURE__ */ jsxRuntime.jsx(TextBlock, { lines: [n.node.label], x: n.x, y: n.y, fill: "#6B7280", fontSize: FONT_SIZE })
+  ] });
+}
+function EdgeSvg({ from, to, label }) {
+  const path = computeEdgePath(from, to);
+  const midX = (from.x + to.x) / 2;
+  const midY = (from.y + from.height / 2 + to.y - to.height / 2) / 2;
+  return /* @__PURE__ */ jsxRuntime.jsxs("g", { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(
+      "path",
+      {
+        d: path,
+        fill: "none",
+        stroke: "#D1D5DB",
+        strokeWidth: 1.5,
+        markerEnd: "url(#fc-arrowhead)"
+      }
+    ),
+    label && /* @__PURE__ */ jsxRuntime.jsxs("g", { children: [
+      /* @__PURE__ */ jsxRuntime.jsx(
+        "rect",
+        {
+          x: midX - label.length * CHAR_WIDTH / 2 - 6,
+          y: midY - 9,
+          width: label.length * CHAR_WIDTH + 12,
+          height: 18,
+          rx: 9,
+          fill: "#F5F3FF"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntime.jsx(
+        "text",
+        {
+          x: midX,
+          y: midY + 1,
+          textAnchor: "middle",
+          dominantBaseline: "central",
+          fill: "#7C3AED",
+          style: { fontSize: "10px", fontFamily: "var(--font-outfit, system-ui, sans-serif)", fontWeight: 500 },
+          children: label
+        }
+      )
+    ] })
+  ] });
 }
 function FlowchartDiagram({ mermaid, className }) {
   const { nodes, edges } = parseMermaidFlowchart(mermaid);
   if (nodes.length === 0) {
     return /* @__PURE__ */ jsxRuntime.jsx("pre", { className: "text-xs bg-white border border-gray-100 rounded-sm p-3 overflow-x-auto whitespace-pre-wrap", children: mermaid });
   }
-  const outgoing = /* @__PURE__ */ new Map();
-  const incoming = /* @__PURE__ */ new Map();
-  for (const edge of edges) {
-    if (!outgoing.has(edge.from)) outgoing.set(edge.from, []);
-    outgoing.get(edge.from).push(edge);
-    if (!incoming.has(edge.to)) incoming.set(edge.to, []);
-    incoming.get(edge.to).push(edge);
-  }
-  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
-  const roots = nodes.filter((n) => !incoming.has(n.id) || incoming.get(n.id).length === 0);
-  const startId = roots.length > 0 ? roots[0].id : nodes[0].id;
-  const visited = /* @__PURE__ */ new Set();
-  const layout = buildLayout(startId, outgoing, incoming, nodeMap, visited);
-  return /* @__PURE__ */ jsxRuntime.jsx("div", { className, children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex flex-col items-center py-2", children: /* @__PURE__ */ jsxRuntime.jsx(RenderLayoutItems, { items: layout, nodeMap }) }) });
+  const { layoutNodes, svgWidth, svgHeight } = computeLayout(nodes, edges);
+  const nodeById = new Map(layoutNodes.map((n) => [n.id, n]));
+  return /* @__PURE__ */ jsxRuntime.jsx("div", { className, children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxRuntime.jsxs(
+    "svg",
+    {
+      width: svgWidth,
+      height: svgHeight,
+      viewBox: `0 0 ${svgWidth} ${svgHeight}`,
+      xmlns: "http://www.w3.org/2000/svg",
+      className: "block",
+      children: [
+        /* @__PURE__ */ jsxRuntime.jsx(SvgDefs, {}),
+        edges.map((e, i) => {
+          const fromNode = nodeById.get(e.from);
+          const toNode = nodeById.get(e.to);
+          if (!fromNode || !toNode) return null;
+          return /* @__PURE__ */ jsxRuntime.jsx(EdgeSvg, { from: fromNode, to: toNode, label: e.label }, `e-${i}`);
+        }),
+        layoutNodes.map((n) => {
+          if (n.node.type === "decision") return /* @__PURE__ */ jsxRuntime.jsx(DecisionNodeSvg, { n }, n.id);
+          if (n.node.type === "terminal") return /* @__PURE__ */ jsxRuntime.jsx(TerminalNodeSvg, { n }, n.id);
+          return /* @__PURE__ */ jsxRuntime.jsx(ActionNodeSvg, { n }, n.id);
+        })
+      ]
+    }
+  ) }) });
 }
 var frequencyLabels = {
   multiple_daily: "occurrence",
